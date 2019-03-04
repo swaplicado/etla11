@@ -1,0 +1,22 @@
+================================================================================
+2019-03-04, 1.1 000.0
+Sergio Abraham Flores Gutiérrez
+--------------------------------------------------------------------------------
+Creación versión 1.1.
+
+================================================================================
+2019-02-20, 1.0 013.05
+Sergio Abraham Flores Gutiérrez
+--------------------------------------------------------------------------------
+Creación de nuevo identificador para grid de remisiones a embarcar en forma de captura SFormShipment, debido a que persiste el error de conversión de Integer a String al agregar remisiones.
+
+================================================================================
+2018-10-30, 1.0 013.04
+Sergio Abraham Flores Gutiérrez
+--------------------------------------------------------------------------------
+Corrección a identificadores de grid en forma de captura SFormShipment puesto que los dos grids de la forma tienen los mismos identificadores.
+Corrección a generación de sentencias SQL de inserción y actualización de la clase SDbShipment, en relación al redondeo de m² y kg erróneamente realizado con formateador de decimales, lo cual incorpora comas como separador de miles.
+
+================================================================================
+
+#eof

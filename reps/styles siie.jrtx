@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jasperTemplate PUBLIC "-//JasperReports//DTD Template//EN" "http://jasperreports.sourceforge.net/dtds/jaspertemplate.dtd">
+
+<jasperTemplate>
+	<style name="Report title 1" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="13" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Report title 2" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Report title 3" hAlign="Center" vAlign="Middle" fontName="Arial" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Parent detail" vAlign="Middle" fontName="Arial" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Parent detail bold" style="Parent detail" vAlign="Middle" isBold="true"/>
+	<style name="Parent group 1" vAlign="Top" fontName="Arial" fontSize="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Parent group 1 bold" style="Parent group 1" vAlign="Top" isBold="true"/>
+	<style name="Parent group 2" vAlign="Top" fontName="Arial" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Parent group 2 bold" style="Parent group 2" vAlign="Top" isBold="true"/>
+	<style name="Parent group 3" vAlign="Top" fontName="Arial" fontSize="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Parent group 3 bold" style="Parent group 3" vAlign="Top" isBold="true"/>
+	<style name="Parent footer" forecolor="#C0C0C0" vAlign="Middle" fontName="Arial" fontSize="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="Detail text left" style="Parent detail" hAlign="Left"/>
+	<style name="Detail text center" style="Parent detail" hAlign="Center"/>
+	<style name="Detail text right" style="Parent detail" hAlign="Right"/>
+	<style name="Detail money" style="Parent detail" hAlign="Right" pattern="#,##0.00;(#,##0.00)"/>
+	<style name="Detail value 0d" style="Parent detail" hAlign="Right" pattern="#,##0"/>
+	<style name="Detail value 2d" style="Parent detail" hAlign="Right" pattern="#,##0.00"/>
+	<style name="Detail value 4d" style="Parent detail" hAlign="Right" pattern="#,##0.0000"/>
+	<style name="Detail value 8d" style="Parent detail" hAlign="Right" pattern="#,##0.00000000"/>
+	<style name="Detail percentage 0d" style="Parent detail" hAlign="Right" pattern="#,##0 %"/>
+	<style name="Detail percentage 2d" style="Parent detail" hAlign="Right" pattern="#,##0.00 %"/>
+	<style name="Detail percentage 4d" style="Parent detail" hAlign="Right" pattern="#,##0.0000 %"/>
+	<style name="Detail date" style="Parent detail" hAlign="Center" pattern="dd/MM/yyyy"/>
+	<style name="Detail date abr" style="Parent detail" hAlign="Center" pattern="dd/MM/yy"/>
+	<style name="Detail datetime" style="Parent detail" hAlign="Center" pattern="dd/MM/yyyy HH:mm:ss"/>
+	<style name="Detail text left bold" style="Parent detail bold" hAlign="Left"/>
+	<style name="Detail text center bold" style="Parent detail bold" hAlign="Center"/>
+	<style name="Detail text right bold" style="Parent detail bold" hAlign="Right"/>
+	<style name="Detail money bold" style="Parent detail bold" hAlign="Right" pattern="#,##0.00;(#,##0.00)"/>
+	<style name="Detail value 0d bold" style="Parent detail bold" hAlign="Right" pattern="#,##0"/>
+	<style name="Detail value 2d bold" style="Parent detail bold" hAlign="Right" pattern="#,##0.00"/>
+	<style name="Detail value 4d bold" style="Parent detail bold" hAlign="Right" pattern="#,##0.0000"/>
+	<style name="Detail value 8d bold" style="Parent detail bold" hAlign="Right" pattern="#,##0.00000000"/>
+	<style name="Detail percentage 0d bold" style="Parent detail bold" hAlign="Right" pattern="#,##0 %"/>
+	<style name="Detail percentage 2d bold" style="Parent detail bold" hAlign="Right" pattern="#,##0.00 %"/>
+	<style name="Detail percentage 4d bold" style="Parent detail bold" hAlign="Right" pattern="#,##0.0000 %"/>
+	<style name="Detail date bold" style="Parent detail bold" hAlign="Center" pattern="dd/MM/yyyy"/>
+	<style name="Detail date abr bold" style="Parent detail bold" hAlign="Center" pattern="dd/MM/yy"/>
+	<style name="Detail datetime bold" style="Parent detail bold" hAlign="Center" pattern="dd/MM/yyyy HH:mm:ss"/>
+	<style name="Group 1 text left" style="Parent group 1" hAlign="Left"/>
+	<style name="Group 1 text center" style="Parent group 1" hAlign="Center"/>
+	<style name="Group 1 text right" style="Parent group 1" hAlign="Right"/>
+	<style name="Group 1 money" style="Parent group 1" hAlign="Right" pattern="#,##0.00;(#,##0.00)"/>
+	<style name="Group 1 value 0d" style="Parent group 1" hAlign="Right" pattern="#,##0"/>
+	<style name="Group 1 value 2d" style="Parent group 1" hAlign="Right" pattern="#,##0.00"/>
+	<style name="Group 1 value 4d" style="Parent group 1" hAlign="Right" pattern="#,##0.0000"/>
+	<style name="Group 1 value 8d" style="Parent group 1" hAlign="Right" pattern="#,##0.00000000"/>
+	<style name="Group 1 percentage 0d" style="Parent group 1" hAlign="Right" pattern="#,##0 %"/>
+	<style name="Group 1 percentage 2d" style="Parent group 1" hAlign="Right" pattern="#,##0.00 %"/>
+	<style name="Group 1 percentage 4d" style="Parent group 1" hAlign="Right" pattern="#,##0.0000 %"/>
+	<style name="Group 1 date" style="Parent group 1" hAlign="Center" pattern="dd/MM/yyyy"/>
+	<style name="Group 1 date abr" style="Parent group 1" hAlign="Center" pattern="dd/MM/yy"/>
+	<style name="Group 1 datetime" style="Parent group 1" hAlign="Center" pattern="dd/MM/yyyy HH:mm:ss"/>
+	<style name="Group 1 text left bold" style="Parent group 1 bold" hAlign="Left"/>
+	<style name="Group 1 text center bold" style="Parent group 1 bold" hAlign="Center"/>
+	<style name="Group 1 text right bold" style="Parent group 1 bold" hAlign="Right"/>
+	<style name="Group 1 money bold" style="Parent group 1 bold" hAlign="Right" pattern="#,##0.00;(#,##0.00)"/>
+	<style name="Group 1 value 0d bold" style="Parent group 1 bold" hAlign="Right" pattern="#,##0"/>
+	<style name="Group 1 value 2d bold" style="Parent group 1 bold" hAlign="Right" pattern="#,##0.00"/>
+	<style name="Group 1 value 4d bold" style="Parent group 1 bold" hAlign="Right" pattern="#,##0.0000"/>
+	<style name="Group 1 value 8d bold" style="Parent group 1 bold" hAlign="Right" pattern="#,##0.00000000"/>
+	<style name="Group 1 percentage 0d bold" style="Parent group 1 bold" hAlign="Right" pattern="#,##0 %"/>
+	<style name="Group 1 percentage 2d bold" style="Parent group 1 bold" hAlign="Right" pattern="#,##0.00 %"/>
+	<style name="Group 1 percentage 4d bold" style="Parent group 1 bold" hAlign="Right" pattern="#,##0.0000 %"/>
+	<style name="Group 1 date bold" style="Parent group 1 bold" hAlign="Center" pattern="dd/MM/yyyy"/>
+	<style name="Group 1 date abr bold" style="Parent group 1 bold" hAlign="Center" pattern="dd/MM/yy"/>
+	<style name="Group 1 datetime bold" style="Parent group 1 bold" hAlign="Center" pattern="dd/MM/yyyy HH:mm:ss"/>
+	<style name="Group 2 text left" style="Parent group 2" hAlign="Left"/>
+	<style name="Group 2 text center" style="Parent group 2" hAlign="Center"/>
+	<style name="Group 2 text right" style="Parent group 2" hAlign="Right"/>
+	<style name="Group 2 money" style="Parent group 2" hAlign="Right" pattern="#,##0.00;(#,##0.00)"/>
+	<style name="Group 2 value 0d" style="Parent group 2" hAlign="Right" pattern="#,##0"/>
+	<style name="Group 2 value 2d" style="Parent group 2" hAlign="Right" pattern="#,##0.00"/>
+	<style name="Group 2 value 4d" style="Parent group 2" hAlign="Right" pattern="#,##0.0000"/>
+	<style name="Group 2 value 8d" style="Parent group 2" hAlign="Right" pattern="#,##0.00000000"/>
+	<style name="Group 2 percentage 0d" style="Parent group 2" hAlign="Right" pattern="#,##0 %"/>
+	<style name="Group 2 percentage 2d" style="Parent group 2" hAlign="Right" pattern="#,##0.00 %"/>
+	<style name="Group 2 percentage 4d" style="Parent group 2" hAlign="Right" pattern="#,##0.0000 %"/>
+	<style name="Group 2 date" style="Parent group 2" hAlign="Center" pattern="dd/MM/yyyy"/>
+	<style name="Group 2 date abr" style="Parent group 2" hAlign="Center" pattern="dd/MM/yy"/>
+	<style name="Group 2 datetime" style="Parent group 2" hAlign="Center" pattern="dd/MM/yyyy HH:mm:ss"/>
+	<style name="Group 2 text left bold" style="Parent group 2 bold" hAlign="Left"/>
+	<style name="Group 2 text center bold" style="Parent group 2 bold" hAlign="Center"/>
+	<style name="Group 2 text right bold" style="Parent group 2 bold" hAlign="Right"/>
+	<style name="Group 2 money bold" style="Parent group 2 bold" hAlign="Right" pattern="#,##0.00;(#,##0.00)"/>
+	<style name="Group 2 value 0d bold" style="Parent group 2 bold" hAlign="Right" pattern="#,##0"/>
+	<style name="Group 2 value 2d bold" style="Parent group 2 bold" hAlign="Right" pattern="#,##0.00"/>
+	<style name="Group 2 value 4d bold" style="Parent group 2 bold" hAlign="Right" pattern="#,##0.0000"/>
+	<style name="Group 2 value 8d bold" style="Parent group 2 bold" hAlign="Right" pattern="#,##0.00000000"/>
+	<style name="Group 2 percentage 0d bold" style="Parent group 2 bold" hAlign="Right" pattern="#,##0 %"/>
+	<style name="Group 2 percentage 2d bold" style="Parent group 2 bold" hAlign="Right" pattern="#,##0.00 %"/>
+	<style name="Group 2 percentage 4d bold" style="Parent group 2 bold" hAlign="Right" pattern="#,##0.0000 %"/>
+	<style name="Group 2 date bold" style="Parent group 2 bold" hAlign="Center" pattern="dd/MM/yyyy"/>
+	<style name="Group 2 date abr bold" style="Parent group 2 bold" hAlign="Center" pattern="dd/MM/yy"/>
+	<style name="Group 2 datetime bold" style="Parent group 2 bold" hAlign="Center" pattern="dd/MM/yyyy HH:mm:ss"/>
+	<style name="Group 3 text left" style="Parent group 3" hAlign="Left"/>
+	<style name="Group 3 text center" style="Parent group 3" hAlign="Center"/>
+	<style name="Group 3 text right" style="Parent group 3" hAlign="Right"/>
+	<style name="Group 3 money" style="Parent group 3" hAlign="Right" pattern="#,##0.00;(#,##0.00)"/>
+	<style name="Group 3 value 0d" style="Parent group 3" hAlign="Right" pattern="#,##0"/>
+	<style name="Group 3 value 2d" style="Parent group 3" hAlign="Right" pattern="#,##0.00"/>
+	<style name="Group 3 value 4d" style="Parent group 3" hAlign="Right" pattern="#,##0.0000"/>
+	<style name="Group 3 value 8d" style="Parent group 3" hAlign="Right" pattern="#,##0.00000000"/>
+	<style name="Group 3 percentage 0d" style="Parent group 3" hAlign="Right" pattern="#,##0 %"/>
+	<style name="Group 3 percentage 2d" style="Parent group 3" hAlign="Right" pattern="#,##0.00 %"/>
+	<style name="Group 3 percentage 4d" style="Parent group 3" hAlign="Right" pattern="#,##0.0000 %"/>
+	<style name="Group 3 date" style="Parent group 3" hAlign="Center" pattern="dd/MM/yyyy"/>
+	<style name="Group 3 date abr" style="Parent group 3" hAlign="Center" pattern="dd/MM/yy"/>
+	<style name="Group 3 datetime" style="Parent group 3" hAlign="Center" pattern="dd/MM/yyyy HH:mm:ss"/>
+	<style name="Group 3 text left bold" style="Parent group 3 bold" hAlign="Left"/>
+	<style name="Group 3 text center bold" style="Parent group 3 bold" hAlign="Center"/>
+	<style name="Group 3 text right bold" style="Parent group 3 bold" hAlign="Right"/>
+	<style name="Group 3 money bold" style="Parent group 3 bold" hAlign="Right" pattern="#,##0.00;(#,##0.00)"/>
+	<style name="Group 3 value 0d bold" style="Parent group 3 bold" hAlign="Right" pattern="#,##0"/>
+	<style name="Group 3 value 2d bold" style="Parent group 3 bold" hAlign="Right" pattern="#,##0.00"/>
+	<style name="Group 3 value 4d bold" style="Parent group 3 bold" hAlign="Right" pattern="#,##0.0000"/>
+	<style name="Group 3 value 8d bold" style="Parent group 3 bold" hAlign="Right" pattern="#,##0.00000000"/>
+	<style name="Group 3 percentage 0d bold" style="Parent group 3 bold" hAlign="Right" pattern="#,##0 %"/>
+	<style name="Group 3 percentage 2d bold" style="Parent group 3 bold" hAlign="Right" pattern="#,##0.00 %"/>
+	<style name="Group 3 percentage 4d bold" style="Parent group 3 bold" hAlign="Right" pattern="#,##0.0000 %"/>
+	<style name="Group 3 date bold" style="Parent group 3 bold" hAlign="Center" pattern="dd/MM/yyyy"/>
+	<style name="Group 3 date abr bold" style="Parent group 3 bold" hAlign="Center" pattern="dd/MM/yy"/>
+	<style name="Group 3 datetime bold" style="Parent group 3 bold" hAlign="Center" pattern="dd/MM/yyyy HH:mm:ss"/>
+	<style name="Footer left" style="Parent footer" forecolor="#000000" hAlign="Left"/>
+	<style name="Footer center" style="Parent footer" forecolor="#000000" hAlign="Center"/>
+	<style name="Footer right" style="Parent footer" forecolor="#000000" hAlign="Right"/>
+	<style name="Background row" backcolor="#CCCCCC"/>
+</jasperTemplate>
