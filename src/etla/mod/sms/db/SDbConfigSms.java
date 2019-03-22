@@ -16,16 +16,24 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Alfredo Pérez
  */
 public class SDbConfigSms extends SDbRegistryUser{
-    
+
     protected int mnPkConfigSmsId;
     protected String msUrlSms;
     protected double mdVmInMaxVariationPercent;
     protected double mdVmInMaxVariationWeight;
     protected double mdVmOutMaxVariationPercent;
     protected double mdVmOutMaxVariationWeight;
+    protected String msMailToWmIn;
+    protected String msMailToWmOut;
+    protected String msRevueltaHost;
+    protected int mnRevueltaPort;
+    protected String msRevueltaName;
+    protected String msRevueltaUser;
+    protected String msRevueltaPassword;
+
     /*
     protected boolean mbDeleted;
     protected boolean mbSystem;
@@ -34,21 +42,28 @@ public class SDbConfigSms extends SDbRegistryUser{
     protected Date mtTsUserInsert;
     protected Date mtTsUserUpdate;
     */
-    
+
     public SDbConfigSms () {
         super(SModConsts.S_CFG);
     }
-    
+
     /*
      * Public methods
      */
-    
+
     public void setPkConfigSmsId(int n) { mnPkConfigSmsId = n; }
     public void setUrlSms(String s) { msUrlSms = s; }
     public void setVmInMaxVariationPercent(double d) { mdVmInMaxVariationPercent = d; }
     public void setVmInMaxVariationWeight(double d) { mdVmInMaxVariationWeight = d; }
     public void setVmOutMaxVariationPercent(double d) { mdVmOutMaxVariationPercent = d; }
     public void setVmOutMaxVariationWeight(double d) { mdVmOutMaxVariationWeight = d; }
+    public void setMailToWmIn(String s) { msMailToWmIn = s; }
+    public void setMailToWmOut(String s) { msMailToWmOut = s; }
+    public void setRevueltaHost(String s) { msRevueltaHost = s; }
+    public void setRevueltaPort(int n) { mnRevueltaPort = n; }
+    public void setRevueltaName(String s) { msRevueltaName = s; }
+    public void setRevueltaUser(String s) { msRevueltaUser = s; }
+    public void setRevueltaPassword(String s) { msRevueltaPassword = s; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
     public void setFkUserInsertId(int n) { mnFkUserInsertId = n; }
@@ -62,6 +77,13 @@ public class SDbConfigSms extends SDbRegistryUser{
     public double getVmInMaxVariationWeight() { return mdVmInMaxVariationWeight; }
     public double getVmOutMaxVariationPercent() { return mdVmOutMaxVariationPercent; }
     public double getVmOutMaxVariationWeight() { return mdVmOutMaxVariationWeight; }
+    public String getMailToWmIn() { return msMailToWmIn; }
+    public String getMailToWmOut() { return msMailToWmOut; }
+    public String getRevueltaHost() { return msRevueltaHost; }
+    public int getRevueltaPort() { return mnRevueltaPort; }
+    public String getRevueltaName() { return msRevueltaName; }
+    public String getRevueltaUser() { return msRevueltaUser; }
+    public String getRevueltaPassword() { return msRevueltaPassword; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
     public int getFkUserInsertId() { return mnFkUserInsertId; }
@@ -85,15 +107,22 @@ public class SDbConfigSms extends SDbRegistryUser{
 
     @Override
     public void initRegistry() {
-        
+
         initBaseRegistry();
-        
+
         mnPkConfigSmsId = 0;
         msUrlSms = "";
         mdVmInMaxVariationPercent = 0;
         mdVmInMaxVariationWeight = 0;
         mdVmOutMaxVariationPercent = 0;
         mdVmOutMaxVariationWeight = 0;
+        msMailToWmIn = "";
+        msMailToWmOut = "";
+        msRevueltaHost = "";
+        mnRevueltaPort = 0;
+        msRevueltaName = "";
+        msRevueltaUser = "";
+        msRevueltaPassword = "";
         mbDeleted = false;
         mbSystem = false;
         mnFkUserInsertId = 0;
@@ -150,16 +179,23 @@ public class SDbConfigSms extends SDbRegistryUser{
             mdVmInMaxVariationWeight = resultSet.getDouble("wm_in_max_var_weight");
             mdVmOutMaxVariationPercent = resultSet.getDouble("wm_out_max_var_pct");
             mdVmOutMaxVariationWeight = resultSet.getDouble("wm_out_max_var_weight");
+            msMailToWmIn = resultSet.getString("mail_to_wm_in");
+            msMailToWmOut = resultSet.getString("mail_to_wm_out");
+            msRevueltaHost = resultSet.getString("rev_host");
+            mnRevueltaPort = resultSet.getInt("rev_port");
+            msRevueltaName = resultSet.getString("rev_name");
+            msRevueltaUser = resultSet.getString("rev_user");
+            msRevueltaPassword = resultSet.getString("rev_pswd");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
             mnFkUserInsertId = resultSet.getInt("fk_usr_ins");
             mnFkUserUpdateId = resultSet.getInt("fk_usr_upd");
             mtTsUserInsert = resultSet.getTimestamp("ts_usr_ins");
             mtTsUserUpdate = resultSet.getTimestamp("ts_usr_upd");
-            
+
             mbRegistryNew = false;
         }
-        
+
         mnQueryResultId = SDbConsts.READ_OK;
     }
 
@@ -167,14 +203,14 @@ public class SDbConfigSms extends SDbRegistryUser{
     public void save(SGuiSession session) throws SQLException, Exception {       
         initQueryMembers();
         mnQueryResultId = SDbConsts.READ_ERROR;
-        
+
         if (mbRegistryNew) {
             computePrimaryKey(session);
             mbDeleted = false;
             mbSystem = false;
             mnFkUserInsertId = session.getUser().getPkUserId();
             mnFkUserUpdateId = SUtilConsts.USR_NA_ID;
-            
+
             msSql = "INSERT INTO " + getSqlTable() + " VALUES (" +
                 mnPkConfigSmsId + ", " + 
                 "'" + msUrlSms + "', " + 
@@ -182,6 +218,13 @@ public class SDbConfigSms extends SDbRegistryUser{
                 mdVmInMaxVariationWeight + ", " + 
                 mdVmOutMaxVariationPercent + ", " + 
                 mdVmOutMaxVariationWeight + ", " + 
+                "'" + msMailToWmIn + "', " + 
+                "'" + msMailToWmOut + "', " + 
+                "'" + msRevueltaHost + "', " + 
+                mnRevueltaPort + ", " + 
+                "'" + msRevueltaName + "', " + 
+                "'" + msRevueltaUser + "', " + 
+                "'" + msRevueltaPassword + "', " + 
                 (mbDeleted ? 1 : 0) + ", " + 
                 (mbSystem ? 1 : 0) + ", " + 
                 mnFkUserInsertId + ", " + 
@@ -192,7 +235,7 @@ public class SDbConfigSms extends SDbRegistryUser{
         }
         else {
             mnFkUserUpdateId = session.getUser().getPkUserId();
-            
+
             msSql = "UPDATE " + getSqlTable() + " SET " +
                 //"id_cfg = " + mnPkConfigSmsId + ", " +
                 "url_sms = '" + msUrlSms + "', " +
@@ -200,6 +243,13 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "wm_in_max_var_weight = " + mdVmInMaxVariationWeight + ", " +
                 "wm_out_max_var_pct = " + mdVmOutMaxVariationPercent + ", " +
                 "wm_out_max_var_weight = " + mdVmOutMaxVariationWeight + ", " +
+                "mail_to_wm_in = '" + msMailToWmIn + "', " +
+                "mail_to_wm_out = '" + msMailToWmOut + "', " +
+                "rev_host = '" + msRevueltaHost + "', " +
+                "rev_port = " + mnRevueltaPort + ", " +
+                "rev_name = '" + msRevueltaName + "', " +
+                "rev_user = '" + msRevueltaUser + "', " +
+                "rev_pswd = '" + msRevueltaPassword + "', " +
                 "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                 "b_sys = " + (mbSystem ? 1 : 0) + ", " +
                 //"fk_usr_ins = " + mnFkUserInsertId + ", " +
@@ -208,7 +258,7 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "ts_usr_upd = " + "NOW()" + ", " +
                  getSqlWhere();
         }
-        
+
         session.getStatement().execute(msSql);
 
         mbRegistryNew = false;
@@ -218,20 +268,27 @@ public class SDbConfigSms extends SDbRegistryUser{
     @Override
     public SDbConfigSms clone() throws CloneNotSupportedException {
         SDbConfigSms  registry = new SDbConfigSms();
-        
+
         registry.setPkConfigSmsId(this.getPkConfigSmsId());
         registry.setUrlSms(this.getUrlSms());
         registry.setVmInMaxVariationPercent(this.getVmInMaxVariationPercent());
         registry.setVmInMaxVariationWeight(this.getVmInMaxVariationWeight());
         registry.setVmOutMaxVariationPercent(this.getVmOutMaxVariationPercent());
         registry.setVmOutMaxVariationWeight(this.getVmOutMaxVariationWeight());
+        registry.setMailToWmIn(this.getMailToWmIn());
+        registry.setMailToWmOut(this.getMailToWmOut());
+        registry.setRevueltaHost(this.getRevueltaHost());
+        registry.setRevueltaPort(this.getRevueltaPort());
+        registry.setRevueltaName(this.getRevueltaName());
+        registry.setRevueltaUser(this.getRevueltaUser());
+        registry.setRevueltaPassword(this.getRevueltaPassword());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());
         registry.setFkUserInsertId(this.getFkUserInsertId());
         registry.setFkUserUpdateId(this.getFkUserUpdateId());
         registry.setTsUserInsert(this.getTsUserInsert());
         registry.setTsUserUpdate(this.getTsUserUpdate());
-        
+
         registry.setRegistryNew(this.isRegistryNew());
         return registry;
     }

@@ -21,10 +21,12 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Daniel López, Sergio Flores
+ * @author Daniel López, Sergio Flores, Alfredo Pérez
  */
 public abstract class SShippingUtils {
     
+    public static final String BOL = "BOL: ";
+
     /**
      * Obtains available shipment deliveries from external system as shipment rows.
      * @param session Current user session.
@@ -38,13 +40,12 @@ public abstract class SShippingUtils {
         ArrayList<SRowShipmentRow> availableRows = new ArrayList<>();
         Statement statement = connection.createStatement();
         ResultSet resultSet = null;
-        
-        String sql = "SELECT ci.CustomerInvoiceKey, ci.InvoiceNumber, ci.BatchNumber, ci.Created, ci.Description, RIGHT(ci.Description, LEN(ci.Description) - 5) AS _bol, " +
-                "c.CustomerId, c.CustomerName, st.SiteLocation, st.City + ', ' + st.State + ', '+ st.ZipCode AS _site_loc, " + 
+
+        String sql = "SELECT ci.CustomerInvoiceKey, ci.InvoiceNumber, ci.BatchNumber, ci.Created, ci.Description, RIGHT(ci.Description, LEN(ci.Description) - " + BOL.length() + ") AS _bol, " +
+                "c.CustomerId, c.CustomerName, st.SiteLocation, st.Address1, st.Address2, st.City + ', ' + st.State + ', ' + st.ZipCode AS _site_loc, " + 
                 "SUM(cii.Area)/1000000.0 AS _m2, SUM(cii.Weight)/1000000.0 AS _kg, COUNT(*) AS _orders, " +
-                "(SELECT SUM(NoLoads) FROM dbo.BOLUnitsView where BOLKey=RIGHT(ci.Description, LEN(ci.Description) - LEN('BOL: '))) AS _bales " +
-                "FROM " +
-                "dbo.CustomerInvoices AS ci " +
+                "(SELECT SUM(NoLoads) FROM dbo.BOLUnitsView where BOLKey=RIGHT(ci.Description, LEN(ci.Description) - " + BOL.length() + ")) AS _bales " +
+                "FROM dbo.CustomerInvoices AS ci " +
                 "INNER JOIN dbo.CustomerInvoiceItems AS cii ON cii.CustomerInvoiceKey=ci.CustomerInvoiceKey " +
                 "INNER JOIN dbo.Customers AS c ON c.CustomerId=ci.CustomerId " +
                 "INNER JOIN dbo.ShipTo AS st ON st.SiteLocation=ci.SiteLocationKey " +
@@ -55,21 +56,21 @@ public abstract class SShippingUtils {
                 "GROUP BY " +
                 "ci.CustomerInvoiceKey, ci.InvoiceNumber, ci.BatchNumber, ci.Created, ci.Description, ci.SiteLocationKey, " +
                 "c.CustomerId, c.CustomerName, " +
-                "st.SiteLocation, st.City, st.State, st.ZipCode " +
+                "st.SiteLocation,st.Address1, st.Address2, st.City, st.State, st.ZipCode " +
                 "ORDER BY " +
                 "ci.InvoiceNumber, ci.CustomerInvoiceKey ";
-        
+
         resultSet = statement.executeQuery(sql);
         while(resultSet.next()) {
             SDbShipmentRow row = new SDbShipmentRow();
-            
+
             //row.setPkShipmentId(...);
             //row.setPkRowId(...);
             row.setDeliveryId(resultSet.getString("CustomerInvoiceKey"));
-            row.setBolId(SLibUtils.parseInt(resultSet.getString("_bol")));
             row.setDeliveryNumber(SLibUtils.parseInt(resultSet.getString("InvoiceNumber")));
             row.setDeliveryDate(resultSet.getDate("Created"));
-            
+            row.setBolId(SLibUtils.parseInt(resultSet.getString("_bol")));
+
             SDbInvoice invoice = getInvoice(session, resultSet.getInt("CustomerInvoiceKey"));
             if (invoice != null) {
                 row.setInvoiceIdYear(invoice.getDesInvoiceYearId());
@@ -77,7 +78,7 @@ public abstract class SShippingUtils {
                 row.setInvoiceSeries(invoice.getFinalSeries());
                 row.setInvoiceNumber(invoice.getFinalNumber());
             }
-            
+
             row.setOrders(resultSet.getInt("_orders"));
             row.setBales(resultSet.getInt("_bales"));
             row.setMeters2(resultSet.getDouble("_m2"));
@@ -87,14 +88,16 @@ public abstract class SShippingUtils {
 
             row.setDbmsCustomer(resultSet.getString("CustomerName"));
             row.setDbmsDestination(resultSet.getString("_site_loc"));
+            row.setDbmsAddress1(resultSet.getString("Address1"));
+            row.setDbmsAddress2(resultSet.getString("Address2"));
             row.setAuxSiteLocationId(resultSet.getInt("SiteLocation"));
 
             availableRows.add(new SRowShipmentRow(row));
         }
-        
+
         return availableRows;
     }
-    
+
     /**
      * Gets invoice from invoice key in external system.
      * @param session Current user session.
@@ -105,16 +108,18 @@ public abstract class SShippingUtils {
      */
     public static SDbInvoice getInvoice(final SGuiSession session, final int invoiceKey) throws SQLException, Exception {
         SDbInvoice invoice = null;
-        
-        String sql = "SELECT id_inv FROM " + SModConsts.TablesMap.get(SModConsts.A_INV) + " WHERE src_inv_id = " + invoiceKey + " AND NOT b_del ORDER BY id_inv DESC ";
+
+        String sql = "SELECT id_inv FROM " + SModConsts.TablesMap.get(SModConsts.A_INV) + " "
+                + "WHERE src_inv_id = " + invoiceKey + " AND NOT b_del "
+                + "ORDER BY id_inv DESC ";
         ResultSet resultSet = session.getStatement().executeQuery(sql);
         if (resultSet.next()) {
             invoice = (SDbInvoice) session.readRegistry(SModConsts.A_INV, new int[] { resultSet.getInt(1) });
         }
-        
+
         return invoice;
     }
-    
+
     /**
      * Gets customer ID from custemer key in external system.
      * @param session Current user session.
@@ -125,16 +130,18 @@ public abstract class SShippingUtils {
      */
     public static int getCustomerId(final SGuiSession session, final String customerKey) throws SQLException, Exception {
         int id = SLibConsts.UNDEFINED;
-        
-        String sql = "SELECT id_cus FROM " + SModConsts.TablesMap.get(SModConsts.AU_CUS) + " WHERE src_cus_id = '" + customerKey + "' ";
+
+        String sql = "SELECT id_cus "
+                + "FROM " + SModConsts.TablesMap.get(SModConsts.AU_CUS) + " "
+                + "WHERE src_cus_id = '" + customerKey + "' ";
         ResultSet resultSet = session.getStatement().executeQuery(sql);
         if (resultSet.next()) {
             id = resultSet.getInt(1);
         }
-        
+
         return id;
     }
-    
+
     /**
      * Gets destination ID from site location key in external system.
      * @param session Current user session.
@@ -145,19 +152,18 @@ public abstract class SShippingUtils {
      */
     public static int getDestinationId(final SGuiSession session, final int siteLocationKey) throws SQLException, Exception {
         int id = SLibConsts.UNDEFINED;
-        
-        String sql = "SELECT id_destin FROM " + SModConsts.TablesMap.get(SModConsts.SU_DESTIN) + " WHERE site_loc_id = " + siteLocationKey + " ";
+
+        String sql = "SELECT id_destin "
+                + "FROM " + SModConsts.TablesMap.get(SModConsts.SU_DESTIN) + " "
+                + "WHERE site_loc_id = " + siteLocationKey + " ";
         ResultSet resultSet = session.getStatement().executeQuery(sql);
         if (resultSet.next()) {
             id = resultSet.getInt(1);
         }
-        else {
-           
-        }
         
         return id;
     }
-    
+
     /**
      * Change status of a shipment.
      * @param session Current user session.
@@ -168,6 +174,7 @@ public abstract class SShippingUtils {
      */
     public static void changeStatus(final SGuiSession session, final int[] shipmentOrderId, final int status) throws SQLException, Exception {
         SDbShipment shipment = (SDbShipment) session.readRegistry(SModConsts.S_SHIPT, shipmentOrderId);
+        
         if (shipment != null) {
             if (!shipment.isDeleted()) {
                 if (!shipment.isAnnulled()) {

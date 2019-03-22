@@ -10,6 +10,7 @@ import etla.mod.cfg.db.SDbUser;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Date;
+import java.util.Properties;
 import sa.lib.SLibConsts;
 import sa.lib.gui.SGuiSession;
 
@@ -141,6 +142,13 @@ public abstract class SEtlProcess {
             case SEtlConsts.DB_SQL_SERVER:
                 Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
                 connection = DriverManager.getConnection("jdbc:sqlserver://" + host + (port == 0 ? "" : ":" + port) + ";databaseName=" + name + ";user=" + user + ";password=" + pswd);
+                break;
+            case SEtlConsts.DB_SYBASE:
+                Class.forName("com.sybase.jdbc3.jdbc.SybDriver");
+                Properties prop = new Properties();
+                prop.put("user", user);
+                prop.put("password", pswd);
+                connection = DriverManager.getConnection("jdbc:sybase:Tds:" + host + ":" + port + "/" + name, prop);
                 break;
             default:
                 throw new Exception(SLibConsts.ERR_MSG_OPTION_UNKNOWN);

@@ -7,7 +7,6 @@ package etla.mod.etl.view;
 import etla.mod.SModConsts;
 import etla.mod.etl.db.SEtlConsts;
 import java.util.ArrayList;
-import sa.lib.SLibConsts;
 import sa.lib.db.SDbConsts;
 import sa.lib.grid.SGridColumnView;
 import sa.lib.grid.SGridConsts;
@@ -22,24 +21,30 @@ import sa.lib.gui.SGuiDate;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Alfredo Pérez
  */
 public class SViewInvoice extends SGridPaneView {
-    
+
+    public static final int SUBTYPE_ALL = 1;
+    public static final int SUBTYPE_PEND = 2;
+
     private SGridFilterDatePeriod moFilterDatePeriod;
-    
-    public SViewInvoice(SGuiClient client, String title) {
-        super(client, SGridConsts.GRID_PANE_VIEW, SModConsts.A_INV, SLibConsts.UNDEFINED, title);
+
+    public SViewInvoice(SGuiClient client, int subtype, String title) {
+        super(client, SGridConsts.GRID_PANE_VIEW, SModConsts.A_INV, subtype, title);
         initComponentsCustom();
     }
-    
+
     private void initComponentsCustom() {
         setRowButtonsEnabled(false, false, false, false, false);
-        moFilterDatePeriod = new SGridFilterDatePeriod(miClient, this, SGuiConsts.DATE_PICKER_DATE_PERIOD);
-        moFilterDatePeriod.initFilter(new SGuiDate(SGuiConsts.GUI_DATE_MONTH, miClient.getSession().getCurrentDate().getTime()));
-        getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(moFilterDatePeriod);
+
+        if (mnGridSubtype == SUBTYPE_ALL) {
+            moFilterDatePeriod = new SGridFilterDatePeriod(miClient, this, SGuiConsts.DATE_PICKER_DATE_PERIOD);
+            moFilterDatePeriod.initFilter(new SGuiDate(SGuiConsts.GUI_DATE_MONTH, miClient.getSession().getCurrentDate().getTime()));
+            getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(moFilterDatePeriod);
+        }
     }
-    
+
     @Override
     public void prepareSqlQuery() {
         String sql = "";
@@ -57,8 +62,15 @@ public class SViewInvoice extends SGridPaneView {
         }
 
         filter = (SGuiDate) moFiltersMap.get(SGridConsts.FILTER_DATE_PERIOD).getValue();
-        sql += (sql.isEmpty() ? "" : "AND ") + SGridUtils.getSqlFilterDate("v.fin_dat", (SGuiDate) filter);
-        
+        if (filter != null) {
+            sql += (sql.isEmpty() ? "" : "AND ") + SGridUtils.getSqlFilterDate("v.fin_dat", (SGuiDate) filter);
+        }
+
+        if(mnGridSubtype == SUBTYPE_PEND){
+            sql += (sql.isEmpty() ? "" : "AND ") + "v.des_inv_yea_id = 0 AND v.src_inv_id NOT IN (SELECT i.src_inv_id FROM "
+                    + SModConsts.TablesMap.get(SModConsts.A_INV) + " AS i WHERE i.des_inv_yea_id <> 0) ";
+        }
+
         msSql = "SELECT "
                 + "v.id_inv AS " + SDbConsts.FIELD_ID + "1, "
                 + "v.src_inv_id AS " + SDbConsts.FIELD_CODE + ", "
@@ -119,7 +131,7 @@ public class SViewInvoice extends SGridPaneView {
 
     @Override
     public ArrayList<SGridColumnView> createGridColumns() {
-        ArrayList<SGridColumnView> columns = new ArrayList<SGridColumnView>();
+        ArrayList<SGridColumnView> columns = new ArrayList<>();
 
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "v.fin_ser", "Serie " + SEtlConsts.TXT_SYS_SIIE));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "v.fin_num", "Folio " + SEtlConsts.TXT_SYS_SIIE));

@@ -84,6 +84,16 @@
                 <Property name="text" type="java.lang.String" value="Facturas"/>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiEtlBolPending">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Remisiones x importar"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiEtlInvoicePending">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Remisiones x facturar"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jsEtl2">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiEtlItem">
@@ -128,6 +138,18 @@
             <MenuItem class="javax.swing.JMenuItem" name="jmiSmsShipper">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Transportistas"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="jmWm">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="B&#xe1;scula"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiReports">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reporte"/>
               </Properties>
             </MenuItem>
           </SubComponents>

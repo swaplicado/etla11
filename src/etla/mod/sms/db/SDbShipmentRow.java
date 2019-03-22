@@ -9,7 +9,6 @@ import etla.mod.SModConsts;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import sa.gui.util.SUtilConsts;
 import sa.lib.SLibConsts;
 import sa.lib.SLibUtils;
 import sa.lib.db.SDbConsts;
@@ -19,10 +18,10 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Daniel López, Sergio Flores
+ * @author Daniel López, Sergio Flores, Alfredo Pérez
  */
 public class SDbShipmentRow extends SDbRegistryUser{
-    
+
     protected int mnPkShipmentId;
     protected int mnPkRowId;
     protected String msDeliveryId;
@@ -39,21 +38,23 @@ public class SDbShipmentRow extends SDbRegistryUser{
     protected double mdKilograms;
     protected int mnFkCustomerId;
     protected int mnFkDestinationId;
-    
+
     protected String msDbmsCustomer;
     protected String msDbmsDestination;
-    
+    protected String msDbmsAddress1;
+    protected String msDbmsAddress2;
+
     protected int mnAuxSiteLocationId;
     protected boolean mbAuxDestinationCreated;
-    
+
     public SDbShipmentRow () {
         super(SModConsts.S_SHIPT_ROW);
     }
-    
+
     /*
      * Public methods
      */
-    
+
     public void setPkShipmentId(int n) { mnPkShipmentId = n; }
     public void setPkRowId(int n) { mnPkRowId = n; }
     public void setDeliveryId(String s) { msDeliveryId = s; }
@@ -87,19 +88,23 @@ public class SDbShipmentRow extends SDbRegistryUser{
     public double getKilograms() { return mdKilograms; }
     public int getFkCustomerId() { return mnFkCustomerId; }
     public int getFkDestinationId() { return mnFkDestinationId; }
-    
+
     public void setDbmsCustomer(String s) { msDbmsCustomer = s; }
     public void setDbmsDestination(String s) { msDbmsDestination = s; }
-    
+    public void setDbmsAddress1(String s) { msDbmsAddress1 = s; }
+    public void setDbmsAddress2(String s) { msDbmsAddress2 = s; }
+
     public String getDbmsCustomer() { return msDbmsCustomer; }
     public String getDbmsDestination() { return msDbmsDestination; }
-    
+    public String getDbmsAddress1() { return msDbmsAddress1; }
+    public String getDbmsAddress2() { return msDbmsAddress2; }
+
     public void setAuxSiteLocationId(int n) { mnAuxSiteLocationId = n; }
     public void setAuxDestinationCreated(boolean b) { mbAuxDestinationCreated = b; }
-    
+
     public int getAuxSiteLocationId() { return mnAuxSiteLocationId; }
     public boolean isAuxDestinationCreated() { return mbAuxDestinationCreated; }
-    
+
     /*
      * Overriden methods
      */
@@ -118,7 +123,7 @@ public class SDbShipmentRow extends SDbRegistryUser{
     @Override
     public void initRegistry() {
         initBaseRegistry();
-        
+
         mnPkShipmentId = 0;
         mnPkRowId = 0;
         msDeliveryId = "";
@@ -135,10 +140,12 @@ public class SDbShipmentRow extends SDbRegistryUser{
         mdKilograms = 0;
         mnFkCustomerId = 0;
         mnFkDestinationId = 0;
-        
+
         msDbmsCustomer = "";
         msDbmsDestination = "";
-        
+        msDbmsAddress1 = "";
+        msDbmsAddress2 = "";
+
         mnAuxSiteLocationId = 0;
         mbAuxDestinationCreated = false;
     }
@@ -203,13 +210,17 @@ public class SDbShipmentRow extends SDbRegistryUser{
             mdKilograms = resultSet.getDouble("kg");
             mnFkCustomerId = resultSet.getInt("fk_customer");
             mnFkDestinationId = resultSet.getInt("fk_destin");
-            
+
             msDbmsCustomer = (String) session.readField(SModConsts.AU_CUS, new int[] { mnFkCustomerId }, SDbRegistry.FIELD_NAME);
-            msDbmsDestination = (String) session.readField(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId}, SDbRegistry.FIELD_NAME);
             
+            SDbDestination destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId });
+            msDbmsDestination = destination.getName();
+            msDbmsAddress1 = destination.getAddress1();
+            msDbmsAddress2 = destination.getAddress2();
+
             mbRegistryNew = false;
         }
-        
+
         mnQueryResultId = SDbConsts.READ_OK;
     }
 
@@ -217,16 +228,20 @@ public class SDbShipmentRow extends SDbRegistryUser{
     public void save(SGuiSession session) throws SQLException, Exception {       
         initQueryMembers();
         mnQueryResultId = SDbConsts.READ_ERROR;
-        
+
         // check if current destination should be created or updated:
-        
+
         SDbDestination destination;
-        
+
         if (mnFkDestinationId != SLibConsts.UNDEFINED) {
             // update destination if necessary:
             destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId });
-            if (destination.getName().compareToIgnoreCase(msDbmsDestination) != 0) {
+            if (!destination.getName().equalsIgnoreCase(msDbmsDestination) ||
+                    !destination.getAddress1().equalsIgnoreCase(msDbmsAddress1) ||
+                    !destination.getAddress2().equalsIgnoreCase(msDbmsAddress2)) {
                 destination.setName(msDbmsDestination);
+                destination.setAddress1(msDbmsAddress1);
+                destination.setAddress2(msDbmsAddress2);
                 destination.save(session);
             }
         }
@@ -237,6 +252,8 @@ public class SDbShipmentRow extends SDbRegistryUser{
             destination.setSiteLocationId(mnAuxSiteLocationId);
             destination.setCode("");
             destination.setName(msDbmsDestination);
+            destination.setAddress1(msDbmsAddress1);
+            destination.setAddress2(msDbmsAddress2);
             //destination.setDeleted(...);
             //destination.setSystem(...);
             //destination.setFkUserInsertId(...);
@@ -244,20 +261,16 @@ public class SDbShipmentRow extends SDbRegistryUser{
             //destination.setTsUserInsert(...);
             //destination.setTsUserUpdate(...);
             destination.save(session);
-            
+
             mnFkDestinationId = destination.getPkDestinationId();
             mbAuxDestinationCreated = true;
         }
-        
+
         // save shipment row registry:
-        
+
         if (mbRegistryNew) {
             computePrimaryKey(session);
-            mbDeleted = false;
-            mbSystem = false;
-            mnFkUserInsertId = session.getUser().getPkUserId();
-            mnFkUserUpdateId = SUtilConsts.USR_NA_ID;
-            
+
             msSql = "INSERT INTO " + getSqlTable() + " VALUES (" +
                 mnPkShipmentId + ", " + 
                 mnPkRowId + ", " + 
@@ -278,8 +291,6 @@ public class SDbShipmentRow extends SDbRegistryUser{
                 ")";
         }
         else {
-            mnFkUserUpdateId = session.getUser().getPkUserId();
-            
             msSql = "UPDATE " + getSqlTable() + " SET " +
                 //"id_shipt = " + mnPkShipmentId + ", " +
                 //"id_row = " + mnPkRowId + ", " +
@@ -299,7 +310,7 @@ public class SDbShipmentRow extends SDbRegistryUser{
                 "fk_destin = " + mnFkDestinationId + " " +
                 getSqlWhere();
         }
-        
+
         session.getStatement().execute(msSql);
 
         mbRegistryNew = false;
@@ -309,7 +320,7 @@ public class SDbShipmentRow extends SDbRegistryUser{
     @Override
     public SDbShipmentRow clone() throws CloneNotSupportedException {
         SDbShipmentRow registry = new SDbShipmentRow();
-        
+
         registry.setPkShipmentId(this.getPkShipmentId());
         registry.setPkRowId(this.getPkRowId());
         registry.setDeliveryId(this.getDeliveryId());
@@ -326,12 +337,15 @@ public class SDbShipmentRow extends SDbRegistryUser{
         registry.setKilograms(this.getKilograms());
         registry.setFkCustomerId(this.getFkCustomerId());
         registry.setFkDestinationId(this.getFkDestinationId());
-        
+
         registry.setDbmsCustomer(this.getDbmsCustomer());
         registry.setDbmsDestination(this.getDbmsDestination());
+        registry.setDbmsAddress1(this.getDbmsAddress1());
+        registry.setDbmsAddress2(this.getDbmsAddress2());
+        
         registry.setAuxSiteLocationId(this.getAuxSiteLocationId());
         registry.setAuxDestinationCreated(this.isAuxDestinationCreated());
-        
+
         registry.setRegistryNew(this.isRegistryNew());
         return registry;
     }

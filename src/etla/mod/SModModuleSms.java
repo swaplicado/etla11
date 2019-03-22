@@ -5,15 +5,19 @@
  */
 package etla.mod;
 
+import etla.mod.etl.view.SViewAvistaCustomerInvoicesPending;
 import etla.mod.sms.db.SDbCargoType;
 import etla.mod.sms.db.SDbComment;
+import etla.mod.sms.db.SDbConfigSms;
 import etla.mod.sms.db.SDbDestination;
+import etla.mod.sms.db.SDbErpDocEtlLog;
 import etla.mod.sms.db.SDbHandlingType;
 import etla.mod.sms.db.SDbShipment;
 import etla.mod.sms.db.SDbShipmentRow;
 import etla.mod.sms.db.SDbShipmentType;
 import etla.mod.sms.db.SDbShipper;
 import etla.mod.sms.db.SDbVehicleType;
+import etla.mod.sms.db.SDbWmUser;
 import etla.mod.sms.form.SFormShipment;
 import etla.mod.sms.form.SFormShipper;
 import etla.mod.sms.view.SViewShipment;
@@ -34,10 +38,10 @@ import sa.lib.gui.SGuiReport;
 
 /**
  *
- * @author Daniel López
+ * @author Daniel López, Alfredo Pérez, Sergio Flores
  */
 public class SModModuleSms extends SGuiModule {
-    
+
     private SFormShipper moFormShipper;
     private SFormShipment moFormShipment;
 
@@ -102,12 +106,21 @@ public class SModModuleSms extends SGuiModule {
             case SModConsts.S_SHIPT_ROW:
                 registry = new SDbShipmentRow();
                 break;
+            case SModConsts.SU_WM_USER:
+                registry = new SDbWmUser();
+                break;
             case SModConsts.S_EVIDENCE:
+                break;
+            case SModConsts.S_CFG:
+                registry = new SDbConfigSms();
+                break;
+            case SModConsts.S_ERP_DOC_ETL_LOG:
+                registry = new SDbErpDocEtlLog();
                 break;
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
         }
-        
+
          return registry;
     }
 
@@ -115,7 +128,7 @@ public class SModModuleSms extends SGuiModule {
     public SGuiCatalogueSettings getCatalogueSettings(int type, int subtype, SGuiParams params) {
         String sql = "";
         SGuiCatalogueSettings settings = null;
-        
+
         switch(type) {
             case SModConsts.SS_SHIPT_ST:
             case SModConsts.SS_WEB_ROLE:
@@ -155,6 +168,16 @@ public class SModModuleSms extends SGuiModule {
                 sql = "SELECT id_destin AS " + SDbConsts.FIELD_ID + "1, name AS " + SDbConsts.FIELD_ITEM + " "                        
                         + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_destin ";
                 break;
+            case SModConsts.SU_WM_USER:
+                settings = new SGuiCatalogueSettings("Usuarios Bascula", 1);
+                sql = "SELECT id_wm_user AS " + SDbConsts.FIELD_ID + "1, name AS " + SDbConsts.FIELD_ITEM + " "
+                        + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_wm_user ";
+                break;
+            case SModConsts.SS_WM_TICKET_TP:
+                settings = new SGuiCatalogueSettings("E/S", 1);
+                sql = "SELECT id_wm_ticket_tp AS " + SDbConsts.FIELD_ID + "1, name AS " + SDbConsts.FIELD_ITEM + " "
+                        + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_wm_ticket_tp ";
+                break;
             case SModConsts.S_SHIPT:
             case SModConsts.S_SHIPT_ROW:
             case SModConsts.S_EVIDENCE:
@@ -162,19 +185,22 @@ public class SModModuleSms extends SGuiModule {
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
         }
-        
+
         if (settings != null) {
             settings.setSql(sql);
         }
-        
+
         return settings;
     }
 
     @Override
     public SGridPaneView getView(int type, int subtype, SGuiParams params) {
         SGridPaneView view = null;
-        
+
         switch (type) {
+            case SModConsts.AX_CUST_INV_PEND:
+                view = new SViewAvistaCustomerInvoicesPending(miClient, "Remisiones pendientes");
+                break;
             case SModConsts.S_SHIPT:
                 switch (subtype) {
                     case SLibConsts.UNDEFINED:
@@ -196,7 +222,7 @@ public class SModModuleSms extends SGuiModule {
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
         }
-        
+
         return view;
     }
 
@@ -208,7 +234,7 @@ public class SModModuleSms extends SGuiModule {
     @Override
     public SGuiForm getForm(int type, int subtype, SGuiParams params) {
         SGuiForm form = null;
-        
+
         switch (type) {
             case SModConsts.S_SHIPT:
                 if (moFormShipment == null) moFormShipment = new SFormShipment(miClient, "Embarques");
@@ -221,20 +247,20 @@ public class SModModuleSms extends SGuiModule {
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
         }
-        
+
         return form;
     }
 
     @Override
     public SGuiReport getReport(int type, int subtype, SGuiParams params) {
         SGuiReport report = null;
-        
+
         switch (type){
             case SModConsts.SR_SHIPT:
                 report = new SGuiReport("reps/shipt.jasper", "Orden de embarque");
                 break;
         }
-            
+
         return report;
     }
 }

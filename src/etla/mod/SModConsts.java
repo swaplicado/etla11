@@ -15,12 +15,12 @@ public abstract class SModConsts {
     public static final int MOD_CFG = 110000;
     public static final int MOD_ETL = 210000;
     public static final int MOD_SMS = 220000;
-    
+
     public static final int SR_SHIPT = 2240001;
 
     public static final int SU_SYS = 110001;
     public static final int SU_COM = 110002;
-    
+
     public static final int CS_USR_TP = 111011;
 
     public static final int CU_USR = 112011;
@@ -41,14 +41,16 @@ public abstract class SModConsts {
     public static final int A_INV_ROW = 213056;
     public static final int A_EXR = 213061;
     public static final int A_ETL_LOG = 213501;
-    
+    public static final int A_CUSTOMERINVOICES = 213901;
+
     public static final int AX_ETL = 215001;
-    
+    public static final int AX_CUST_INV_PEND = 215051;
+
     public static final int SS_SHIPT_ST = 221011;
     public static final int SS_WEB_ROLE = 221101;
     public static final int SS_WM_TICKET_TP = 221211;
     public static final int SS_WM_LINK_ST = 221221;
-    
+
     public static final int SU_SHIPT_TP = 222011;
     public static final int SU_CARGO_TP = 222012;
     public static final int SU_HANDG_TP = 222021;
@@ -57,7 +59,8 @@ public abstract class SModConsts {
     public static final int SU_SHIPPER = 222051;
     public static final int SU_DESTIN = 222061;
     public static final int SU_WM_ITEM = 222201;
-    
+    public static final int SU_WM_USER = 222202;
+
     public static final int S_CFG = 223001;
     public static final int S_SHIPT = 223011;
     public static final int S_SHIPT_ROW = 223016;
@@ -66,11 +69,9 @@ public abstract class SModConsts {
     public static final int S_ERP_DOC_ETL_LOG = 223206;
     public static final int S_WM_TICKET = 223211;
     public static final int S_WM_TICKET_LINK = 223221;
-    
-    public static final int SX_SHIPT_ROW_ADDED = 223916;
-    
-    public static final int SX_WM_LINK = 224001;
-    
+
+    public static final int SX_SHIPT_ROW_ADDED = 225916;
+
     public static final HashMap<Integer, String> TablesMap = new HashMap<>();
 
     static {
@@ -97,7 +98,8 @@ public abstract class SModConsts {
         TablesMap.put(A_INV_ROW, "a_inv_row");
         TablesMap.put(A_EXR, "a_exr");
         TablesMap.put(A_ETL_LOG, "a_etl_log");
-        
+        TablesMap.put(A_CUSTOMERINVOICES, "a_CustomerInvoices");
+
         TablesMap.put(SS_SHIPT_ST, "ss_shipt_st");
         TablesMap.put(SS_WEB_ROLE, "ss_web_role");
         TablesMap.put(SS_WM_TICKET_TP, "ss_wm_ticket_tp");
@@ -111,6 +113,7 @@ public abstract class SModConsts {
         TablesMap.put(SU_SHIPPER, "su_shipper");
         TablesMap.put(SU_DESTIN, "su_destin");
         TablesMap.put(SU_WM_ITEM, "su_wm_item");
+        TablesMap.put(SU_WM_USER, "su_wm_user");
 
         TablesMap.put(S_CFG, "s_cfg");
         TablesMap.put(S_SHIPT, "s_shipt");

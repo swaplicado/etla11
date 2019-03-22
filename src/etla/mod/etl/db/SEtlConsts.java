@@ -23,6 +23,7 @@ public abstract class SEtlConsts {
     
     public static final int DB_MYSQL = 1;
     public static final int DB_SQL_SERVER = 2;
+    public static final int DB_SYBASE = 3;
     
     public static final int AVISTA_INV_STA_APP = 2; // invoice status: approved
     public static final int AVISTA_INV_STA_ARC = 3; // invoice status: archived

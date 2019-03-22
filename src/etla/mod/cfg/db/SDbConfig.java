@@ -20,7 +20,7 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Alfredo Pérez
  */
 public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
     
@@ -32,6 +32,13 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
     protected String msSiieName;
     protected String msSiieUser;
     protected String msSiiePassword;
+    protected String msMailHost;
+    protected String msMailPort;
+    protected String msMailProtocol;
+    protected String msMailUser;
+    protected String msMailPassword;
+    protected boolean mbMailStartTls;
+    protected boolean mbMailAuth;
     /*
     protected boolean mbDeleted;
     protected boolean mbSystem;
@@ -60,6 +67,13 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
     public void setSiieName(String s) { msSiieName = s; }
     public void setSiieUser(String s) { msSiieUser = s; }
     public void setSiiePassword(String s) { msSiiePassword = s; }
+    public void setMailHost(String s) { msMailHost = s; }
+    public void setMailPort(String s) { msMailPort = s; }
+    public void setMailProtocol(String s) { msMailProtocol = s; }
+    public void setMailUser(String s) { msMailUser = s; }
+    public void setMailPassword(String s) { msMailPassword = s; }
+    public void setMailStartTls(boolean b) { mbMailStartTls = b; }
+    public void setMailAuth(boolean b) { mbMailAuth = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
     public void setFkUserInsertId(int n) { mnFkUserInsertId = n; }
@@ -75,6 +89,13 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
     public String getSiieName() { return msSiieName; }
     public String getSiieUser() { return msSiieUser; }
     public String getSiiePassword() { return msSiiePassword; }
+    public String getMailHost() { return msMailHost; }
+    public String getMailPort() { return msMailPort; }
+    public String getMailProtocol() { return msMailProtocol; }
+    public String getMailUser() { return msMailUser; }
+    public String getMailPassword() { return msMailPassword; }
+    public boolean isMailStartTls() { return mbMailStartTls; }
+    public boolean isMailAuth() { return mbMailAuth; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
     public int getFkUserInsertId() { return mnFkUserInsertId; }
@@ -105,7 +126,7 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
     @Override
     public void initRegistry() {
         initBaseRegistry();
-        
+
         mnPkConfigId = 0;
         mnVersion = 0;
         mtVersionTs = null;
@@ -114,13 +135,20 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
         msSiieName = "";
         msSiieUser = "";
         msSiiePassword = "";
+        msMailHost = "";
+        msMailPort = "";
+        msMailProtocol = "";
+        msMailUser = "";
+        msMailPassword = "";
+        mbMailStartTls = false;
+        mbMailAuth = false;
         mbDeleted = false;
         mbSystem = false;
         mnFkUserInsertId = 0;
         mnFkUserUpdateId = 0;
         mtTsUserInsert = null;
         mtTsUserUpdate = null;
-        
+
         moDbConfigAvista = null;
         moDbConfigSms = null;
     }
@@ -175,6 +203,13 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
             msSiieName = resultSet.getString("sie_name");
             msSiieUser = resultSet.getString("sie_user");
             msSiiePassword = resultSet.getString("sie_pswd");
+            msMailHost = resultSet.getString("mail_host");
+            msMailPort = resultSet.getString("mail_port");
+            msMailProtocol = resultSet.getString("mail_prot");
+            msMailUser = resultSet.getString("mail_user");
+            msMailPassword = resultSet.getString("mail_pswd");
+            mbMailStartTls = resultSet.getBoolean("b_mail_tls");
+            mbMailAuth = resultSet.getBoolean("b_mail_auth");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
             mnFkUserInsertId = resultSet.getInt("fk_usr_ins");
@@ -223,6 +258,13 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
                     "'" + msSiieName + "', " + 
                     "'" + msSiieUser + "', " + 
                     "'" + msSiiePassword + "', " + 
+                    "'" + msMailHost + "', " + 
+                    "'" + msMailPort + "', " + 
+                    "'" + msMailProtocol + "', " + 
+                    "'" + msMailUser + "', " + 
+                    "'" + msMailPassword + "', " + 
+                    (mbMailStartTls ? 1 : 0) + ", " + 
+                    (mbMailAuth ? 1 : 0) + ", " + 
                     (mbDeleted ? 1 : 0) + ", " + 
                     (mbSystem ? 1 : 0) + ", " + 
                     mnFkUserInsertId + ", " + 
@@ -243,6 +285,12 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
                     "sie_name = '" + msSiieName + "', " +
                     "sie_user = '" + msSiieUser + "', " +
                     "sie_pswd = '" + msSiiePassword + "', " +
+                    "'" + msMailHost + "', " + 
+                    "'" + msMailPort + "', " + 
+                    "'" + msMailProtocol + "', " + 
+                    "'" + msMailUser + "', " + 
+                    "'" + msMailPassword + "', " + 
+                    (mbMailStartTls ? 1 : 0) + ", " + 
                     "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                     "b_sys = " + (mbSystem ? 1 : 0) + ", " +
                     //"fk_usr_ins = " + mnFkUserInsertId + ", " +
@@ -278,13 +326,20 @@ public class SDbConfig extends SDbRegistryUser implements SGuiConfigSystem {
         registry.setSiieName(this.getSiieName());
         registry.setSiieUser(this.getSiieUser());
         registry.setSiiePassword(this.getSiiePassword());
+        registry.setMailHost(this.getMailHost());
+        registry.setMailPort(this.getMailPort());
+        registry.setMailProtocol(this.getMailProtocol());
+        registry.setMailUser(this.getMailUser());
+        registry.setMailPassword(this.getMailPassword());
+        registry.setMailStartTls(this.isMailStartTls());
+        registry.setMailAuth(this.isMailAuth());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());
         registry.setFkUserInsertId(this.getFkUserInsertId());
         registry.setFkUserUpdateId(this.getFkUserUpdateId());
         registry.setTsUserInsert(this.getTsUserInsert());
         registry.setTsUserUpdate(this.getTsUserUpdate());
-        
+
         registry.setDbConfigAvista(this.getDbConfigAvista() == null ? null : this.getDbConfigAvista().clone());
         registry.setDbConfigSms(this.getDbConfigSms() == null ? null : this.getDbConfigSms().clone());
 

@@ -8,11 +8,14 @@ package etla.mod.etl.db;
 import erp.mod.SModSysConsts;
 import etla.mod.SModConsts;
 import etla.mod.cfg.db.SDbConfig;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import sa.gui.util.SUtilConsts;
 import sa.lib.SLibUtils;
 import sa.lib.gui.SGuiConsts;
 import sa.lib.gui.SGuiItem;
@@ -24,7 +27,8 @@ import sa.lib.gui.SGuiSession;
  */
 public abstract class SEtlUtils {
     
-    public static DecimalFormat DecimalFormatPlantBoardType = new DecimalFormat("000000");
+    public static final int START_CUSTOMERINVOICE_KEY = 19635;
+    public static final DecimalFormat DecimalFormatPlantBoardType = new DecimalFormat("000000");
     
     public static String composeItemCode(final String prefix, final int plantBoardType, final String flute) {
         return prefix + "-" + DecimalFormatPlantBoardType.format(plantBoardType) + "-" + flute;
@@ -132,5 +136,52 @@ public abstract class SEtlUtils {
         }
         
         return items;
+    }
+
+    private static int getLastExtractedCustomerInvoiceKey(SGuiSession session) throws Exception {
+        int lastId = 0;
+        String sql = "SELECT MAX(CustomerInvoiceKey) "
+                + "FROM " + SModConsts.TablesMap.get(SModConsts.A_CUSTOMERINVOICES);
+        ResultSet resultSet = session.getStatement().executeQuery(sql);
+        if (resultSet.next()) {
+            lastId = resultSet.getInt(1);
+        }
+        return lastId != 0 ? lastId : START_CUSTOMERINVOICE_KEY;
+    }
+
+    public static void extractCustomerInvoices(SGuiSession session) throws Exception {
+        String sql = "SELECT CustomerInvoiceKey, "
+                + "CustomerId, " 
+                + "InvoiceNumber, " 
+                + "BatchNumber, " 
+                + "Created," 
+                + "Description " 
+                + "FROM dbo.CustomerInvoices "
+                + "WHERE CustomerInvoiceKey > " + getLastExtractedCustomerInvoiceKey(session) + " " 
+                + "ORDER BY CustomerInvoiceKey";
+        SDbConfig config = (SDbConfig) session.getConfigSystem();
+        SDbConfigAvista configAvista = config.getDbConfigAvista();
+        Connection connectionAvista = SEtlProcess.createConnection(
+                SEtlConsts.DB_SQL_SERVER, 
+                configAvista.getAvistaHost(), 
+                configAvista.getAvistaPort(), 
+                configAvista.getAvistaName(), 
+                configAvista.getAvistaUser(), 
+                configAvista.getAvistaPassword());
+        
+        ResultSet resultSet = connectionAvista.createStatement().executeQuery(sql);
+        sql = "INSERT INTO " + SModConsts.TablesMap.get(SModConsts.A_CUSTOMERINVOICES) 
+                + " VALUES ( ?, ?, ?, ?, ?, ?, 0, 1, " + session.getUser().getPkUserId() + ", " + SUtilConsts.USR_NA_ID + ", NOW(), NOW())";
+        PreparedStatement preparedStatement = session.getStatement().getConnection().prepareStatement(sql);
+        while (resultSet.next()) {
+            preparedStatement.setInt(1, resultSet.getInt("CustomerInvoiceKey"));
+            preparedStatement.setString(2, resultSet.getString("CustomerId"));
+            preparedStatement.setString(3, resultSet.getString("InvoiceNumber"));
+            preparedStatement.setInt(4, resultSet.getInt("BatchNumber"));
+            preparedStatement.setTimestamp(5, resultSet.getTimestamp("Created"));
+            String description = resultSet.getString("Description");
+            preparedStatement.setString(6, description == null ? "" : description);
+            preparedStatement.execute();
+        }
     }
 }

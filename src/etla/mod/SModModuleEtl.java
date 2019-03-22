@@ -23,6 +23,7 @@ import etla.mod.etl.view.SViewExchangeRate;
 import etla.mod.etl.view.SViewInvoice;
 import etla.mod.etl.view.SViewItem;
 import etla.mod.etl.view.SViewSalesAgent;
+import etla.mod.etl.view.SViewAvistaCustomerInvoicesPending;
 import javax.swing.JMenu;
 import sa.lib.SLibConsts;
 import sa.lib.db.SDbConsts;
@@ -39,15 +40,15 @@ import sa.lib.gui.SGuiReport;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Alfredo Pérez
  */
 public class SModModuleEtl extends SGuiModule {
-    
+
     private SFormSalesAgent moFormSalesAgent;
     private SFormCustomer moFormCustomer;
     private SFormItem moFormItem;
     private SFormExchangeRate moFormExchangeRate;
-    
+
     public SModModuleEtl(SGuiClient client) {
         super(client, SModConsts.MOD_ETL, SLibConsts.UNDEFINED);
     }
@@ -181,12 +182,26 @@ public class SModModuleEtl extends SGuiModule {
             case SModConsts.A_CFG:
                 break;
             case SModConsts.A_INV:
-                view = new SViewInvoice(miClient, "Facturas");
+                String title = "";
+                switch (subtype) {
+                    case SViewInvoice.SUBTYPE_ALL:
+                        title = "Facturas";
+                        break;
+                    case SViewInvoice.SUBTYPE_PEND:
+                        title = "Remisiones x facturar";
+                        break;
+                    default:
+                        miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
+                }
+                    view = new SViewInvoice(miClient, subtype, title);
                 break;
             case SModConsts.A_INV_ROW:
                 break;
             case SModConsts.A_EXR:
                 view = new SViewExchangeRate(miClient, "Tipos cambio");
+                break;
+            case SModConsts.AX_CUST_INV_PEND:
+                view = new SViewAvistaCustomerInvoicesPending(miClient, "Remisiones x importar");
                 break;
             /*
             case SModConsts.RS_DB_TP:
@@ -260,7 +275,7 @@ public class SModModuleEtl extends SGuiModule {
     @Override
     public SGuiReport getReport(int type, int subtype, SGuiParams params) {
         SGuiReport report = null;
-        
+
         switch (type) {
             /*
             case SModConsts.RR_FIN_STA_BS:
@@ -276,7 +291,7 @@ public class SModModuleEtl extends SGuiModule {
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
         }
-        
+
         return report;
     }
 }

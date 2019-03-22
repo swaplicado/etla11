@@ -16,17 +16,14 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Daniel López, Alfredo Pérez, Sergio Flores
+ * @author Alfredo Pérez, Sergio Flores
  */
-public class SDbDestination extends SDbRegistryUser{
-    
-    protected int mnPkDestinationId;
-    protected int mnSiteLocationId;
+public class SDbWmItem extends SDbRegistryUser {
+
+    protected int mnPkWmItemId;
+    protected String msProductId;
     protected String msCode;
     protected String msName;
-    protected String msAddress1;
-    protected String msAddress2;
-
     /*
     protected boolean mbDeleted;
     protected boolean mbSystem;
@@ -36,20 +33,18 @@ public class SDbDestination extends SDbRegistryUser{
     protected Date mtTsUserUpdate;
     */
 
-    public SDbDestination () {
-        super(SModConsts.SU_DESTIN);
+    public SDbWmItem () {
+        super(SModConsts.SU_WM_ITEM);
     }
 
     /*
      * Public methods
      */
 
-    public void setPkDestinationId(int n) { mnPkDestinationId = n; }
-    public void setSiteLocationId(int n) { mnSiteLocationId = n; }
+    public void setPkWmItemId(int n) { mnPkWmItemId = n; }
+    public void setProductId(String s) { msProductId = s; }
     public void setCode(String s) { msCode = s; }
     public void setName(String s) { msName = s; }
-    public void setAddress1(String s) { msAddress1 = s; }
-    public void setAddress2(String s) { msAddress2 = s; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
     public void setFkUserInsertId(int n) { mnFkUserInsertId = n; }
@@ -57,12 +52,10 @@ public class SDbDestination extends SDbRegistryUser{
     public void setTsUserInsert(Date t) { mtTsUserInsert = t; }
     public void setTsUserUpdate(Date t) { mtTsUserUpdate = t; }
 
-    public int getPkDestinationId() { return mnPkDestinationId; }
-    public int getSiteLocationId() { return mnSiteLocationId; }
+    public int getPkWmItemId() { return mnPkWmItemId; }
+    public String getProductId() { return msProductId; }
     public String getCode() { return msCode; }
     public String getName() { return msName; }
-    public String getAddress1() { return msAddress1; }
-    public String getAddress2() { return msAddress2; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
     public int getFkUserInsertId() { return mnFkUserInsertId; }
@@ -73,15 +66,14 @@ public class SDbDestination extends SDbRegistryUser{
     /*
      * Overriden methods
      */
-
     @Override
     public void setPrimaryKey(int[] pk) {
-        mnPkDestinationId = pk[0];
+        mnPkWmItemId = pk[0];
     }
 
     @Override
     public int[] getPrimaryKey() {
-        return new int[] { mnPkDestinationId };
+        return new int[] { mnPkWmItemId };
     }
 
     @Override
@@ -89,19 +81,16 @@ public class SDbDestination extends SDbRegistryUser{
 
         initBaseRegistry();
 
-        mnPkDestinationId = 0;
-        mnSiteLocationId = 0;
+        mnPkWmItemId = 0;
+        msProductId = "";
         msCode = "";
         msName = "";
-        msAddress1 ="";
-        msAddress2 ="";
         mbDeleted = false;
         mbSystem = false;
         mnFkUserInsertId = 0;
         mnFkUserUpdateId = 0;
         mtTsUserInsert = null;
         mtTsUserUpdate = null;
-
     }
 
     @Override
@@ -111,24 +100,24 @@ public class SDbDestination extends SDbRegistryUser{
 
     @Override
     public String getSqlWhere() {
-        return "WHERE id_destin = " + mnPkDestinationId + " ";
+        return "WHERE id_wm_item = " + mnPkWmItemId + " ";
     }
 
     @Override
     public String getSqlWhere(int[] pk) {
-        return "WHERE id_destin = " + pk[0] + " ";
+        return "WHERE id_wm_item = " + pk[0] + " ";
     }
 
     @Override
     public void computePrimaryKey(SGuiSession session) throws SQLException, Exception {
         ResultSet resultSet = null;
 
-        mnPkDestinationId = 0;
+        mnPkWmItemId = 0;
 
-        msSql = "SELECT COALESCE(MAX(id_destin), 0) + 1 FROM " + getSqlTable() + " ";
+        msSql = "SELECT COALESCE(MAX(id_wm_item), 0) + 1 FROM " + getSqlTable() + " ";
         resultSet = session.getStatement().executeQuery(msSql);
         if (resultSet.next()) {
-            mnPkDestinationId = resultSet.getInt(1);
+            mnPkWmItemId = resultSet.getInt(1);
         }
     }
 
@@ -146,12 +135,10 @@ public class SDbDestination extends SDbRegistryUser{
             throw new Exception(SDbConsts.ERR_MSG_REG_NOT_FOUND);
         }
         else {
-            mnPkDestinationId = resultSet.getInt("id_destin");
-            mnSiteLocationId = resultSet.getInt("site_loc_id");
+            mnPkWmItemId = resultSet.getInt("id_wm_item");
+            msProductId = resultSet.getString("prod_id");
             msCode = resultSet.getString("code");
             msName = resultSet.getString("name");
-            msAddress1 = resultSet.getString("address1");
-            msAddress2 = resultSet.getString("address2");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
             mnFkUserInsertId = resultSet.getInt("fk_usr_ins");
@@ -161,7 +148,7 @@ public class SDbDestination extends SDbRegistryUser{
 
             mbRegistryNew = false;
         }
-        
+
         mnQueryResultId = SDbConsts.READ_OK;
     }
 
@@ -178,37 +165,34 @@ public class SDbDestination extends SDbRegistryUser{
             mnFkUserUpdateId = SUtilConsts.USR_NA_ID;
 
             msSql = "INSERT INTO " + getSqlTable() + " VALUES (" +
-                mnPkDestinationId + ", " +
-                mnSiteLocationId + ", " + 
-                "'" + msCode + "', " + 
-                "'" + msName + "', " + 
-                "'" + msAddress1 + "', " + 
-                "'" + msAddress2 + "', " + 
-                (mbDeleted ? 1 : 0) + ", " + 
-                (mbSystem ? 1 : 0) + ", " + 
-                mnFkUserInsertId + ", " + 
-                mnFkUserUpdateId + ", " + 
-                "NOW()" + ", " + 
-                "NOW()" + 
-                 ")";
+                    mnPkWmItemId + ", " + 
+                    "'" + msProductId + "', " + 
+                    "'" + msCode + "', " + 
+                    "'" + msName + "', " + 
+                    "'N', " +
+                    ""+(mbDeleted ? 1 : 0) + ", " + 
+                    ""+(mbSystem ? 1 : 0) + ", " + 
+                    ""+mnFkUserInsertId + ", " + 
+                    ""+mnFkUserUpdateId + ", " + 
+                    "NOW()" + ", " + 
+                    "NOW()" + " " +
+                     ")";
         }
         else {
             mnFkUserUpdateId = session.getUser().getPkUserId();
 
             msSql = "UPDATE " + getSqlTable() + " SET " +
-                    //"id_destin = " + mnPkDestinationId + ", " +
-                    "site_loc_id = " + mnSiteLocationId + ", " +
+                    //"id_wm_item = " + mnPkWmItemId + ", " +
+                    "prod_id = '" + msProductId + "', " +
                     "code = '" + msCode + "', " +
                     "name = '" + msName + "', " +
-                    "address1 = '" + msAddress1 + "', " +
-                    "address2 = '" + msAddress2 + "', " +
                     "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                     "b_sys = " + (mbSystem ? 1 : 0) + ", " +
                     //"fk_usr_ins = " + mnFkUserInsertId + ", " +
                     "fk_usr_upd = " + mnFkUserUpdateId + ", " +
-                    //"ts_usr_ins = " + "NOW()" + ", " +
-                    "ts_usr_upd = " + "NOW()" +
-                 getSqlWhere(); 
+                    //"ts_usr_ins = NOW()" + ", " +
+                    "ts_usr_upd = NOW()" + " " +
+                    getSqlWhere();
         }
 
         session.getStatement().execute(msSql);
@@ -218,15 +202,13 @@ public class SDbDestination extends SDbRegistryUser{
     }
 
     @Override
-    public SDbDestination clone() throws CloneNotSupportedException {
-        SDbDestination  registry = new SDbDestination();
+    public SDbWmItem clone() throws CloneNotSupportedException {
+        SDbWmItem  registry = new SDbWmItem();
 
-        registry.setPkDestinationId(this.getPkDestinationId());
-        registry.setSiteLocationId(this.getSiteLocationId());
+        registry.setPkWmItemId(this.getPkWmItemId());
+        registry.setProductId(this.getProductId());
         registry.setCode(this.getCode());
         registry.setName(this.getName());
-        registry.setAddress1(this.getAddress1());
-        registry.setAddress2(this.getAddress2());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());
         registry.setFkUserInsertId(this.getFkUserInsertId());

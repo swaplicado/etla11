@@ -6,7 +6,7 @@ package etla.mod;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Alfredo Pérez
  */
 public abstract class SModSysConsts {
 
@@ -31,7 +31,7 @@ public abstract class SModSysConsts {
     public static final int AS_UOM_K = 6;
     public static final int AS_UOM_KG = 7;
     public static final int AS_UOM_TON = 8;
-    
+
     public static final int AS_PAY_MET_NA = 1;
     public static final int AS_PAY_MET_CSH = 11;
     public static final int AS_PAY_MET_CHK = 12;
@@ -48,12 +48,12 @@ public abstract class SModSysConsts {
     public static final int SS_SHIPT_ST_REL = 2;
     public static final int SS_SHIPT_ST_ACC_TO = 11;
     public static final int SS_SHIPT_ST_ACC = 12;
-    
+
     public static final int SS_WEB_ROLE_NA = 1;
     public static final int SS_WEB_ROLE_ADMIN = 11;
     public static final int SS_WEB_ROLE_CREDIT = 21;
     public static final int SS_WEB_ROLE_SHIPPER = 31;
-    
+
     public static final int SS_WM_TICKET_TP_IN = 1;     // in
     public static final int SS_WM_TICKET_TP_OUT = 2;    // out
 
@@ -62,12 +62,14 @@ public abstract class SModSysConsts {
     public static final int SS_WM_LINK_ST_REJD = 3; // rejected
 
     public static final int SU_VEHIC_TP_CUS = 9; //customer picks up
-    
+
     public static final int SU_SHIPPER_NA = 1;
-    
+
     public static final int SU_DESTIN_NA = 1;
-    
+
     public static final int SU_WM_ITEM_NA = 1;
-    
+
+    public static final int SU_WM_USER_NA = 1;
+
     public static final int S_CFG_CFG = 1;
 }
