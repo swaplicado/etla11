@@ -6,6 +6,7 @@ Importación de usuarios báscula, productos y boletos de báscula de Revuelta.
 Importación de facturas y notas de crédito del sistema SIIE.
 Generación de resumen de báscula y envio del mismo por email.
 Vistas de remisiones por facturar y remisiones por importar.
+Incorporación del domicilio en la generación de embarques desde remisiones Axiom.
 
 ================================================================================
 2019-03-04, 1.1 000.0
