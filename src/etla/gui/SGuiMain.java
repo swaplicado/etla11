@@ -10,6 +10,9 @@ import etla.mod.cfg.db.SDbConfig;
 import etla.mod.cfg.db.SDbUser;
 import etla.mod.cfg.db.SDbUserGui;
 import etla.mod.etl.form.SDialogEtl;
+import etla.mod.etl.view.SViewInvoice;
+import etla.mod.sms.db.SSmsEtl;
+import etla.mod.sms.form.SDialogSendWmReport;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,12 +67,12 @@ import sa.lib.xml.SXmlUtils;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Alfredo Pérez
  */
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETL Avista 1.1";
-    public static final String APP_RELEASE = "SIIE ETL Avista 1.1 002.0"; // release: 2019-03-20
+    public static final String APP_RELEASE = "SIIE ETL Avista 1.1 000.0"; // release: 2019-03-04
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -94,7 +97,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private ImageIcon moIconCloseBright;
     private ImageIcon moIconCloseDark;
     private ImageIcon moIconCmdStdPrint;
-    
+
     /**
      * Creates new form SMainForm
      */
@@ -141,6 +144,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiEtlEtl = new javax.swing.JMenuItem();
         jsEtl1 = new javax.swing.JPopupMenu.Separator();
         jmiEtlInvoice = new javax.swing.JMenuItem();
+        jmiEtlBolPending = new javax.swing.JMenuItem();
+        jmiEtlInvoicePending = new javax.swing.JMenuItem();
         jsEtl2 = new javax.swing.JPopupMenu.Separator();
         jmiEtlItem = new javax.swing.JMenuItem();
         jmiEtlCustomer = new javax.swing.JMenuItem();
@@ -151,6 +156,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipmentsRel = new javax.swing.JMenuItem();
         jsFile4 = new javax.swing.JPopupMenu.Separator();
         jmiSmsShipper = new javax.swing.JMenuItem();
+        jmWm = new javax.swing.JMenu();
+        jmiReports = new javax.swing.JMenuItem();
         jmHelp = new javax.swing.JMenu();
         jmiHelpHelp = new javax.swing.JMenuItem();
         jsHelp1 = new javax.swing.JPopupMenu.Separator();
@@ -280,6 +287,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
         jmiEtlInvoice.setText("Facturas");
         jmEtl.add(jmiEtlInvoice);
+
+        jmiEtlBolPending.setText("Remisiones x importar");
+        jmEtl.add(jmiEtlBolPending);
+
+        jmiEtlInvoicePending.setText("Remisiones x facturar");
+        jmEtl.add(jmiEtlInvoicePending);
         jmEtl.add(jsEtl2);
 
         jmiEtlItem.setText("Ítems");
@@ -309,6 +322,13 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmShip.add(jmiSmsShipper);
 
         jMenuBar.add(jmShip);
+
+        jmWm.setText("Báscula");
+
+        jmiReports.setText("Reporte");
+        jmWm.add(jmiReports);
+
+        jMenuBar.add(jmWm);
 
         jmHelp.setText("Ayuda");
 
@@ -383,7 +403,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         }
         //</editor-fold>
         //</editor-fold>
-        
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -391,7 +411,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
                 new SGuiMain().setVisible(true);
             }
         });
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -408,11 +428,14 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenu jmFile;
     private javax.swing.JMenu jmHelp;
     private javax.swing.JMenu jmShip;
+    private javax.swing.JMenu jmWm;
     private javax.swing.JMenuItem jmiCfgUser;
+    private javax.swing.JMenuItem jmiEtlBolPending;
     private javax.swing.JMenuItem jmiEtlCustomer;
     private javax.swing.JMenuItem jmiEtlEtl;
     private javax.swing.JMenuItem jmiEtlExchangeRate;
     private javax.swing.JMenuItem jmiEtlInvoice;
+    private javax.swing.JMenuItem jmiEtlInvoicePending;
     private javax.swing.JMenuItem jmiEtlItem;
     private javax.swing.JMenuItem jmiEtlSalesAgent;
     private javax.swing.JMenuItem jmiFileCloseSession;
@@ -423,6 +446,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenuItem jmiFileWorkingDate;
     private javax.swing.JMenuItem jmiHelpAbout;
     private javax.swing.JMenuItem jmiHelpHelp;
+    private javax.swing.JMenuItem jmiReports;
     private javax.swing.JMenuItem jmiSmsShipments;
     private javax.swing.JMenuItem jmiSmsShipmentsRel;
     private javax.swing.JMenuItem jmiSmsShipmentsToRel;
@@ -515,21 +539,25 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiFileCloseViewsOther.addActionListener(this);
         jmiFileCloseSession.addActionListener(this);
         jmiFileExit.addActionListener(this);
-        
+
         jmiCfgUser.addActionListener(this);
-        
+
         jmiEtlExchangeRate.addActionListener(this);
         jmiEtlEtl.addActionListener(this);
         jmiEtlInvoice.addActionListener(this);
+        jmiEtlBolPending.addActionListener(this);
+        jmiEtlInvoicePending.addActionListener(this);
         jmiEtlItem.addActionListener(this);
         jmiEtlCustomer.addActionListener(this);
         jmiEtlSalesAgent.addActionListener(this);
-        
+
         jmiSmsShipments.addActionListener(this);
         jmiSmsShipmentsToRel.addActionListener(this);
         jmiSmsShipmentsRel.addActionListener(this);
         jmiSmsShipper.addActionListener(this);
-        
+
+        jmiReports.addActionListener(this);
+
         jmiHelpHelp.addActionListener(this);
         jmiHelpAbout.addActionListener(this);
     }
@@ -548,7 +576,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     }
 
     private void renderMenues(JMenu[] menues) {
-        
+
     }
 
     private void renderClientSession(SGuiSessionCustom clientSession) {
@@ -615,7 +643,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
                 moSession.setCurrentDate(date);
                 moSession.setUserTs(date);
                 moSession.setDatabase(loginDlg.getDatabase());
-                
+
                 sql = "SET GLOBAL max_allowed_packet = 1024 * 1024 * 16 ";  // 16 MB
                 moSession.getStatement().execute(sql);
 
@@ -757,6 +785,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         dialog.setVisible(true);
     }
 
+    private void actionSmsWmReport(){
+        SDialogSendWmReport dialog = new SDialogSendWmReport(this, "Resumen bascúla");
+        dialog.initForm();
+        dialog.setVisible(true);
+    }
+
     public void actionHelpHelp() {
 
     }
@@ -764,7 +798,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     public void actionHelpAbout() {
         new SDlgHelpAbout(this).setVisible(true);
     }
-    
+
     @Override
     public JFrame getFrame() {
         return this;
@@ -1005,6 +1039,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             else if (menuItem == jmiEtlInvoice) {
                 moSession.showView(SModConsts.A_INV, SLibConsts.UNDEFINED, null);
             }
+            else if (menuItem == jmiEtlBolPending) {
+                moSession.showView(SModConsts.AX_CUST_INV_PEND, SViewInvoice.SUBTYPE_ALL, null);
+            }
+            else if (menuItem == jmiEtlInvoicePending) {
+                moSession.showView(SModConsts.AX_CUST_INV_PEND, SViewInvoice.SUBTYPE_PEND, null);
+            }
             else if (menuItem == jmiEtlItem) {
                 moSession.showView(SModConsts.AU_ITM, SLibConsts.UNDEFINED, null);
             }
@@ -1026,12 +1066,25 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             else if( menuItem == jmiSmsShipper) {
                 moSession.showView(SModConsts.SU_SHIPPER, SLibConsts.UNDEFINED, null);
             }
+            else if( menuItem == jmiReports) {
+                importProcess();
+                actionSmsWmReport();
+            }
             else if (menuItem == jmiHelpHelp) {
                 actionHelpHelp();
             }
             else if (menuItem == jmiHelpAbout) {
                 actionHelpAbout();
             }
+        }
+    }
+
+    private void importProcess(){
+        try {
+            new SSmsEtl(moSession).computeEtl();
+        }
+        catch (Exception e) {
+            SLibUtils.showException(this, e);
         }
     }
 
