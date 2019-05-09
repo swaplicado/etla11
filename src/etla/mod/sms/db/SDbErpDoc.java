@@ -270,7 +270,7 @@ public class SDbErpDoc extends SDbRegistryUser {
                     "'" + msDocNumber + "', " + 
                     "'" + SLibUtils.DbmsDateFormatDate.format(mtDocDate) + "', " + 
                     mnBizPartnerId + ", " + 
-                    "'" + msBizPartner + "', " + 
+                    "'" + SLibUtils.textToSql(msBizPartner) + "', " + 
                     mdWeight + ", " + 
                     "NOW()" + ", " + 
                     (mbClosed ? 1 : 0) + ", " + 
@@ -297,7 +297,7 @@ public class SDbErpDoc extends SDbRegistryUser {
                     "doc_num = '" + msDocNumber + "', " +
                     "doc_date = '" + SLibUtils.DbmsDateFormatDate.format(mtDocDate) + "', " +
                     "biz_partner_id = " + mnBizPartnerId + ", " +
-                    "biz_partner = '" + msBizPartner + "', " +
+                    "biz_partner = '" + SLibUtils.textToSql(msBizPartner) + "', " +
                     "weight = " + mdWeight + ", " +
                     "doc_upd = " + "NOW()" + ", " +
                     "b_clo = " + (mbClosed ? 1 : 0) + ", " +

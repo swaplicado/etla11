@@ -1,6 +1,12 @@
 ================================================================================
+2019-05-09, 1.1 003.1
+Luis Alfredo Pérez Zavala
+--------------------------------------------------------------------------------
+Correción en "remisiones importadas por facturar" y "remisiones por importar".
+
+================================================================================
 2019-03-22, 1.1 003.0
-Alfredo Pérez
+Luis Alfredo Pérez Zavala
 --------------------------------------------------------------------------------
 Importación de usuarios báscula, productos y boletos de báscula de Revuelta.
 Importación de facturas y notas de crédito del sistema SIIE.

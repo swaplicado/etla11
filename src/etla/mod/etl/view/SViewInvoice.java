@@ -61,7 +61,13 @@ public class SViewInvoice extends SGridPaneView {
             sql += (sql.isEmpty() ? "" : "AND ") + "v.b_del = 0 ";
         }
 
-        filter = (SGuiDate) moFiltersMap.get(SGridConsts.FILTER_DATE_PERIOD).getValue();
+        try {
+            filter = (SGuiDate) moFiltersMap.get(SGridConsts.FILTER_DATE_PERIOD).getValue();
+        }
+        catch(Exception e) {
+            filter = null;
+        }
+
         if (filter != null) {
             sql += (sql.isEmpty() ? "" : "AND ") + SGridUtils.getSqlFilterDate("v.fin_dat", (SGuiDate) filter);
         }

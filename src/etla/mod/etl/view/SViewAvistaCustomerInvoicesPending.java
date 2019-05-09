@@ -63,7 +63,7 @@ public class SViewAvistaCustomerInvoicesPending extends SGridPaneView {
                 + SModConsts.TablesMap.get(SModConsts.CU_USR) + " AS cu ON ci.fk_usr_ins = cu.id_usr "
                 + "LEFT JOIN "
                 + SModConsts.TablesMap.get(SModConsts.AU_CUS) + " AS cus ON ci.CustomerId = cus.src_cus_id "
-                + "WHERE CustomerInvoiceKey NOT IN (SELECT src_inv_id FROM " + SModConsts.TablesMap.get(SModConsts.A_INV) + ")";
+                + "WHERE CustomerInvoiceKey NOT IN (SELECT src_inv_id FROM " + SModConsts.TablesMap.get(SModConsts.A_INV) + ") AND NOT cus.b_etl_ign ";
     }
 
     @Override

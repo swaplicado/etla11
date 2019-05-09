@@ -72,7 +72,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETL Avista 1.1";
-    public static final String APP_RELEASE = "SIIE ETL Avista 1.1 003.0"; // release: 2019-03-25
+    public static final String APP_RELEASE = "SIIE ETL Avista 1.1 003.1"; // release: 2019-05-09
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -276,7 +276,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
         jMenuBar.add(jmCfg);
 
-        jmEtl.setText("Exportación");
+        jmEtl.setText("Facturas");
 
         jmiEtlExchangeRate.setText("Tipos de cambio");
         jmEtl.add(jmiEtlExchangeRate);
@@ -291,7 +291,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiEtlBolPending.setText("Remisiones x importar");
         jmEtl.add(jmiEtlBolPending);
 
-        jmiEtlInvoicePending.setText("Remisiones x facturar");
+        jmiEtlInvoicePending.setText("Remisiones importadas x facturar");
         jmEtl.add(jmiEtlInvoicePending);
         jmEtl.add(jsEtl2);
 
@@ -1037,13 +1037,13 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
                 actionEtlEtl();
             }
             else if (menuItem == jmiEtlInvoice) {
-                moSession.showView(SModConsts.A_INV, SLibConsts.UNDEFINED, null);
+                moSession.showView(SModConsts.A_INV, SViewInvoice.SUBTYPE_ALL, null);
             }
             else if (menuItem == jmiEtlBolPending) {
-                moSession.showView(SModConsts.AX_CUST_INV_PEND, SViewInvoice.SUBTYPE_ALL, null);
+                moSession.showView(SModConsts.AX_CUST_INV_PEND, SLibConsts.UNDEFINED, null);
             }
             else if (menuItem == jmiEtlInvoicePending) {
-                moSession.showView(SModConsts.AX_CUST_INV_PEND, SViewInvoice.SUBTYPE_PEND, null);
+                moSession.showView(SModConsts.A_INV, SViewInvoice.SUBTYPE_PEND, null);
             }
             else if (menuItem == jmiEtlItem) {
                 moSession.showView(SModConsts.AU_ITM, SLibConsts.UNDEFINED, null);

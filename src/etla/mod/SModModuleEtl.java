@@ -188,7 +188,7 @@ public class SModModuleEtl extends SGuiModule {
                         title = "Facturas";
                         break;
                     case SViewInvoice.SUBTYPE_PEND:
-                        title = "Remisiones x facturar";
+                        title = "Remisiones importadas x facturar";
                         break;
                     default:
                         miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);

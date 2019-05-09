@@ -64,7 +64,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="jmEtl">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Exportaci&#xf3;n"/>
+            <Property name="text" type="java.lang.String" value="Facturas"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jmiEtlExchangeRate">
@@ -91,7 +91,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiEtlInvoicePending">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remisiones x facturar"/>
+                <Property name="text" type="java.lang.String" value="Remisiones importadas x facturar"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jsEtl2">
