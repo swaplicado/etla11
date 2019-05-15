@@ -957,6 +957,7 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setSurface(dEntryArea);    // m²
                         dataDpsEntry.setVolume(0);
                         dataDpsEntry.setMass(dEntryWeight);     // kg
+                        dataDpsEntry.setWeightPackagingExtra(0);
                         dataDpsEntry.setWeightGross(0);
                         dataDpsEntry.setWeightDelivery(0);
                         dataDpsEntry.setSurplusPercentage(0);
