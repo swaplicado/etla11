@@ -603,8 +603,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moGridSelectedRows.setPaneFormOwner(null);
         jpSelectedRows.add(moGridSelectedRows, BorderLayout.CENTER);
         
+        /*
         mvFormGrids.add(moGridAvailableRows);
         mvFormGrids.add(moGridSelectedRows);
+        */
     }
     
     private void computeTotals() {

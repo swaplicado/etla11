@@ -215,7 +215,7 @@ public class SModModuleSms extends SGuiModule {
                     default:
                         miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
                 }
-            break;
+                break;
             case SModConsts.SU_SHIPPER:
                 view = new SViewShipper(miClient, "Transportistas");
                 break;
