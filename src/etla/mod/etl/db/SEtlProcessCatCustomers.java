@@ -481,7 +481,6 @@ public abstract class SEtlProcessCatCustomers {
                     //dataBizPartnerBranchAddress.setUserNewTs(...);
                     //dataBizPartnerBranchAddress.setUserEditTs(...);
                     //dataBizPartnerBranchAddress.setUserDeleteTs(...);
-                    dataBizPartnerBranchAddress.setAuxCountrySysId(dbConfigAvista.getDesLocalCountryFk());
 
                     dataBizPartnerBranch.getDbmsBizPartnerBranchAddresses().add(dataBizPartnerBranchAddress);
 

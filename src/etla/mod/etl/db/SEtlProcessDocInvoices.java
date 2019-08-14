@@ -762,6 +762,7 @@ public class SEtlProcessDocInvoices {
                     dataDps.setFkBizPartnerAltId_r(dbInvoiceCustomer.getDesCustomerId());
                     dataDps.setFkBizPartnerBranchAltId(dbInvoiceCustomer.getDesCustomerBranchId());
                     dataDps.setFkBizPartnerBranchAddressAltId(SEtlConsts.SIIE_DEFAULT);
+                    dataDps.setFkBizPartnerAddresseeId_n(SLibConsts.UNDEFINED);
                     dataDps.setFkAddresseeBizPartnerId_nr(SLibConsts.UNDEFINED);
                     dataDps.setFkAddresseeBizPartnerBranchId_n(SLibConsts.UNDEFINED);
                     dataDps.setFkAddresseeBizPartnerBranchAddressId_n(SLibConsts.UNDEFINED);
