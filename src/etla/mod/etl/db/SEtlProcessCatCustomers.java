@@ -47,6 +47,7 @@ public abstract class SEtlProcessCatCustomers {
         dataBizPartnerCategory.setDateEnd_n(null);
         dataBizPartnerCategory.setPaymentAccount("");
         dataBizPartnerCategory.setNumberExporter("");
+        dataBizPartnerCategory.setDiotOperation("");
         dataBizPartnerCategory.setCfdiPaymentWay("");
         dataBizPartnerCategory.setCfdiCfdiUsage("");
         dataBizPartnerCategory.setIsCreditByUser(false);

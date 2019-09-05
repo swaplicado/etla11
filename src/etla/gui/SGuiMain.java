@@ -72,7 +72,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETL Avista 1.1";
-    public static final String APP_RELEASE = "SIIE ETL Avista 1.1 003.3"; // release: 2019-08-14
+    public static final String APP_RELEASE = "SIIE ETL Avista 1.1 003.4"; // release: 2019-09-05
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
