@@ -831,8 +831,11 @@ public class SEtlProcessDocInvoices {
                     //dataDpsNotes.setPkDocId(...);     // set when saved
                     //dataDpsNotes.setPkNotesId(...);   // set when saved
                     dataDpsNotes.setNotes(dbInvoice.getBillOfLading());
+                    //dataDpsNotes.setCfdComplementDisposition(...);
+                    //dataDpsNotes.setCfdComplementRule(...);
                     dataDpsNotes.setIsAllDocs(true);
                     dataDpsNotes.setIsPrintable(true);
+                    //dataDpsNotes.setIsCfdComplement(...);
                     dataDpsNotes.setIsDeleted(false);
                     dataDpsNotes.setFkUserNewId(((SDbUser) session.getUser()).getDesUserId());
                     dataDpsNotes.setFkUserEditId(SDataConstantsSys.USRX_USER_NA);
