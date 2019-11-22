@@ -1,4 +1,18 @@
 ================================================================================
+2019-11-22, 1.1 003.8
+Sergio Abraham Flores Gutiérrez
+--------------------------------------------------------------------------------
+1) Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 147:
+    Partidas de DPS (tercero causante).
+
+================================================================================
+2019-11-06, 1.1 003.7
+Sergio Abraham Flores Gutiérrez
+--------------------------------------------------------------------------------
+1) Mejoramiento al manejo de la situación en la que la descripción del estado de un cliente es nula (null),
+    en el proceso de importación de facturas a SIIE.
+
+================================================================================
 2019-09-26, 1.1 003.6
 Sergio Abraham Flores Gutiérrez
 --------------------------------------------------------------------------------

@@ -991,6 +991,7 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setFkUnitId(dataItem.getFkUnitId());
                         dataDpsEntry.setFkOriginalUnitId(row.getDesFinalUnitOfMeasureFk());
                         dataDpsEntry.setFkTaxRegionId(dataBizPartnerCustomer.getDbmsHqBranch().getFkTaxRegionId_n() == SLibConsts.UNDEFINED ? SEtlConsts.SIIE_DEFAULT : dataBizPartnerCustomer.getDbmsHqBranch().getFkTaxRegionId_n());
+                        dataDpsEntry.setFkThirdTaxCausingId_n(0);
                         dataDpsEntry.setFkDpsAdjustmentTypeId(SDataConstantsSys.TRNS_STP_DPS_ADJ_NA_NA[0]);
                         dataDpsEntry.setFkDpsAdjustmentSubtypeId(SDataConstantsSys.TRNS_STP_DPS_ADJ_NA_NA[1]);
                         dataDpsEntry.setFkDpsEntryTypeId(SDataConstantsSys.TRNS_TP_DPS_ETY_ORDY);

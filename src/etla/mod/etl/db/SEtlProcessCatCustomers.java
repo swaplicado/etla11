@@ -258,12 +258,14 @@ public abstract class SEtlProcessCatCustomers {
             }
             /****************************************************************/
             
+            String customer = "Nombre: '" + SLibUtils.textTrim(resultSetAvista.getString("CustomerName")) + "'; RFC: '" + resultSetAvista.getString("TaxId") + "'.";
+            
             // Validate customer's Tax ID:
             
             sTaxId = SLibUtils.textToSql(resultSetAvista.getString("TaxId"));
             
             if (sTaxId.isEmpty() || (sTaxId.length() != SEtlConsts.RFC_LEN_PER && sTaxId.length() != SEtlConsts.RFC_LEN_ORG)) {
-                throw new Exception(SEtlConsts.MSG_ERR_CUS_TAX_ID + "'" + SLibUtils.textTrim(resultSetAvista.getString("CustomerName")) + "', RFC: '" + resultSetAvista.getString("TaxId") + "'.");
+                throw new Exception(SEtlConsts.MSG_ERR_CUS_TAX_ID + customer);
             }
             
             // Select customer's country:
@@ -275,13 +277,13 @@ public abstract class SEtlProcessCatCustomers {
                 sAvistaCountryFk = dbConfigAvista.getSrcLocalCountryFk();
                 sAvistaCountry = SEtlConsts.AvistaCountriesMap.get(sAvistaCountryFk);
                 if (sAvistaCountry == null) {
-                    throw new Exception(SEtlConsts.MSG_ERR_UNK_CTY + "'" + sAvistaCountryFk + "'.");
+                    throw new Exception(SEtlConsts.MSG_ERR_UNK_CTY + "'" + sAvistaCountryFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + customer);
                 }
             }
             sAvistaCountry = SLibUtils.textTrim(sAvistaCountry).toUpperCase();
 
             if (sAvistaCountryFk.compareTo(dbConfigAvista.getSrcLocalCountryFk()) != 0) {
-                throw new Exception(SEtlConsts.MSG_ERR_UNK_CTY + "'" + sAvistaCountryFk + "'."); // by now, only local country allowed (i.e., MX)
+                throw new Exception(SEtlConsts.MSG_ERR_UNK_CTY + "'" + sAvistaCountryFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + customer); // by now, only local country allowed (i.e., MX)
             }
 
             // Select customer's state:
@@ -291,11 +293,16 @@ public abstract class SEtlProcessCatCustomers {
             
             if (sAvistaStateFk == null || sAvistaStateFk.isEmpty()) {
                 sAvistaStateFk = dbConfigAvista.getSrcLocalStateFk();
-                sAvistaState = SEtlConsts.AvistaStatesMap.get(sAvistaStateFk);
-                if (sAvistaState == null) {
-                    throw new Exception(SEtlConsts.MSG_ERR_UNK_STA + "'" + sAvistaStateFk + "'.");
-                }
             }
+            
+            if (sAvistaState == null || sAvistaState.isEmpty()) {
+                sAvistaState = SEtlConsts.AvistaStatesMap.get(sAvistaStateFk);
+            }
+            
+            if (sAvistaState == null) {
+                throw new Exception(SEtlConsts.MSG_ERR_UNK_STA + "'" + sAvistaStateFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + customer);
+            }
+            
             sAvistaState = SLibUtils.textTrim(sAvistaState).toUpperCase();
 
             // Select customer's currency:
@@ -330,7 +337,7 @@ public abstract class SEtlProcessCatCustomers {
             
             dbSalesAgent = etlCatalogs.getEtlSalesAgent(etlCatalogs.getEtlIdForSalesAgent(resultSetAvista.getInt("SalesUserKey")));
             if (dbSalesAgent != null && dbSalesAgent.getDesSalesAgentId() == 0) {
-                throw new Exception(SEtlConsts.MSG_ERR_UNK_SAL_AGT + "'" + dbSalesAgent.getName() + "' (" + SEtlConsts.TXT_CUS + "='" + SLibUtils.textTrim(resultSetAvista.getString("CustomerName")) + "').");
+                throw new Exception(SEtlConsts.MSG_ERR_UNK_SAL_AGT + "'" + dbSalesAgent.getName() + "'.\n" + SEtlConsts.TXT_CUS + ": " + customer);
             }
 
             // II.1. Export business partner to SIIE:
@@ -539,7 +546,7 @@ public abstract class SEtlProcessCatCustomers {
                     // Save new business partner:
 
                     if (dataBizPartner.save(etlPackage.ConnectionSiie) != SLibConstants.DB_ACTION_SAVE_OK) {
-                        throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_INS + "'" + SLibUtils.textTrim(resultSetAvista.getString("CustomerName")) + "'.");
+                        throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_INS + customer);
                     }
                     
                     statementSiie.execute("COMMIT");
@@ -553,7 +560,7 @@ public abstract class SEtlProcessCatCustomers {
 
                     dataBizPartner = new SDataBizPartner();
                     if (dataBizPartner.read(new int[] { nBizPartnerId }, statementSiie) != SLibConstants.DB_ACTION_READ_OK) {
-                        throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_QRY + "'" + SLibUtils.textTrim(resultSetAvista.getString("CustomerName")) + "'.");
+                        throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_QRY + customer);
                     }
                     
                     if (dataBizPartner.getExternalId().compareTo(resultSetAvista.getString("CustomerId")) != 0 ||
@@ -605,7 +612,7 @@ public abstract class SEtlProcessCatCustomers {
                         }
                         
                         if (dataBizPartner.save(etlPackage.ConnectionSiie) != SLibConstants.DB_ACTION_SAVE_OK) {
-                            throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_UPD + "'" + SLibUtils.textTrim(resultSetAvista.getString("CustomerName")) + "'.");
+                            throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_UPD + customer);
                         }
                         
                         statementSiie.execute("COMMIT");
