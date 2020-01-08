@@ -907,6 +907,8 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setOriginalPriceUnitarySystemCy(SLibUtils.round(dEntryPriceUnitOrigCy, nMiscDecsAmountUnit));          // preserve price as is
                         dataDpsEntry.setOriginalDiscountUnitaryCy(0);
                         dataDpsEntry.setOriginalDiscountUnitarySystemCy(0);
+                        dataDpsEntry.setSalesPriceUnitaryCy(0);
+                        dataDpsEntry.setSalesFreightUnitaryCy(0);
                         
                         if (dataItem.getFkUnitId() == row.getDesFinalUnitOfMeasureFk()) {
                             dEntryPriceUnitCy = dEntryPriceUnitOrigCy;
@@ -985,6 +987,9 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setIsTaxesAutomaticApplying(true);
                         dataDpsEntry.setIsPriceVariable(false);
                         dataDpsEntry.setIsPriceConfirm(false);
+                        dataDpsEntry.setIsSalesFreightRequired(false);
+                        dataDpsEntry.setIsSalesFreightConfirm(false);
+                        dataDpsEntry.setIsSalesFreightAdd(false);
                         dataDpsEntry.setIsInventoriable(false); // to prevent unnecessary stock supply status
                         dataDpsEntry.setIsDeleted(false);
                         dataDpsEntry.setFkItemId(dataItem.getPkItemId());

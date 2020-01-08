@@ -160,6 +160,7 @@ public class SEtlProcessCatItems {
                     dataItem.setIsFreeDiscountEntry(false);
                     dataItem.setIsFreeDiscountDoc(false);
                     dataItem.setIsFreeCommissions(false);
+                    dataItem.setIsSalesFreightRequired(false);
                     dataItem.setIsDeleted(false);
                     dataItem.setFkItemGenericId(dbConfigAvista.getDesDefaultItemGenericFk());
                     dataItem.setFkItemLineId_n(SLibConsts.UNDEFINED);

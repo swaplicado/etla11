@@ -1,4 +1,12 @@
 ================================================================================
+2020-01-08, 1.1 003.9
+Sergio Abraham Flores Gutiérrez
+--------------------------------------------------------------------------------
+1) Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 151:
+    Bandera "Precio de embarques requerido en ventas" para catálogo de Ítems.
+    Banderas y campos relacionados con precios de embarques en Renglones de Documentos.
+
+================================================================================
 2019-11-22, 1.1 003.8
 Sergio Abraham Flores Gutiérrez
 --------------------------------------------------------------------------------
