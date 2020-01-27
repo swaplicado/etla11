@@ -1,6 +1,17 @@
 ================================================================================
+2020-01-27, 1.1 003.10
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Mejoramiento al proceso de creación y actualización de clientes al importarse remisiones Axiom:
+    Apertura de opciones de búsqueda de asociados de negocio SIIE:
+        a) por ID Cliente Axiom en ID Externo;
+        b) por RFC;
+        c) por nombre;
+        d) por nombre comercial.
+
+================================================================================
 2020-01-08, 1.1 003.9
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 1) Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 151:
     Bandera "Precio de embarques requerido en ventas" para catálogo de Ítems.
@@ -8,47 +19,47 @@ Sergio Abraham Flores Gutiérrez
 
 ================================================================================
 2019-11-22, 1.1 003.8
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 1) Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 147:
     Partidas de DPS (tercero causante).
 
 ================================================================================
 2019-11-06, 1.1 003.7
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 1) Mejoramiento al manejo de la situación en la que la descripción del estado de un cliente es nula (null),
     en el proceso de importación de facturas a SIIE.
 
 ================================================================================
 2019-09-26, 1.1 003.6
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 Recompilación por liberación de SIIE 3.2 145.
 
 ================================================================================
 2019-09-24, 1.1 003.5
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 144:
     Notas de DPS.
 
 ================================================================================
 2019-09-05, 1.1 003.4
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 142:
     Categoría de asociados de negocios: tipo de operación DIOT.
 
 ================================================================================
 2019-08-14, 1.1 003.3
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 137 a 140.
 
 ================================================================================
 2019-05-15, 1.1 003.2
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 136.
 
@@ -70,19 +81,19 @@ Incorporación del domicilio en la generación de embarques desde remisiones Axi
 
 ================================================================================
 2019-03-04, 1.1 000.0
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 Creación versión 1.1.
 
 ================================================================================
 2019-02-20, 1.0 013.05
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 Creación de nuevo identificador para grid de remisiones a embarcar en forma de captura SFormShipment, debido a que persiste el error de conversión de Integer a String al agregar remisiones.
 
 ================================================================================
 2018-10-30, 1.0 013.04
-Sergio Abraham Flores Gutiérrez
+Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 Corrección a identificadores de grid en forma de captura SFormShipment puesto que los dos grids de la forma tienen los mismos identificadores.
 Corrección a generación de sentencias SQL de inserción y actualización de la clase SDbShipment, en relación al redondeo de m² y kg erróneamente realizado con formateador de decimales, lo cual incorpora comas como separador de miles.

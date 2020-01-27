@@ -247,25 +247,6 @@ public class SEtlProcessDocInvoices {
                 idInvoiceSalesAgentDes = dataBizPartnerCustomer.getDbmsDataCustomerConfig().getFkSalesAgentId_n();
                 idInvoiceSalesSupervisorDes = dataBizPartnerCustomer.getDbmsDataCustomerConfig().getFkSalesSupervisorId_n();
                 
-                /* Checking of ETL's sales agent setting for current customer is not longer needed. Code snippet preserved only for historical reasons. (Sergio Flores, 2017-05-24)
-                if (idInvoiceSalesAgentDes == SLibConsts.UNDEFINED) {
-                    // Set sales agent from ETL customer's registry if SIIE customer does not have a sales agent set:
-
-                    dbInvoiceSalesAgent = etlCatalogs.getEtlSalesAgent(etlCatalogs.getEtlIdForSalesAgent(dbInvoiceCustomer.getSrcCustomerSalesAgentFk_n()));
-                    if (dbInvoiceSalesAgent != null) {
-                        if (dbInvoiceSalesAgent.getDesSalesAgentId() == SLibConsts.UNDEFINED) {
-                            throw new Exception(SEtlConsts.MSG_ERR_UNK_SAL_AGT + "\n"
-                                    + "'" + dbInvoiceSalesAgent.getName() + "' (" + SEtlConsts.TXT_CUS + "='" + dbInvoiceCustomer.getName() + "')."
-                                    + sInvoiceErrMsg);
-                        }
-                        else {
-                            idInvoiceSalesAgentDes = dbInvoiceSalesAgent.getDesSalesAgentId();
-                            idInvoiceSalesSupervisorDes = SLibConsts.UNDEFINED;
-                        }
-                    }
-                }
-                */
-                
                 // Set invoice's pay method & account from SIIE customer's registries:
                 
                 idInvoicePayMethodDes = dataBizPartnerCustomer.getDbmsCategorySettingsCus().getFkPaymentSystemTypeId_n();  // current SIIE's settings have preference

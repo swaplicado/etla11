@@ -18,6 +18,7 @@ import erp.mod.SModSysConsts;
 import etla.mod.SModConsts;
 import etla.mod.cfg.db.SDbConfig;
 import etla.mod.cfg.db.SDbUser;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import sa.lib.SLibConsts;
@@ -123,7 +124,10 @@ public abstract class SEtlProcessCatCustomers {
         int nSalesAgentId = 0;
         int nCustomerId = 0;
         int nAvistaCurrencyCustomerFk = 0;
-        String sTaxId = "";
+        String sAvistaCustomerId = "";
+        String sAvistaCustomerTaxId = "";
+        String sAvistaCustomerName = "";
+        String sAvistaCustomerTradename = "";
         String sAvistaCountry = "";
         String sAvistaCountryFk = "";
         String sAvistaState = "";
@@ -133,7 +137,7 @@ public abstract class SEtlProcessCatCustomers {
         boolean bIsBizPartnerPerson = false;
         boolean bIsBizPartnerCustomer = false;
         String sql = "";
-        String[] sqlQueries = null;
+        String[] sqlWheres = null;
         Statement statementEtl = session.getStatement().getConnection().createStatement();
         Statement statementSiie = etlPackage.ConnectionSiie.createStatement();
         Statement statementAvista = etlPackage.ConnectionAvista.createStatement();
@@ -252,20 +256,29 @@ public abstract class SEtlProcessCatCustomers {
                 + "ORDER BY c.CustomerId, c.TaxId ";
         resultSetAvista = statementAvista.executeQuery(sql);
         while (resultSetAvista.next()) {
+            sAvistaCustomerId = resultSetAvista.getString("CustomerId");
+            sAvistaCustomerTaxId = SLibUtils.textToSql(resultSetAvista.getString("TaxId"));
+            sAvistaCustomerName = SLibUtils.textToSql(resultSetAvista.getString("CustomerName")).replaceAll("'", "''");
+            sAvistaCustomerTradename = SLibUtils.textToSql(resultSetAvista.getString("ShortName")).replaceAll("'", "''");
+            
+            String msgCustomer = "Cliente: '" + sAvistaCustomerName + "'; RFC: '" + sAvistaCustomerTaxId + "'; alias: '" + sAvistaCustomerTradename + "'; ID: '" + sAvistaCustomerId + "'.";
+            
             /****************************************************************/
             if (SEtlConsts.SHOW_DEBUG_MSGS) {
-                System.out.println(SEtlConsts.TXT_CUS + " (" + ++nCount + "): " + SLibUtils.textTrim(resultSetAvista.getString("CustomerName")));
+                System.out.println(SEtlConsts.TXT_CUS + " (" + ++nCount + "): " + sAvistaCustomerName);
             }
             /****************************************************************/
             
-            String customer = "Nombre: '" + SLibUtils.textTrim(resultSetAvista.getString("CustomerName")) + "'; RFC: '" + resultSetAvista.getString("TaxId") + "'.";
+            // Validate customer's tax ID:
             
-            // Validate customer's Tax ID:
+            if (sAvistaCustomerTaxId.isEmpty() || (sAvistaCustomerTaxId.length() != SEtlConsts.RFC_LEN_PER && sAvistaCustomerTaxId.length() != SEtlConsts.RFC_LEN_ORG)) {
+                throw new Exception(SEtlConsts.MSG_ERR_CUS_TAX_ID + msgCustomer);
+            }
             
-            sTaxId = SLibUtils.textToSql(resultSetAvista.getString("TaxId"));
+            // Validate customer's name:
             
-            if (sTaxId.isEmpty() || (sTaxId.length() != SEtlConsts.RFC_LEN_PER && sTaxId.length() != SEtlConsts.RFC_LEN_ORG)) {
-                throw new Exception(SEtlConsts.MSG_ERR_CUS_TAX_ID + customer);
+            if (sAvistaCustomerName.isEmpty()) {
+                throw new Exception(SEtlConsts.MSG_ERR_CUS_NAME + msgCustomer);
             }
             
             // Select customer's country:
@@ -277,13 +290,13 @@ public abstract class SEtlProcessCatCustomers {
                 sAvistaCountryFk = dbConfigAvista.getSrcLocalCountryFk();
                 sAvistaCountry = SEtlConsts.AvistaCountriesMap.get(sAvistaCountryFk);
                 if (sAvistaCountry == null) {
-                    throw new Exception(SEtlConsts.MSG_ERR_UNK_CTY + "'" + sAvistaCountryFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + customer);
+                    throw new Exception(SEtlConsts.MSG_ERR_UNK_CTY + "'" + sAvistaCountryFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + msgCustomer);
                 }
             }
             sAvistaCountry = SLibUtils.textTrim(sAvistaCountry).toUpperCase();
 
             if (sAvistaCountryFk.compareTo(dbConfigAvista.getSrcLocalCountryFk()) != 0) {
-                throw new Exception(SEtlConsts.MSG_ERR_UNK_CTY + "'" + sAvistaCountryFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + customer); // by now, only local country allowed (i.e., MX)
+                throw new Exception(SEtlConsts.MSG_ERR_UNK_CTY + "'" + sAvistaCountryFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + msgCustomer); // by now, only local country allowed (i.e., MX)
             }
 
             // Select customer's state:
@@ -300,7 +313,7 @@ public abstract class SEtlProcessCatCustomers {
             }
             
             if (sAvistaState == null) {
-                throw new Exception(SEtlConsts.MSG_ERR_UNK_STA + "'" + sAvistaStateFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + customer);
+                throw new Exception(SEtlConsts.MSG_ERR_UNK_STA + "'" + sAvistaStateFk + "'.\n" + SEtlConsts.TXT_CUS + ": " + msgCustomer);
             }
             
             sAvistaState = SLibUtils.textTrim(sAvistaState).toUpperCase();
@@ -337,7 +350,7 @@ public abstract class SEtlProcessCatCustomers {
             
             dbSalesAgent = etlCatalogs.getEtlSalesAgent(etlCatalogs.getEtlIdForSalesAgent(resultSetAvista.getInt("SalesUserKey")));
             if (dbSalesAgent != null && dbSalesAgent.getDesSalesAgentId() == 0) {
-                throw new Exception(SEtlConsts.MSG_ERR_UNK_SAL_AGT + "'" + dbSalesAgent.getName() + "'.\n" + SEtlConsts.TXT_CUS + ": " + customer);
+                throw new Exception(SEtlConsts.MSG_ERR_UNK_SAL_AGT + "'" + dbSalesAgent.getName() + "'.\n" + SEtlConsts.TXT_CUS + ": " + msgCustomer);
             }
 
             // II.1. Export business partner to SIIE:
@@ -345,45 +358,59 @@ public abstract class SEtlProcessCatCustomers {
             etlPackage.EtlLog.setStepAux(SEtlConsts.STEP_AUX_CUS_AUX_1);
             etlPackage.EtlLog.save(session);
 
-            // From SIIE, obtain oldest business partner, alive and deleted ones, both of them when possible:
+            // From SIIE, obtain business partner, preferably active and the oldest:
             
             nBizPartnerAliveId = 0;
             nBizPartnerDeletedId = 0;
-            bIsBizPartnerPerson = sTaxId.length() == SEtlConsts.RFC_LEN_PER;
+            bIsBizPartnerPerson = sAvistaCustomerTaxId.length() == SEtlConsts.RFC_LEN_PER;
             bIsBizPartnerCustomer = false;
             
-            sqlQueries = new String[] {
-                "SELECT id_bp, b_cus, b_del " // a) search by Customer ID
-                    + "FROM erp.bpsu_bp "
-                    + "WHERE ext_id='" + resultSetAvista.getString("CustomerId") + "' "
-                    + "ORDER BY id_bp ",
-                "SELECT id_bp, b_cus, b_del " // b) search by Tax ID
-                    + "FROM erp.bpsu_bp "
-                    + "WHERE fiscal_id='" + sTaxId + "' "
-                    + "ORDER BY id_bp "
+            // search SIIE's Business Partners:
+            sqlWheres = new String[] {
+                // a) by Customer ID:
+                "ext_id='" + sAvistaCustomerId + "' ",
+                // b) by Tax ID:
+                "fiscal_id='" + sAvistaCustomerTaxId + "' ",
+                // c) by Customer Name:
+                "bp='" + sAvistaCustomerName + "' ",
+                // d) by Customer Tradename:
+                "bp_comm='" + sAvistaCustomerTradename + "' "
             };
             
+            // search first actives then those deleted SIIE's Business Partners:
             queries:
-            for (String query : sqlQueries) {
-                resultSetSiie = statementSiie.executeQuery(query);
-                while (resultSetSiie.next()) {
-                    if (!resultSetSiie.getBoolean("b_del")) {
-                        nBizPartnerAliveId = resultSetSiie.getInt("id_bp");
-                        bIsBizPartnerCustomer = resultSetSiie.getBoolean("b_cus");
-                        break queries;
-                    }
-                    else {
-                        if (nBizPartnerDeletedId == 0) {
-                            nBizPartnerDeletedId = resultSetSiie.getInt("id_bp");
+            for (String where : sqlWheres) {
+                sql = "SELECT id_bp, b_cus "
+                        + "FROM erp.bpsu_bp "
+                        + "WHERE " + where + "AND b_del = ? "
+                        + "ORDER BY id_bp;";
+                PreparedStatement preparedStatement = etlPackage.ConnectionSiie.prepareStatement(sql);
+                
+                for (int del = 0; del <= 1; del++) {
+                    boolean deleted = del == 1; // 0 = false; 1 = true
+                    preparedStatement.setBoolean(1, deleted);
+                    resultSetSiie = preparedStatement.executeQuery(where);
+                    while (resultSetSiie.next()) {
+                        if (!deleted) {
+                            nBizPartnerAliveId = resultSetSiie.getInt("id_bp");
                             bIsBizPartnerCustomer = resultSetSiie.getBoolean("b_cus");
+                            break queries; // stop search
+                        }
+                        else {
+                            if (nBizPartnerDeletedId == 0) {
+                                nBizPartnerDeletedId = resultSetSiie.getInt("id_bp");
+                                bIsBizPartnerCustomer = resultSetSiie.getBoolean("b_cus");
+                                // continue searching for an active business partner...
+                            }
                         }
                     }
                 }
             }
             
             try {
-                if (nBizPartnerAliveId  == 0 && nBizPartnerDeletedId == 0) {
-
+                if (nBizPartnerAliveId == 0 && nBizPartnerDeletedId == 0) {
+                    // No SIIE's business partner found!
+                    
                     statementSiie.execute("START TRANSACTION");
 
                     // Create business-partner registry:
@@ -391,14 +418,14 @@ public abstract class SEtlProcessCatCustomers {
                     dataBizPartner = new SDataBizPartner();
                     
                     //dataBizPartner.setPkBizPartnerId(...); // set on save
-                    dataBizPartner.setBizPartner(SLibUtils.textToSql(resultSetAvista.getString("CustomerName")).replaceAll("'", "''"));
-                    dataBizPartner.setBizPartnerCommercial(SLibUtils.textToSql(resultSetAvista.getString("ShortName")).replaceAll("'", "''"));
-                    dataBizPartner.setLastname(!bIsBizPartnerPerson ? "" : SLibUtils.textToSql(resultSetAvista.getString("CustomerName")).replaceAll("'", "''"));
+                    dataBizPartner.setBizPartner(sAvistaCustomerName);
+                    dataBizPartner.setBizPartnerCommercial(sAvistaCustomerTradename);
+                    dataBizPartner.setLastname(bIsBizPartnerPerson ? sAvistaCustomerName : "");
                     dataBizPartner.setFirstname("");
-                    dataBizPartner.setFiscalId(sTaxId); // keystone for ETL processing!
+                    dataBizPartner.setFiscalId(sAvistaCustomerTaxId); // keystone for ETL processing!
                     dataBizPartner.setFiscalFrgId("");
                     dataBizPartner.setAlternativeId("");
-                    dataBizPartner.setExternalId(resultSetAvista.getString("CustomerId")); // keystone for ETL processing!
+                    dataBizPartner.setExternalId(sAvistaCustomerId); // keystone for ETL processing!
                     dataBizPartner.setCodeBankSantander("");
                     dataBizPartner.setCodeBankBanBajio("");
                     dataBizPartner.setWeb("");
@@ -543,10 +570,10 @@ public abstract class SEtlProcessCatCustomers {
 
                     dataBizPartner.getDbmsBizPartnerBranches().add(dataBizPartnerBranch);
 
-                    // Save new business partner:
+                    // Save new SIIE's business partner:
 
                     if (dataBizPartner.save(etlPackage.ConnectionSiie) != SLibConstants.DB_ACTION_SAVE_OK) {
-                        throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_INS + customer);
+                        throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_INS + msgCustomer);
                     }
                     
                     statementSiie.execute("COMMIT");
@@ -560,23 +587,23 @@ public abstract class SEtlProcessCatCustomers {
 
                     dataBizPartner = new SDataBizPartner();
                     if (dataBizPartner.read(new int[] { nBizPartnerId }, statementSiie) != SLibConstants.DB_ACTION_READ_OK) {
-                        throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_QRY + customer);
+                        throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_QRY + msgCustomer);
                     }
                     
-                    if (dataBizPartner.getExternalId().compareTo(resultSetAvista.getString("CustomerId")) != 0 ||
+                    if (!dataBizPartner.getExternalId().equals(sAvistaCustomerId) ||
                             dataBizPartner.getIsDeleted() ||
                             dataBizPartner.getDbmsCategorySettingsCus() == null ||
                             dataBizPartner.getDbmsCategorySettingsCus().getIsDeleted()) {
                         
                         statementSiie.execute("START TRANSACTION");
 
-                        dataBizPartner.setExternalId(resultSetAvista.getString("CustomerId"));
+                        dataBizPartner.setExternalId(sAvistaCustomerId); // keystone for ETL processing!
                         if (!bIsBizPartnerCustomer) {
                             dataBizPartner.setIsCustomer(true);
                         }
                         dataBizPartner.setIsDeleted(false);
                         //dataBizPartner.setFkUserNewId(...);
-                        dataBizPartner.setFkUserEditId(((SDbUser) session.getUser()).getDesUserId());
+                        dataBizPartner.setFkUserEditId(/*((SDbUser) session.getUser()).getDesUserId()*/SDataConstantsSys.USRX_USER_NA); // to prevent confusion in Department of Credit
                         //dataBizPartner.setFkUserDeleteId(...);
                         
                         if (dataBizPartner.getDbmsCategorySettingsCus() == null) {
@@ -607,12 +634,12 @@ public abstract class SEtlProcessCatCustomers {
                             dataBizPartnerCategory = dataBizPartner.getDbmsCategorySettingsCus();
                             dataBizPartnerCategory.setIsDeleted(false);
                             //dataBizPartnerCategory.setFkUserNewId(...);
-                            dataBizPartnerCategory.setFkUserEditId(((SDbUser) session.getUser()).getDesUserId());
+                            dataBizPartnerCategory.setFkUserEditId(/*((SDbUser) session.getUser()).getDesUserId()*/SDataConstantsSys.USRX_USER_NA); // to prevent confusion in Department of Credit
                             //dataBizPartnerCategory.setFkUserDeleteId(...);
                         }
                         
                         if (dataBizPartner.save(etlPackage.ConnectionSiie) != SLibConstants.DB_ACTION_SAVE_OK) {
-                            throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_UPD + customer);
+                            throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_UPD + msgCustomer);
                         }
                         
                         statementSiie.execute("COMMIT");
@@ -637,7 +664,7 @@ public abstract class SEtlProcessCatCustomers {
             
             sql = "SELECT id_cus "
                     + "FROM " + SModConsts.TablesMap.get(SModConsts.AU_CUS) + " "
-                    + "WHERE src_cus_id='" + resultSetAvista.getString("CustomerId") + "' "
+                    + "WHERE src_cus_id='" + sAvistaCustomerId + "' "
                     + "ORDER BY id_cus ";
             resultSetEtl = statementEtl.executeQuery(sql);
             if (resultSetEtl.next()) {
@@ -652,13 +679,13 @@ public abstract class SEtlProcessCatCustomers {
                     
                     dbCustomer = new SDbCustomer();
                     //dbCustomersetPkCustomerId(...); // set on save
-                    dbCustomer.setSrcCustomerId(resultSetAvista.getString("CustomerId"));
+                    dbCustomer.setSrcCustomerId(sAvistaCustomerId);
                     dbCustomer.setDesCustomerId(nBizPartnerId); // user defined, but default value set
                     dbCustomer.setDesCustomerBranchId(nBizPartnerBranchId); // user defined, but default value set
                     dbCustomer.setCode(SLibUtils.textTrim(resultSetAvista.getString("CustomerNumber")));
-                    dbCustomer.setName(SLibUtils.textToSql(resultSetAvista.getString("CustomerName")).replaceAll("'", "''"));
-                    dbCustomer.setNameShort(SLibUtils.textToSql(resultSetAvista.getString("ShortName")).replaceAll("'", "''"));
-                    dbCustomer.setTaxId(sTaxId);
+                    dbCustomer.setName(sAvistaCustomerName);
+                    dbCustomer.setNameShort(sAvistaCustomerTradename);
+                    dbCustomer.setTaxId(sAvistaCustomerTaxId);
                     dbCustomer.setStreet(SLibUtils.textToSql(resultSetAvista.getString("Address1")).replaceAll("'", "''"));
                     dbCustomer.setNumberExt(SLibUtils.textToSql(resultSetAvista.getString("Address2")).replaceAll("'", "''"));
                     dbCustomer.setNumberInt(SLibUtils.textToSql(resultSetAvista.getString("AddressInternalNumber")).replaceAll("'", "''"));

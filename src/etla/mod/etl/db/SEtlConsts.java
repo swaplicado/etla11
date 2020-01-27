@@ -127,6 +127,7 @@ public abstract class SEtlConsts {
     public static final String MSG_ERR_WRG_QTY = MSG_ERR + ": cantidad igual a cero.";
     public static final String MSG_ERR_USR_DES_ID = MSG_ERR + ": el usuario no tiene su ID " + TXT_SYS_SIIE + ".";
     public static final String MSG_ERR_CUS_TAX_ID = MSG_ERR + " al validar el RFC el cliente: ";
+    public static final String MSG_ERR_CUS_NAME = MSG_ERR + " al validar el nombre el cliente: ";
     public static final String MSG_ERR_UNK_CTY = MSG_ERR + " al determinar el país: ";
     public static final String MSG_ERR_UNK_STA = MSG_ERR + " al determinar el estado: ";
     public static final String MSG_ERR_UNK_CUR = MSG_ERR + " al determinar la moneda: ";
