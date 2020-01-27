@@ -389,7 +389,7 @@ public abstract class SEtlProcessCatCustomers {
                 for (int del = 0; del <= 1; del++) {
                     boolean deleted = del == 1; // 0 = false; 1 = true
                     preparedStatement.setBoolean(1, deleted);
-                    resultSetSiie = preparedStatement.executeQuery(where);
+                    resultSetSiie = preparedStatement.executeQuery();
                     while (resultSetSiie.next()) {
                         if (!deleted) {
                             nBizPartnerAliveId = resultSetSiie.getInt("id_bp");
