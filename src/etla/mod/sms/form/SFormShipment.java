@@ -13,8 +13,11 @@ import etla.mod.etl.db.SEtlConsts;
 import etla.mod.etl.db.SEtlProcess;
 import etla.mod.sms.db.SDbShipment;
 import etla.mod.sms.db.SDbShipmentRow;
+import etla.mod.sms.db.SDbWmTicket;
 import etla.mod.sms.db.SRowShipmentRow;
 import etla.mod.sms.db.SShippingUtils;
+import etla.mod.sms.db.SSmsEtl;
+import etla.mod.sms.db.SSmsUtils;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +31,7 @@ import javax.swing.JButton;
 import sa.lib.SLibConsts;
 import sa.lib.SLibTimeUtils;
 import sa.lib.SLibUtils;
+import sa.lib.db.SDbConsts;
 import sa.lib.db.SDbRegistry;
 import sa.lib.grid.SGridColumnForm;
 import sa.lib.grid.SGridConsts;
@@ -42,7 +46,7 @@ import sa.lib.gui.bean.SBeanForm;
 
 /**
  *
- * @author Daniel López, Sergio Flores
+ * @author Daniel López, Sergio Flores, Isabel Servín
  */
 public class SFormShipment extends SBeanForm implements ActionListener, ItemListener {
     
@@ -52,6 +56,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private SDbShipment moRegistry;
     private SGridPaneForm moGridAvailableRows;
     private SGridPaneForm moGridSelectedRows;
+    private SSmsEtl moSmsEtl;
     private Connection miConnectionAvista;
     private boolean mbRowsShown;
     
@@ -94,23 +99,24 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moKeyHandlingType = new sa.lib.gui.bean.SBeanFieldKey();
         jPanel6 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
+        jlTicketId = new javax.swing.JLabel();
+        moIntTicketId = new sa.lib.gui.bean.SBeanFieldInteger();
+        jbValidateTicket = new javax.swing.JButton();
+        jPanel16 = new javax.swing.JPanel();
         jlShipper = new javax.swing.JLabel();
         moKeyShipper = new sa.lib.gui.bean.SBeanFieldKey();
-        jPanel16 = new javax.swing.JPanel();
+        jPanel17 = new javax.swing.JPanel();
         jlVehicleType = new javax.swing.JLabel();
         moKeyVehicleType = new sa.lib.gui.bean.SBeanFieldKey();
-        jPanel17 = new javax.swing.JPanel();
+        jPanel14 = new javax.swing.JPanel();
         jlVehiclePlate = new javax.swing.JLabel();
         moTextVehiclePlate = new sa.lib.gui.bean.SBeanFieldText();
-        jPanel14 = new javax.swing.JPanel();
+        jPanel15 = new javax.swing.JPanel();
         jlDriverName = new javax.swing.JLabel();
         moTextDriverName = new sa.lib.gui.bean.SBeanFieldText();
-        jPanel15 = new javax.swing.JPanel();
+        jPanel18 = new javax.swing.JPanel();
         jlDriverPhone = new javax.swing.JLabel();
         moTextDriverPhone = new sa.lib.gui.bean.SBeanFieldText();
-        jPanel18 = new javax.swing.JPanel();
-        jlScaleTicket1 = new javax.swing.JLabel();
-        moIntScaleTicket1 = new sa.lib.gui.bean.SBeanFieldInteger();
         jpBody = new javax.swing.JPanel();
         jpRows = new javax.swing.JPanel();
         jpFilterControls = new javax.swing.JPanel();
@@ -214,66 +220,70 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
         jPanel13.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlShipper.setText("Línea transportista:*");
-        jlShipper.setPreferredSize(new java.awt.Dimension(110, 23));
-        jPanel13.add(jlShipper);
+        jlTicketId.setText("Boleto báscula:");
+        jlTicketId.setPreferredSize(new java.awt.Dimension(110, 23));
+        jPanel13.add(jlTicketId);
+        jPanel13.add(moIntTicketId);
 
-        moKeyShipper.setPreferredSize(new java.awt.Dimension(250, 23));
-        jPanel13.add(moKeyShipper);
+        jbValidateTicket.setText("Validar");
+        jbValidateTicket.setPreferredSize(new java.awt.Dimension(75, 23));
+        jPanel13.add(jbValidateTicket);
 
         jPanel6.add(jPanel13);
 
         jPanel16.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlVehicleType.setText("Tipo vehículo:*");
-        jlVehicleType.setPreferredSize(new java.awt.Dimension(110, 23));
-        jlVehicleType.setRequestFocusEnabled(false);
-        jPanel16.add(jlVehicleType);
+        jlShipper.setText("Línea transportista:*");
+        jlShipper.setPreferredSize(new java.awt.Dimension(110, 23));
+        jPanel16.add(jlShipper);
 
-        moKeyVehicleType.setPreferredSize(new java.awt.Dimension(250, 23));
-        jPanel16.add(moKeyVehicleType);
+        moKeyShipper.setPreferredSize(new java.awt.Dimension(250, 23));
+        jPanel16.add(moKeyShipper);
 
         jPanel6.add(jPanel16);
 
         jPanel17.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlVehiclePlate.setText("Placas vehículo:");
-        jlVehiclePlate.setPreferredSize(new java.awt.Dimension(110, 23));
-        jPanel17.add(jlVehiclePlate);
+        jlVehicleType.setText("Tipo vehículo:*");
+        jlVehicleType.setPreferredSize(new java.awt.Dimension(110, 23));
+        jlVehicleType.setRequestFocusEnabled(false);
+        jPanel17.add(jlVehicleType);
 
-        moTextVehiclePlate.setPreferredSize(new java.awt.Dimension(150, 23));
-        jPanel17.add(moTextVehiclePlate);
+        moKeyVehicleType.setPreferredSize(new java.awt.Dimension(250, 23));
+        jPanel17.add(moKeyVehicleType);
 
         jPanel6.add(jPanel17);
 
         jPanel14.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlDriverName.setText("Nombre chofer:");
-        jlDriverName.setPreferredSize(new java.awt.Dimension(110, 23));
-        jPanel14.add(jlDriverName);
+        jlVehiclePlate.setText("Placas vehículo:");
+        jlVehiclePlate.setPreferredSize(new java.awt.Dimension(110, 23));
+        jPanel14.add(jlVehiclePlate);
 
-        moTextDriverName.setPreferredSize(new java.awt.Dimension(250, 23));
-        jPanel14.add(moTextDriverName);
+        moTextVehiclePlate.setPreferredSize(new java.awt.Dimension(150, 23));
+        jPanel14.add(moTextVehiclePlate);
 
         jPanel6.add(jPanel14);
 
         jPanel15.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlDriverPhone.setText("Teléfono chofer:");
-        jlDriverPhone.setPreferredSize(new java.awt.Dimension(110, 23));
-        jPanel15.add(jlDriverPhone);
+        jlDriverName.setText("Nombre chofer:");
+        jlDriverName.setPreferredSize(new java.awt.Dimension(110, 23));
+        jPanel15.add(jlDriverName);
 
-        moTextDriverPhone.setPreferredSize(new java.awt.Dimension(250, 23));
-        jPanel15.add(moTextDriverPhone);
+        moTextDriverName.setPreferredSize(new java.awt.Dimension(250, 23));
+        jPanel15.add(moTextDriverName);
 
         jPanel6.add(jPanel15);
 
         jPanel18.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlScaleTicket1.setText("Boleto báscula:");
-        jlScaleTicket1.setPreferredSize(new java.awt.Dimension(110, 23));
-        jPanel18.add(jlScaleTicket1);
-        jPanel18.add(moIntScaleTicket1);
+        jlDriverPhone.setText("Teléfono chofer:");
+        jlDriverPhone.setPreferredSize(new java.awt.Dimension(110, 23));
+        jPanel18.add(jlDriverPhone);
+
+        moTextDriverPhone.setPreferredSize(new java.awt.Dimension(250, 23));
+        jPanel18.add(moTextDriverPhone);
 
         jPanel6.add(jPanel18);
 
@@ -454,6 +464,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JButton jbRowAdd;
     private javax.swing.JButton jbRowRemove;
     private javax.swing.JButton jbShowRows;
+    private javax.swing.JButton jbValidateTicket;
     private javax.swing.JCheckBox jckReleaseOnSave;
     private javax.swing.JLabel jlCargoType;
     private javax.swing.JLabel jlDate;
@@ -464,9 +475,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JLabel jlEstatus;
     private javax.swing.JLabel jlHandlingType;
     private javax.swing.JLabel jlNumber;
-    private javax.swing.JLabel jlScaleTicket1;
     private javax.swing.JLabel jlShipmentType;
     private javax.swing.JLabel jlShipper;
+    private javax.swing.JLabel jlTicketId;
     private javax.swing.JLabel jlTotalM2;
     private javax.swing.JLabel jlVehiclePlate;
     private javax.swing.JLabel jlVehicleType;
@@ -485,7 +496,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JTextField jtfTotalM2;
     private sa.lib.gui.bean.SBeanFieldDate moDateDate;
     private sa.lib.gui.bean.SBeanFieldDate moDateRows;
-    private sa.lib.gui.bean.SBeanFieldInteger moIntScaleTicket1;
+    private sa.lib.gui.bean.SBeanFieldInteger moIntTicketId;
     private sa.lib.gui.bean.SBeanFieldKey moKeyCargoType;
     private sa.lib.gui.bean.SBeanFieldKey moKeyComment;
     private sa.lib.gui.bean.SBeanFieldKey moKeyHandlingType;
@@ -508,12 +519,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moKeyShipmentType.setKeySettings(miClient, SGuiUtils.getLabelName(jlShipmentType), true);
         moKeyCargoType.setKeySettings(miClient, SGuiUtils.getLabelName(jlCargoType), true);
         moKeyHandlingType.setKeySettings(miClient, SGuiUtils.getLabelName(jlHandlingType), true);
+        moIntTicketId.setIntegerSettings(SGuiUtils.getLabelName(jlTicketId), SGuiConsts.GUI_TYPE_INT_RAW, true);
         moKeyShipper.setKeySettings(miClient, SGuiUtils.getLabelName(jlShipper), true);
         moKeyVehicleType.setKeySettings(miClient, SGuiUtils.getLabelName(jlVehicleType), true);
         moTextVehiclePlate.setTextSettings(SGuiUtils.getLabelName(jlVehiclePlate), 25, 0);
         moTextDriverName.setTextSettings(SGuiUtils.getLabelName(jlDriverName), 50, 0);
         moTextDriverPhone.setTextSettings(SGuiUtils.getLabelName(jlDriverPhone), 50, 0);
-        moIntScaleTicket1.setIntegerSettings(SGuiUtils.getLabelName(jlScaleTicket1), SGuiConsts.GUI_TYPE_INT_RAW, false);
         moDateRows.setDateSettings(miClient, SGuiUtils.getLabelName(jlDateRows), false);
         moDateRows.setNextButton(jbShowRows);
         moKeyComment.setKeySettings(miClient, SGuiUtils.getLabelName(moKeyComment.getToolTipText()), false);
@@ -522,12 +533,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moFields.addField(moKeyShipmentType);
         moFields.addField(moKeyCargoType);
         moFields.addField(moKeyHandlingType);
+        moFields.addField(moIntTicketId);
         moFields.addField(moKeyShipper);
         moFields.addField(moKeyVehicleType);
         moFields.addField(moTextVehiclePlate);
         moFields.addField(moTextDriverName);
         moFields.addField(moTextDriverPhone);
-        moFields.addField(moIntScaleTicket1);
         moFields.addField(moDateRows);
         moFields.addField(moKeyComment);
         
@@ -630,6 +641,31 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         }
     }
     
+    private void actionPerfomedValidateTicket() {
+        try {
+            moSmsEtl.importRevueltaWmTickets(moIntTicketId.getText());
+            
+            SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), moIntTicketId.getValue()) }, SDbConsts.MODE_STEALTH);
+            
+            if (wmTicket.isRegistryNew()) {
+                moKeyShipper.resetField();
+                moTextVehiclePlate.resetField();
+                moTextDriverName.resetField();
+                moTextDriverPhone.resetField();
+                miClient.showMsgBoxInformation("No se encontró el boleto '" + moIntTicketId.getText() + "'.");
+            }
+            else {
+                moKeyShipper.setValue(new int [] { SSmsUtils.getShipperId(miClient.getSession(), wmTicket.getCarrierId()) });
+                moTextVehiclePlate.setText(wmTicket.getVehiclePlate());
+                moTextDriverName.setText(wmTicket.getDriverName());
+                moTextDriverPhone.setText("");
+            }
+        }
+        catch (Exception e) {
+            SLibUtils.showException(this, e);
+        }
+    }
+    
     private void actionPerformedShowRows() {
         if (jbShowRows.isEnabled()) {
             if (moDateRows.getValue() == null) {
@@ -721,7 +757,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         }
     }
     
-    private void actionPerformedRemoveRow() {        
+    private void actionPerformedRemoveRow() {
         if (moGridSelectedRows.getSelectedGridRow() == null) {
             miClient.showMsgBoxWarning(SGridConsts.MSG_SELECT_ROW);
         } 
@@ -768,6 +804,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             moKeyVehicleType.setEnabled(true);
         }
     }
+    
     /*
      * Public methods
      */
@@ -778,23 +815,23 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     
     @Override
     public void addAllListeners() {
+        jbValidateTicket.addActionListener(this);
         jbShowRows.addActionListener(this);
         jbClearRows.addActionListener(this);
         jbRowAdd.addActionListener(this);
         jbRowRemove.addActionListener(this);
         jbAddComment.addActionListener(this);
-        
         moKeyShipper.addItemListener(this);
     }
 
     @Override
     public void removeAllListeners() {
+        jbValidateTicket.removeActionListener(this);
         jbShowRows.removeActionListener(this);
         jbClearRows.removeActionListener(this);
         jbRowAdd.removeActionListener(this);
         jbRowRemove.removeActionListener(this);
         jbAddComment.removeActionListener(this);
-        
         moKeyShipper.removeItemListener(this);
     }
 
@@ -832,12 +869,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moKeyShipmentType.setValue(new int[] { moRegistry.getFkShipmentTypeId()} );
         moKeyCargoType.setValue(new int[]{ moRegistry.getFkCargoTypeId() });
         moKeyHandlingType.setValue(new int[] { moRegistry.getFkHandlingTypeId() });
+        moIntTicketId.setValue(moRegistry.getTicketId());
         moKeyShipper.setValue(new int[] { moRegistry.getFkShipperId() });
         moKeyVehicleType.setValue(new int[] { moRegistry.getFkVehicleTypeId() });
         moTextVehiclePlate.setValue(moRegistry.getVehiclePlate());
         moTextDriverName.setValue(moRegistry.getDriverName());
         moTextDriverPhone.setValue(moRegistry.getDriverPhone());
-        moIntScaleTicket1.setValue(moRegistry.getScaleTicket1());
         jtaComments.setText(moRegistry.getComments());
         jtaComments.setCaretPosition(0);
         jtfTotalM2.setText(SLibUtils.getDecimalFormatQuantity().format(moRegistry.getMeters2()));
@@ -871,7 +908,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             jbSave.setEnabled(true);
         }
         else {
+            
         }
+        
+        moSmsEtl = new SSmsEtl(miClient.getSession());
        
         try {
             SDbConfigAvista configAvista = ((SDbConfig) miClient.getSession().getConfigSystem()).getDbConfigAvista();
@@ -905,7 +945,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         registry.setMeters2(SLibUtils.parseDouble(jtfTotalM2.getText()));
         //registry.setKilograms(...);
         registry.setComments(jtaComments.getText());
-        registry.setScaleTicket1(moIntScaleTicket1.getValue());
+        registry.setTicketId(moIntTicketId.getValue());
         //registry.setScaleTicket1Datetime_n(...);
         //registry.setScaleTicket1Kilograms(...);
         //registry.setScaleTicket2(...);
@@ -931,7 +971,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     }
 
     @Override
-    public SGuiValidation validateForm() {        
+    public SGuiValidation validateForm() {
         SGuiValidation validation = moFields.validateFields();
         
         if (validation.isValid()) {
@@ -957,10 +997,6 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                         validation.setMessage(SGuiConsts.ERR_MSG_FIELD_REQ + "'" + SGuiUtils.getLabelName(jlDriverPhone) + "'.");
                         validation.setComponent(moTextDriverPhone);
                     }
-                    else if (moIntScaleTicket1.getValue() == 0) {
-                        validation.setMessage(SGuiConsts.ERR_MSG_FIELD_REQ + "'" + SGuiUtils.getLabelName(jlScaleTicket1) + "'.");
-                        validation.setComponent(moIntScaleTicket1);
-                    }
                 }
             }
         }
@@ -973,7 +1009,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         if (evt.getSource() instanceof JButton) {
             JButton button = (JButton) evt.getSource();
 
-            if (button == jbShowRows) {
+            if (button == jbValidateTicket) {
+                actionPerfomedValidateTicket();
+            }
+            else if (button == jbShowRows) {
                 actionPerformedShowRows();
             }
             else if (button == jbClearRows) {

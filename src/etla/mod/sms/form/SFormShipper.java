@@ -18,7 +18,7 @@ import sa.lib.gui.bean.SBeanForm;
 
 /**
  *
- * @author Daniel López
+ * @author Daniel López, Isabel Servín
  */
 public class SFormShipper extends SBeanForm {
     
@@ -55,12 +55,16 @@ public class SFormShipper extends SBeanForm {
         jPanel6 = new javax.swing.JPanel();
         jlMail = new javax.swing.JLabel();
         moTextMail = new sa.lib.gui.bean.SBeanFieldText();
+        jPanel7 = new javax.swing.JPanel();
+        jlCarrierId = new javax.swing.JLabel();
+        moTextCarrierId = new sa.lib.gui.bean.SBeanFieldText();
+        jLabel1 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos del registro:"));
         jPanel1.setLayout(new java.awt.BorderLayout(0, 5));
 
-        jPanel2.setLayout(new java.awt.GridLayout(3, 1, 0, 5));
+        jPanel2.setLayout(new java.awt.GridLayout(4, 1, 0, 5));
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
@@ -84,6 +88,7 @@ public class SFormShipper extends SBeanForm {
 
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
+        jlMail.setForeground(new java.awt.Color(0, 153, 153));
         jlMail.setText("Mail:*");
         jlMail.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel6.add(jlMail);
@@ -92,6 +97,20 @@ public class SFormShipper extends SBeanForm {
         jPanel6.add(moTextMail);
 
         jPanel2.add(jPanel6);
+
+        jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        jlCarrierId.setText("ID transportista:");
+        jlCarrierId.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel7.add(jlCarrierId);
+        jPanel7.add(moTextCarrierId);
+
+        jLabel1.setForeground(java.awt.SystemColor.textInactiveText);
+        jLabel1.setText("(ID transportista en Revuelta)");
+        jLabel1.setPreferredSize(new java.awt.Dimension(200, 23));
+        jPanel7.add(jLabel1);
+
+        jPanel2.add(jPanel7);
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
 
@@ -102,15 +121,19 @@ public class SFormShipper extends SBeanForm {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JLabel jlCarrierId;
     private javax.swing.JLabel jlCode;
     private javax.swing.JLabel jlMail;
     private javax.swing.JLabel jlName;
+    private sa.lib.gui.bean.SBeanFieldText moTextCarrierId;
     private sa.lib.gui.bean.SBeanFieldText moTextCode;
     private sa.lib.gui.bean.SBeanFieldText moTextMail;
     private sa.lib.gui.bean.SBeanFieldText moTextName;
@@ -126,10 +149,13 @@ public class SFormShipper extends SBeanForm {
         moTextCode.setTextSettings(SGuiUtils.getLabelName(jlCode), 10);
         moTextName.setTextSettings(SGuiUtils.getLabelName(jlName), 100);
         moTextMail.setTextSettings(SGuiUtils.getLabelName(jlMail), 100);
+        moTextMail.setTextCaseType(0);
+        moTextCarrierId.setTextSettings(SGuiUtils.getLabelName(jlCarrierId), 10, 0);
         
         moFields.addField(moTextCode);
         moFields.addField(moTextName);
         moFields.addField(moTextMail);
+        moFields.addField(moTextCarrierId);
         
         moFields.setFormButton(jbSave);
     }    
@@ -176,6 +202,7 @@ public class SFormShipper extends SBeanForm {
         moTextCode.setText(moRegistry.getCode());
         moTextName.setText(moRegistry.getName());
         moTextMail.setText(moRegistry.getMail());
+        moTextCarrierId.setText(moRegistry.getCarrierId());
        
         setFormEditable(true);
         
@@ -194,6 +221,7 @@ public class SFormShipper extends SBeanForm {
         if (registry.isRegistryNew()) {}
 
         //registry.setPkShipperId(...);
+        registry.setCarrierId(moTextCarrierId.getValue());
         registry.setCode(moTextCode.getValue());
         registry.setName(moTextName.getValue());
         registry.setMail(moTextMail.getValue());

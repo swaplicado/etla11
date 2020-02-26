@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import javax.mail.MessagingException;
 import sa.lib.SLibConsts;
 import sa.lib.SLibTimeUtils;
@@ -33,7 +34,6 @@ import sa.lib.gui.bean.SBeanFormDialog;
 import sa.lib.mail.SMail;
 import sa.lib.mail.SMailConsts;
 import sa.lib.mail.SMailSender;
-import java.util.Iterator;
 
 /**
  *
@@ -498,31 +498,29 @@ public class SDialogSendWmReport extends SBeanFormDialog implements ActionListen
                 config.getMailPassword(),
                 config.getMailUser());
 
-        String AuxSql = "SELECT " + (moKeyES.getSelectedIndex() == 1 ? "mail_to_wm_in " : "mail_to_wm_out ") + "FROM " + SModConsts.TablesMap.get(SModConsts.S_CFG) + ";";
+        String sql = "SELECT " + (moKeyES.getSelectedIndex() == 1 ? "mail_to_wm_in " : "mail_to_wm_out ")
+                + "FROM " + SModConsts.TablesMap.get(SModConsts.S_CFG) + ";";
 
-        ResultSet resultSet = miClient.getSession().getStatement().executeQuery(AuxSql);
-        try {
-            resultSet.next();
-        }
-        catch (Exception e) {
-            SLibUtils.showException(this, e);
-        }
-        ArrayList<String> recipients = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode(resultSet.getString(1), ";")));
-        SMail mail = new SMail(sender, subject, body, recipients);
-
-        mail.setContentType(SMailConsts.CONT_TP_TEXT_HTML);
-
-        try {
-            if (canSend) {
-                mail.send();
-                miClient.showMsgBoxInformation(SLibConsts.MSG_PROCESS_FINISHED);
+        try (ResultSet resultSet = miClient.getSession().getStatement().executeQuery(sql)) {
+            if (resultSet.next()) {
+                ArrayList<String> recipients = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode(resultSet.getString(1), ";")));
+                SMail mail = new SMail(sender, subject, body, recipients);
+                
+                mail.setContentType(SMailConsts.CONT_TP_TEXT_HTML);
+                
+                try {
+                    if (canSend) {
+                        mail.send();
+                        miClient.showMsgBoxInformation(SLibConsts.MSG_PROCESS_FINISHED);
+                    }
+                    else {
+                        miClient.showMsgBoxError("No se encontraron registros para los parametros seleccionados");
+                    }
+                }
+                catch (MessagingException ex) {
+                    SLibUtils.showException(this, ex);
+                }
             }
-            else {
-                miClient.showMsgBoxError("No se encontraron registros para los parametros seleccionados");
-            }
-        }
-        catch (MessagingException ex) {
-            SLibUtils.showException(this, ex);
         }
     }
 }

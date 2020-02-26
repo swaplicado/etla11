@@ -1,4 +1,14 @@
 ================================================================================
+2020-02-26, 1.1 004.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Habilitación de importación de boletos Revuelta y documentos SIIE.
+2) Implementación de informe diario de entradas y salidas de báscula vía mail.
+3) Implementación de informe semanal de entradas y salidas de báscula vía mail.
+4) Implementación de validación y extracción de datos de boleto Revuelta en captura de embarques.
+5) Refactorización general del código fuente.
+
+================================================================================
 2020-01-27, 1.1 003.10
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------

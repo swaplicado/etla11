@@ -16,18 +16,20 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores, Alfredo Pérez
+ * @author Sergio Flores, Alfredo Pérez, Isabel Servín
  */
 public class SDbConfigSms extends SDbRegistryUser{
 
     protected int mnPkConfigSmsId;
     protected String msUrlSms;
-    protected double mdVmInMaxVariationPercent;
-    protected double mdVmInMaxVariationWeight;
-    protected double mdVmOutMaxVariationPercent;
-    protected double mdVmOutMaxVariationWeight;
-    protected String msMailToWmIn;
-    protected String msMailToWmOut;
+    protected double mdWmInMaxVariationPercent;
+    protected double mdWmInMaxVariationWeight;
+    protected double mdWmOutMaxVariationPercent;
+    protected double mdWmOutMaxVariationWeight;
+    protected String msMailWmInTo;
+    protected String msMailWmInBcc;
+    protected String msMailWmOutTo;
+    protected String msMailWmOutBcc;
     protected String msRevueltaHost;
     protected int mnRevueltaPort;
     protected String msRevueltaName;
@@ -53,12 +55,14 @@ public class SDbConfigSms extends SDbRegistryUser{
 
     public void setPkConfigSmsId(int n) { mnPkConfigSmsId = n; }
     public void setUrlSms(String s) { msUrlSms = s; }
-    public void setVmInMaxVariationPercent(double d) { mdVmInMaxVariationPercent = d; }
-    public void setVmInMaxVariationWeight(double d) { mdVmInMaxVariationWeight = d; }
-    public void setVmOutMaxVariationPercent(double d) { mdVmOutMaxVariationPercent = d; }
-    public void setVmOutMaxVariationWeight(double d) { mdVmOutMaxVariationWeight = d; }
-    public void setMailToWmIn(String s) { msMailToWmIn = s; }
-    public void setMailToWmOut(String s) { msMailToWmOut = s; }
+    public void setWmInMaxVariationPercent(double d) { mdWmInMaxVariationPercent = d; }
+    public void setWmInMaxVariationWeight(double d) { mdWmInMaxVariationWeight = d; }
+    public void setWmOutMaxVariationPercent(double d) { mdWmOutMaxVariationPercent = d; }
+    public void setWmOutMaxVariationWeight(double d) { mdWmOutMaxVariationWeight = d; }
+    public void setMailWmInTo(String s) { msMailWmInTo = s; }
+    public void setMailWmInBcc(String s) { msMailWmInBcc = s; }
+    public void setMailWmOutTo(String s) { msMailWmOutTo = s; }
+    public void setMailWmOutBcc(String s) { msMailWmOutBcc = s; }
     public void setRevueltaHost(String s) { msRevueltaHost = s; }
     public void setRevueltaPort(int n) { mnRevueltaPort = n; }
     public void setRevueltaName(String s) { msRevueltaName = s; }
@@ -73,12 +77,14 @@ public class SDbConfigSms extends SDbRegistryUser{
 
     public int getPkConfigSmsId() { return mnPkConfigSmsId; }
     public String getUrlSms() { return msUrlSms; }
-    public double getVmInMaxVariationPercent() { return mdVmInMaxVariationPercent; }
-    public double getVmInMaxVariationWeight() { return mdVmInMaxVariationWeight; }
-    public double getVmOutMaxVariationPercent() { return mdVmOutMaxVariationPercent; }
-    public double getVmOutMaxVariationWeight() { return mdVmOutMaxVariationWeight; }
-    public String getMailToWmIn() { return msMailToWmIn; }
-    public String getMailToWmOut() { return msMailToWmOut; }
+    public double getWmInMaxVariationPercent() { return mdWmInMaxVariationPercent; }
+    public double getWmInMaxVariationWeight() { return mdWmInMaxVariationWeight; }
+    public double getWmOutMaxVariationPercent() { return mdWmOutMaxVariationPercent; }
+    public double getWmOutMaxVariationWeight() { return mdWmOutMaxVariationWeight; }
+    public String getMailWmInTo() { return msMailWmInTo; }
+    public String getMailWmInBcc() { return msMailWmInBcc; }
+    public String getMailWmOutTo() { return msMailWmOutTo; }
+    public String getMailWmOutBcc() { return msMailWmOutBcc; }
     public String getRevueltaHost() { return msRevueltaHost; }
     public int getRevueltaPort() { return mnRevueltaPort; }
     public String getRevueltaName() { return msRevueltaName; }
@@ -111,13 +117,15 @@ public class SDbConfigSms extends SDbRegistryUser{
         initBaseRegistry();
 
         mnPkConfigSmsId = 0;
-        msUrlSms = "";
-        mdVmInMaxVariationPercent = 0;
-        mdVmInMaxVariationWeight = 0;
-        mdVmOutMaxVariationPercent = 0;
-        mdVmOutMaxVariationWeight = 0;
-        msMailToWmIn = "";
-        msMailToWmOut = "";
+        msUrlSms = "";        
+        mdWmInMaxVariationPercent = 0;
+        mdWmInMaxVariationWeight = 0;
+        mdWmOutMaxVariationPercent = 0;
+        mdWmOutMaxVariationWeight = 0;
+        msMailWmInTo = "";
+        msMailWmInBcc = "";
+        msMailWmOutTo = "";
+        msMailWmOutBcc = "";
         msRevueltaHost = "";
         mnRevueltaPort = 0;
         msRevueltaName = "";
@@ -175,12 +183,14 @@ public class SDbConfigSms extends SDbRegistryUser{
         else {
             mnPkConfigSmsId = resultSet.getInt("id_cfg");
             msUrlSms = resultSet.getString("url_sms");
-            mdVmInMaxVariationPercent = resultSet.getDouble("wm_in_max_var_pct");
-            mdVmInMaxVariationWeight = resultSet.getDouble("wm_in_max_var_weight");
-            mdVmOutMaxVariationPercent = resultSet.getDouble("wm_out_max_var_pct");
-            mdVmOutMaxVariationWeight = resultSet.getDouble("wm_out_max_var_weight");
-            msMailToWmIn = resultSet.getString("mail_to_wm_in");
-            msMailToWmOut = resultSet.getString("mail_to_wm_out");
+            mdWmInMaxVariationPercent = resultSet.getDouble("wm_in_max_var_pct");
+            mdWmInMaxVariationWeight = resultSet.getDouble("wm_in_max_var_weight");
+            mdWmOutMaxVariationPercent = resultSet.getDouble("wm_out_max_var_pct");
+            mdWmOutMaxVariationWeight = resultSet.getDouble("wm_out_max_var_weight");
+            msMailWmInTo = resultSet.getString("mail_wm_in_to");
+            msMailWmInBcc = resultSet.getString("mail_wm_in_bcc");
+            msMailWmOutTo = resultSet.getString("mail_wm_out_to");
+            msMailWmOutBcc = resultSet.getString("mail_wm_out_bcc");
             msRevueltaHost = resultSet.getString("rev_host");
             mnRevueltaPort = resultSet.getInt("rev_port");
             msRevueltaName = resultSet.getString("rev_name");
@@ -214,12 +224,14 @@ public class SDbConfigSms extends SDbRegistryUser{
             msSql = "INSERT INTO " + getSqlTable() + " VALUES (" +
                 mnPkConfigSmsId + ", " + 
                 "'" + msUrlSms + "', " + 
-                mdVmInMaxVariationPercent + ", " + 
-                mdVmInMaxVariationWeight + ", " + 
-                mdVmOutMaxVariationPercent + ", " + 
-                mdVmOutMaxVariationWeight + ", " + 
-                "'" + msMailToWmIn + "', " + 
-                "'" + msMailToWmOut + "', " + 
+                mdWmInMaxVariationPercent + ", " + 
+                mdWmInMaxVariationWeight + ", " + 
+                mdWmOutMaxVariationPercent + ", " + 
+                mdWmOutMaxVariationWeight + ", " + 
+                "'" + msMailWmInTo + "', " + 
+                "'" + msMailWmInBcc + "', " + 
+                "'" + msMailWmOutTo + "', " + 
+                "'" + msMailWmOutBcc + "', " + 
                 "'" + msRevueltaHost + "', " + 
                 mnRevueltaPort + ", " + 
                 "'" + msRevueltaName + "', " + 
@@ -239,12 +251,14 @@ public class SDbConfigSms extends SDbRegistryUser{
             msSql = "UPDATE " + getSqlTable() + " SET " +
                 //"id_cfg = " + mnPkConfigSmsId + ", " +
                 "url_sms = '" + msUrlSms + "', " +
-                "wm_in_max_var_pct = " + mdVmInMaxVariationPercent + ", " +
-                "wm_in_max_var_weight = " + mdVmInMaxVariationWeight + ", " +
-                "wm_out_max_var_pct = " + mdVmOutMaxVariationPercent + ", " +
-                "wm_out_max_var_weight = " + mdVmOutMaxVariationWeight + ", " +
-                "mail_to_wm_in = '" + msMailToWmIn + "', " +
-                "mail_to_wm_out = '" + msMailToWmOut + "', " +
+                "wm_in_max_var_pct = " + mdWmInMaxVariationPercent + ", " +
+                "wm_in_max_var_weight = " + mdWmInMaxVariationWeight + ", " +
+                "wm_out_max_var_pct = " + mdWmOutMaxVariationPercent + ", " +
+                "wm_out_max_var_weight = " + mdWmOutMaxVariationWeight + ", " +
+                "mail_wm_in_to = '" + msMailWmInTo + "', " +
+                "mail_wm_in_bcc = '" + msMailWmInBcc + "', " +
+                "mail_wm_out_to = '" + msMailWmOutTo + "', " +
+                "mail_wm_out_bcc = '" + msMailWmOutBcc + "', " +
                 "rev_host = '" + msRevueltaHost + "', " +
                 "rev_port = " + mnRevueltaPort + ", " +
                 "rev_name = '" + msRevueltaName + "', " +
@@ -271,12 +285,14 @@ public class SDbConfigSms extends SDbRegistryUser{
 
         registry.setPkConfigSmsId(this.getPkConfigSmsId());
         registry.setUrlSms(this.getUrlSms());
-        registry.setVmInMaxVariationPercent(this.getVmInMaxVariationPercent());
-        registry.setVmInMaxVariationWeight(this.getVmInMaxVariationWeight());
-        registry.setVmOutMaxVariationPercent(this.getVmOutMaxVariationPercent());
-        registry.setVmOutMaxVariationWeight(this.getVmOutMaxVariationWeight());
-        registry.setMailToWmIn(this.getMailToWmIn());
-        registry.setMailToWmOut(this.getMailToWmOut());
+        registry.setWmInMaxVariationPercent(this.getWmInMaxVariationPercent());
+        registry.setWmInMaxVariationWeight(this.getWmInMaxVariationWeight());
+        registry.setWmOutMaxVariationPercent(this.getWmOutMaxVariationPercent());
+        registry.setWmOutMaxVariationWeight(this.getWmOutMaxVariationWeight());
+        registry.setMailWmInTo(this.getMailWmInTo());
+        registry.setMailWmInBcc(this.getMailWmInBcc());
+        registry.setMailWmOutTo(this.getMailWmOutTo());
+        registry.setMailWmOutBcc(this.getMailWmOutBcc());
         registry.setRevueltaHost(this.getRevueltaHost());
         registry.setRevueltaPort(this.getRevueltaPort());
         registry.setRevueltaName(this.getRevueltaName());

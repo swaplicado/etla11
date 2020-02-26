@@ -11,13 +11,14 @@ import java.sql.SQLException;
 import java.util.Date;
 import sa.gui.util.SUtilConsts;
 import sa.lib.SLibConsts;
+import sa.lib.SLibUtils;
 import sa.lib.db.SDbConsts;
 import sa.lib.db.SDbRegistryUser;
 import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Alfredo Pérez, Sergio Flores
+ * @author Alfredo Pérez, Sergio Flores, Isabel Servín
  */
 public class SDbWmTicket extends SDbRegistryUser {
 
@@ -25,6 +26,7 @@ public class SDbWmTicket extends SDbRegistryUser {
     protected int mnTicketId;
     protected Date mtTicketDatetimeArrival;
     protected Date mtTicketDatetimeDeparture;
+    protected String msCarrierId;
     protected String msCompany;
     protected String msDriverName;
     protected String msVehiclePlate;
@@ -78,6 +80,7 @@ public class SDbWmTicket extends SDbRegistryUser {
     public void setTicketId(int n) { mnTicketId = n; }
     public void setTicketDatetimeArrival(Date t) { mtTicketDatetimeArrival = t; }
     public void setTicketDatetimeDeparture(Date t) { mtTicketDatetimeDeparture = t; }
+    public void setCarrierId(String s) { msCarrierId = s; }
     public void setCompany(String s) { msCompany = s; }
     public void setDriverName(String s) { msDriverName = s; }
     public void setVehiclePlate(String s) { msVehiclePlate = s; }
@@ -106,6 +109,7 @@ public class SDbWmTicket extends SDbRegistryUser {
     public int getTicketId() { return mnTicketId; }
     public Date getTicketDatetimeArrival() { return mtTicketDatetimeArrival; }
     public Date getTicketDatetimeDeparture() { return mtTicketDatetimeDeparture; }
+    public String getCarrierId() { return msCarrierId; }
     public String getCompany() { return msCompany; }
     public String getDriverName() { return msDriverName; }
     public String getVehiclePlate() { return msVehiclePlate; }
@@ -158,6 +162,7 @@ public class SDbWmTicket extends SDbRegistryUser {
         mnTicketId = 0;
         mtTicketDatetimeArrival = null;
         mtTicketDatetimeDeparture = null;
+        msCarrierId = "";
         msCompany = "";
         msDriverName = "";
         msVehiclePlate = "";
@@ -232,6 +237,7 @@ public class SDbWmTicket extends SDbRegistryUser {
             mnTicketId = resultSet.getInt("ticket_id");
             mtTicketDatetimeArrival = resultSet.getTimestamp("ticket_dt_arr");
             mtTicketDatetimeDeparture = resultSet.getTimestamp("ticket_dt_dep");
+            msCarrierId = resultSet.getString("carr_id");
             msCompany = resultSet.getString("company");
             msDriverName = resultSet.getString("driver_name");
             msVehiclePlate = resultSet.getString("vehic_plate");
@@ -292,9 +298,10 @@ public class SDbWmTicket extends SDbRegistryUser {
             
             msSql = "INSERT INTO " + getSqlTable() + " VALUES (" +
                     mnPkWmTicketId + ", " + 
-                    mnTicketId + ", '" + 
-                    mtTicketDatetimeArrival + "', '" + 
-                    mtTicketDatetimeDeparture + "', " + 
+                    mnTicketId + ", " +
+                    "'" + SLibUtils.DbmsDateFormatDatetime.format(mtTicketDatetimeArrival) + "', " +
+                    "'" + SLibUtils.DbmsDateFormatDatetime.format(mtTicketDatetimeDeparture) + "', " + 
+                    "'" + msCarrierId + "', " + 
                     "'" + msCompany + "', " + 
                     "'" + msDriverName + "', " + 
                     "'" + msVehiclePlate + "', " + 
@@ -324,9 +331,10 @@ public class SDbWmTicket extends SDbRegistryUser {
 
             msSql = "UPDATE " + getSqlTable() + " SET " +
                     //"id_wm_ticket = " + mnPkWmTicketId + ", " +
-//                    "ticket_id = " + mnTicketId + ", " +
-                    "ticket_dt_arr = '" + mtTicketDatetimeArrival + "', " +
-                    "ticket_dt_dep = '" + mtTicketDatetimeDeparture + "', " +
+                    "ticket_id = " + mnTicketId + ", " +
+                    "ticket_dt_arr = '" + SLibUtils.DbmsDateFormatDatetime.format(mtTicketDatetimeArrival) + "', " +
+                    "ticket_dt_dep = '" + SLibUtils.DbmsDateFormatDatetime.format(mtTicketDatetimeDeparture) + "', " +
+                    "carr_id = '" + msCarrierId + "', " +
                     "company = '" + msCompany + "', " +
                     "driver_name = '" + msDriverName + "', " +
                     "vehic_plate = '" + msVehiclePlate + "', " +
@@ -366,6 +374,7 @@ public class SDbWmTicket extends SDbRegistryUser {
         registry.setTicketId(this.getTicketId());
         registry.setTicketDatetimeArrival(this.getTicketDatetimeArrival());
         registry.setTicketDatetimeDeparture(this.getTicketDatetimeDeparture());
+        registry.setCarrierId(this.getCarrierId());
         registry.setCompany(this.getCompany());
         registry.setDriverName(this.getDriverName());
         registry.setVehiclePlate(this.getVehiclePlate());

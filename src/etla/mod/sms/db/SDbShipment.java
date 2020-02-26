@@ -21,7 +21,7 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Daniel López, Sergio Flores
+ * @author Daniel López, Sergio Flores, Isabel Servín
  */
 public class SDbShipment extends SDbRegistryUser{
     
@@ -39,14 +39,7 @@ public class SDbShipment extends SDbRegistryUser{
     protected double mdMeters2;
     protected double mdKilograms;
     protected String msComments;
-    protected int mnScaleTicket1;
-    protected Date mtScaleTicket1Datetime_n;
-    protected double mdScaleTicket1Kilograms;
-    protected int mnScaleTicket2;
-    protected Date mtScaleTicket2Datetime_n;
-    protected double mdScaleTicket2Kilograms;
-    protected double mdTareKilograms;
-    protected boolean mbTared;
+    protected int mnTicketId;
     protected boolean mbAnnulled;
     /*
     protected boolean mbDeleted;
@@ -114,10 +107,7 @@ public class SDbShipment extends SDbRegistryUser{
         }
     }
     
-    private boolean checkChangedTared() {
-        return mbTared != mbOriginalTared;
-    }
-        
+      
     private boolean checkChangedAnnulled() {
         return mbAnnulled != mbOriginalAnnulled;
     }
@@ -151,14 +141,7 @@ public class SDbShipment extends SDbRegistryUser{
     public void setMeters2(double d) { mdMeters2 = d; }
     public void setKilograms(double d) { mdKilograms = d; }
     public void setComments(String s) { msComments = s; }
-    public void setScaleTicket1(int n) { mnScaleTicket1 = n; }
-    public void setScaleTicket1Datetime_n(Date t) { mtScaleTicket1Datetime_n = t; }
-    public void setScaleTicket1Kilograms(double d) { mdScaleTicket1Kilograms = d; }
-    public void setScaleTicket2(int n) { mnScaleTicket2 = n; }
-    public void setScaleTicket2Datetime_n(Date t) { mtScaleTicket2Datetime_n = t; }
-    public void setScaleTicket2Kilograms(double d) { mdScaleTicket2Kilograms = d; }
-    public void setTareKilograms(double d) { mdTareKilograms = d; }
-    public void setTared(boolean b) { mbTared = b; }
+    public void setTicketId(int n) { mnTicketId = n; }
     public void setAnnulled(boolean b) { mbAnnulled = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
@@ -191,14 +174,7 @@ public class SDbShipment extends SDbRegistryUser{
     public double getMeters2() { return mdMeters2; }
     public double getKilograms() { return mdKilograms; }
     public String getComments() { return msComments; }
-    public int getScaleTicket1() { return mnScaleTicket1; }
-    public Date getScaleTicket1Datetime_n() { return mtScaleTicket1Datetime_n; }
-    public double getScaleTicket1Kilograms() { return mdScaleTicket1Kilograms; }
-    public int getScaleTicket2() { return mnScaleTicket2; }
-    public Date getScaleTicket2Datetime_n() { return mtScaleTicket2Datetime_n; }
-    public double getScaleTicket2Kilograms() { return mdScaleTicket2Kilograms; }
-    public double getTareKilograms() { return mdTareKilograms; }
-    public boolean isTared() { return mbTared; }
+    public int getTicketId() { return mnTicketId; }
     public boolean isAnnulled() { return mbAnnulled; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
@@ -252,14 +228,7 @@ public class SDbShipment extends SDbRegistryUser{
         mdMeters2 = 0;
         mdKilograms = 0;
         msComments = "";
-        mnScaleTicket1 = 0;
-        mtScaleTicket1Datetime_n = null;
-        mdScaleTicket1Kilograms = 0;
-        mnScaleTicket2 = 0;
-        mtScaleTicket2Datetime_n = null;
-        mdScaleTicket2Kilograms = 0;
-        mdTareKilograms = 0;
-        mbTared = false;
+        mnTicketId = 0;
         mbAnnulled = false;
         mbDeleted = false;
         mbSystem = false;
@@ -342,18 +311,11 @@ public class SDbShipment extends SDbRegistryUser{
             mdMeters2 = resultSet.getDouble("m2");
             mdKilograms = resultSet.getDouble("kg");
             msComments = resultSet.getString("comments");
-            mnScaleTicket1 = resultSet.getInt("scale_tkt_1");
-            mtScaleTicket1Datetime_n = resultSet.getTimestamp("scale_tkt_1_dt_n");
-            mdScaleTicket1Kilograms = resultSet.getDouble("scale_tkt_1_kg");
-            mnScaleTicket2 = resultSet.getInt("scale_tkt_2");
-            mtScaleTicket2Datetime_n = resultSet.getTimestamp("scale_tkt_2_dt_n");
-            mdScaleTicket2Kilograms = resultSet.getDouble("scale_tkt_2_kg");
-            mdTareKilograms = resultSet.getDouble("tare_kg");
-            mbTared = mbOriginalTared = resultSet.getBoolean("b_tared");        //preserve original value
-            mbAnnulled = mbOriginalAnnulled = resultSet.getBoolean("b_ann");    //preserve original value
+            mnTicketId = resultSet.getInt("ticket_id");
+            mbAnnulled = mbOriginalAnnulled = resultSet.getBoolean("b_ann"); // preserve original value
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
-            mnFkShipmentStatusId = mnOriginalFkShipmentStatusId = resultSet.getInt("fk_shipt_st");  //preserve original value
+            mnFkShipmentStatusId = mnOriginalFkShipmentStatusId = resultSet.getInt("fk_shipt_st"); // preserve original value
             mnFkShipmentTypeId = resultSet.getInt("fk_shipt_tp");
             mnFkCargoTypeId = resultSet.getInt("fk_cargo_tp");
             mnFkHandlingTypeId = resultSet.getInt("fk_handg_tp");
@@ -393,7 +355,7 @@ public class SDbShipment extends SDbRegistryUser{
         
         computeTotals();
         
-        //preserve user that changed current shipment status:
+        // preserve user that changed current shipment status:
         if (checkChangedShipmentStatus()) {
             switch (mnFkShipmentStatusId) {
                 case SModSysConsts.SS_SHIPT_ST_REL_TO:
@@ -410,17 +372,12 @@ public class SDbShipment extends SDbRegistryUser{
             }
         }
         
-        //preserve user that changed current tared status:
-        if (mbTared && checkChangedTared()) {
-            mnFkUserTareId = session.getUser().getPkUserId();
-        }
-        
-        //preserve user that changed current annulled status:
+        // preserve user that changed current annulled status:
         if (mbAnnulled && checkChangedAnnulled()) {
             mnFkUserAnnulId = session.getUser().getPkUserId();
         }
         
-        //set non-applicable user where required:
+        // set non-applicable user where required:
         if (mnFkUserTareId == SLibConsts.UNDEFINED) {
             mnFkUserTareId = SUtilConsts.USR_NA_ID;
         }
@@ -454,14 +411,7 @@ public class SDbShipment extends SDbRegistryUser{
                 SLibUtils.round(mdMeters2, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " + 
                 SLibUtils.round(mdKilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " + 
                 "'" + msComments + "', " + 
-                mnScaleTicket1 + ", " + 
-                (mtScaleTicket1Datetime_n == null ? "NULL" : "'" + SLibUtils.DbmsDateFormatDatetime.format(mtScaleTicket1Datetime_n) + "'") + ", " + 
-                SLibUtils.round(mdScaleTicket1Kilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " + 
-                mnScaleTicket2 + ", " + 
-                (mtScaleTicket2Datetime_n == null ? "NULL" : "'" + SLibUtils.DbmsDateFormatDatetime.format(mtScaleTicket2Datetime_n) + "'") + ", " + 
-                SLibUtils.round(mdScaleTicket2Kilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " + 
-                mdTareKilograms + ", " + 
-                (mbTared ? 1 : 0) + ", " + 
+                mnTicketId + ", " + 
                 (mbAnnulled ? 1 : 0) + ", " + 
                 (mbDeleted ? 1 : 0) + ", " + 
                 (mbSystem ? 1 : 0) + ", " + 
@@ -500,14 +450,7 @@ public class SDbShipment extends SDbRegistryUser{
                 "m2 = " + SLibUtils.round(mdMeters2, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " +
                 "kg = " + SLibUtils.round(mdKilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " +   
                 "comments = '" + msComments + "', " +
-                "scale_tkt_1 = " + mnScaleTicket1 + ", " +
-                "scale_tkt_1_dt_n = " + (mtScaleTicket1Datetime_n == null ? "NULL" : "'" + SLibUtils.DbmsDateFormatDatetime.format(mtScaleTicket1Datetime_n) + "'") + ", " +
-                "scale_tkt_1_kg = " + SLibUtils.round(mdScaleTicket1Kilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " +
-                "scale_tkt_2 = " + mnScaleTicket2 + ", " +
-                "scale_tkt_2_dt_n = " + (mtScaleTicket2Datetime_n == null ? "NULL" : "'" + SLibUtils.DbmsDateFormatDatetime.format(mtScaleTicket2Datetime_n) + "'") + ", " +
-                "scale_tkt_2_kg = " + SLibUtils.round(mdScaleTicket2Kilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " +
-                "tare_kg = " + mdTareKilograms + ", " +
-                "b_tared = " + (mbTared ? 1 : 0) + ", " +
+                "ticket_id = " + mnTicketId + ", " +
                 "b_ann = " + (mbAnnulled ? 1 : 0) + ", " +
                 "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                 "b_sys = " + (mbSystem ? 1 : 0) + ", " +
@@ -523,7 +466,6 @@ public class SDbShipment extends SDbRegistryUser{
                 "fk_usr_ann = " + mnFkUserAnnulId + ", " +
                 //"fk_usr_ins = " + mnFkUserInsertId + ", " +
                 "fk_usr_upd = " + mnFkUserUpdateId + ", " +
-                (mbTared && checkChangedTared() ? "ts_usr_tare = NOW(), " : "") +
                 (mnFkShipmentStatusId == SModSysConsts.SS_SHIPT_ST_REL && checkChangedShipmentStatus() ? "ts_usr_release = NOW(), " : "") +
                 (mnFkShipmentStatusId == SModSysConsts.SS_SHIPT_ST_ACC && checkChangedShipmentStatus() ? "ts_usr_accept = NOW(), " : "") +
                 (mbAnnulled && checkChangedAnnulled() ? "ts_usr_ann = NOW(), " : "") +
@@ -570,14 +512,7 @@ public class SDbShipment extends SDbRegistryUser{
         registry.setMeters2(this.getMeters2());
         registry.setKilograms(this.getKilograms());
         registry.setComments(this.getComments());
-        registry.setScaleTicket1(this.getScaleTicket1());
-        registry.setScaleTicket1Datetime_n(this.getScaleTicket1Datetime_n());
-        registry.setScaleTicket1Kilograms(this.getScaleTicket1Kilograms());
-        registry.setScaleTicket2(this.getScaleTicket2());
-        registry.setScaleTicket2Datetime_n(this.getScaleTicket2Datetime_n());
-        registry.setScaleTicket2Kilograms(this.getScaleTicket2Kilograms());
-        registry.setTareKilograms(this.getTareKilograms());
-        registry.setTared(this.isTared());
+        registry.setTicketId(this.getTicketId());
         registry.setAnnulled(this.isAnnulled());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());

@@ -8,71 +8,37 @@ package etla.mod.sms.db;
 import erp.data.SDataConstantsSys;
 import etla.mod.SModConsts;
 import etla.mod.SModSysConsts;
-import etla.mod.cfg.db.SDbConfig;
-import etla.mod.etl.db.SEtlConsts;
-import etla.mod.etl.db.SEtlProcess;
-import sa.lib.gui.SGuiSession;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.Date;
-import sa.gui.util.SUtilConsts;
 import sa.lib.SLibUtils;
+import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Alfredo Pérez, Cesar Orozco, Sergio Flores
+ * @author Alfredo Pérez, Cesar Orozco, Sergio Flores, Isabel Servín
  */
 public class SSmsEtl {
 
     private final SGuiSession moSession;
-    private Connection moConnectionSiie;
-    private Connection moConnectionRevuelta;
+    private final Connection moConnectionSiie;
+    private final Connection moConnectionRevuelta;
     private SDbErpDocEtlLog moLastErpDocEtlLog;
     private Date mtEtlStart;
     private Date mtMaxDocTsEdit;
 
     /**
      * Creates an object to compute SMS ETL.
-     * @param session
+     * @param session Current user session.
      * @throws Exception 
      */
-    public SSmsEtl(SGuiSession session) throws Exception {
+    public SSmsEtl(final SGuiSession session) throws Exception {
         moSession = session;
-        moConnectionSiie = connectToSiie();
-        moConnectionRevuelta = connectToRevuelta();
+        moConnectionSiie = SSmsUtils.connectToSiie(moSession);
+        moConnectionRevuelta = SSmsUtils.connectToRevuelta(moSession);
         moLastErpDocEtlLog = null;
         mtEtlStart = null;
         mtMaxDocTsEdit = null;
-    }
-
-    /**
-     * Creates Revuelta DB connection.
-     * @throws Exception
-     */
-    private Connection connectToRevuelta() throws Exception {
-        SDbConfigSms configSms = (SDbConfigSms) moSession.readRegistry(SModConsts.S_CFG, new int[] { SUtilConsts.BPR_CO_ID });
-
-        return SEtlProcess.createConnection(SEtlConsts.DB_SYBASE,
-                configSms.getRevueltaHost(),
-                configSms.getRevueltaPort(),
-                configSms.getRevueltaName(),
-                configSms.getRevueltaUser(),
-                configSms.getRevueltaPassword());
-    }
-
-    /**
-     * Creates SIIE DB connection.
-     * @throws Exception
-     */
-    private Connection connectToSiie() throws Exception {
-        SDbConfig config = (SDbConfig) moSession.readRegistry(SModConsts.C_CFG, new int[] { SUtilConsts.BPR_CO_ID });
-
-        return SEtlProcess.createConnection(SEtlConsts.DB_MYSQL,
-                config.getSiieHost(),
-                config.getSiiePort(),
-                config.getSiieName(),
-                config.getSiieUser(),
-                config.getSiiePassword());
     }
 
     /**
@@ -152,103 +118,134 @@ public class SSmsEtl {
 
     /**
      * Finds own ID for user (company) from ID in Revuelta.
-     * @param userId
-     * @return Own ID.
+     * @param userId Revuelta ID of weighing machine user.
+     * @return Own ID of weighing machine user.
      * @throws Exception
      */
-    private int searchWmUserId(String userId) throws Exception {
-        int id = 0;
+    private int searchWmUserId(final String userId) throws Exception {
+        int wmUserId = 0;
+        
         String sql = "SELECT id_wm_user "
                 + "FROM " + SModConsts.TablesMap.get(SModConsts.SU_WM_USER) + " "
                 + "WHERE user_id = '" + userId + "' "
                 + "ORDER BY id_wm_user";
-        ResultSet resultSet = moSession.getStatement().executeQuery(sql);
-        if (resultSet.next()) {
-            id = resultSet.getInt(1);
+        
+        try (ResultSet resultSet = moSession.getStatement().executeQuery(sql)) {
+            if (resultSet.next()) {
+                wmUserId = resultSet.getInt(1);
+            }
         }
-        return id;
+        
+        return wmUserId;
     }
 
     /**
      * Finds own ID for item (product) from ID in Revuelta.
-     * @param itemId
-     * @return Own ID.
+     * @param itemId Revuleta ID of item.
+     * @return Own ID of item.
      * @throws Exception
      */
-    private int searchWmItemId(String itemId) throws Exception {
-        int id = 0;
+    private int searchWmItemId(final String itemId) throws Exception {
+        int wmItemId = 0;
+        
         String sql = "SELECT id_wm_item "
                 + "FROM " + SModConsts.TablesMap.get(SModConsts.SU_WM_ITEM) + " "
                 + "WHERE prod_id = '" + itemId + "' "
                 + "ORDER BY id_wm_item";
-        ResultSet resultSet = moSession.getStatement().executeQuery(sql);
-        if (resultSet.next()) {
-            id = resultSet.getInt(1);
+        
+        try (ResultSet resultSet = moSession.getStatement().executeQuery(sql)) {
+            if (resultSet.next()) {
+                wmItemId = resultSet.getInt(1);
+            }
         }
-        return id;
+        
+        return wmItemId;
     }
 
     /**
      * Imports weighing machine tickets from Revuelta DB.
+     * @param ticketId Optional Revuelta ID of ticket to import. Otherwise (when empty or "0") all pending Revuelta tickets.
      * @throws Exception 
      */
-    private void importRevueltaWmTickets() throws Exception {
-        String sql = "SELECT Pes_ID, pro.Pro_ID, Pes_FecHorPri, Pes_FecHorSeg, "
-                + "Emp_Nombre, Pes_Chofer, Pes_Placas, "
-                + "Pes_PesoPri, Pes_PesoSeg, "
-                + "Pes_FecHor, pe.Pro_ID, Usb_ID "
-                + "FROM dba.Pesadas as pe "
-                + "INNER JOIN dba.Productos AS pro ON pe.Pro_ID = pro.Pro_ID "
-                + "WHERE Pes_Completo = 1 AND "
-                + "Pes_FecHor > '" + SLibUtils.DbmsDateFormatDate.format(moLastErpDocEtlLog.getTsBaseNextEtl()) + "' "
-                + "ORDER BY Pes_ID";
-        ResultSet resultSetRev = moConnectionRevuelta.createStatement().executeQuery(sql);
-        while (resultSetRev.next()) {
-            SDbWmTicket wmTicket = new SDbWmTicket();
+    public void importRevueltaWmTickets(final String ticketId) throws Exception {
+        String sqlRev;
+        if (ticketId.isEmpty() || ticketId.equals("0")) {
+            // Si el argumento ticektId está vacío o es 0 se hace un importado masivo desde la ultima fecha en la que se realizó:
+            sqlRev = "SELECT Tra_ID, Pes_ID, pro.Pro_ID, Pes_FecHorPri, Pes_FecHorSeg, "
+                    + "Emp_Nombre, Pes_Chofer, Pes_Placas, "
+                    + "Pes_PesoPri, Pes_PesoSeg, "
+                    + "Pes_FecHor, pe.Pro_ID, Usb_ID, Pes_Completo "
+                    + "FROM dba.Pesadas as pe "
+                    + "INNER JOIN dba.Productos AS pro ON pe.Pro_ID = pro.Pro_ID "
+                    + "WHERE Pes_Completo = 1 AND "
+                    + "Pes_FecHor > '" + SLibUtils.DbmsDateFormatDate.format(moLastErpDocEtlLog.getTsBaseNextEtl()) + "' "
+                    + "ORDER BY Pes_ID";
+        }
+        else {
+            // Si el ticketId es diferente de 0, significa que solo se va a importar el registro con ese ID:
+            sqlRev = "SELECT TOP 1 * "
+                    + "FROM dba.Pesadas "
+                    + "WHERE Pes_ID = " + ticketId;
+        }
+        
+        try (ResultSet resultSetRev = moConnectionRevuelta.createStatement().executeQuery(sqlRev)) {
+            while (resultSetRev.next()) {
+                
+                // Permitir visibilidad del progreso de importación de boletos Revuelta:
+                System.out.println("Importing Revuelta ticket " + resultSetRev.getString("Pes_ID") + ", " + resultSetRev.getString("Pes_FecHor") + "...");
 
-            sql = "SELECT id_wm_ticket "
-                    + "FROM " + SModConsts.TablesMap.get(SModConsts.S_WM_TICKET) + " "
-                    + "WHERE ticket_id = " + resultSetRev.getInt("Pes_ID") + " "
-                    + "ORDER BY id_wm_ticket";
-            ResultSet resultSet = moSession.getStatement().executeQuery(sql);
-            if (resultSet.next()) {
-                wmTicket.read(moSession, new int[] {resultSet.getInt(1) });
+                // Importar boletos Revuelta:
+                
+                // Intentar leer el boleto Revuelta previamente importado para actualizarlo:
+                int wmTicketId = SSmsUtils.getWmTicketId(moSession, resultSetRev.getInt("Pes_ID"));
+                
+                SDbWmTicket wmTicket = new SDbWmTicket();
+                
+                if (wmTicketId != 0) {
+                    wmTicket.read(moSession, new int[] { wmTicketId });
+                }
+                
+                // Crear o actualizar boleto Revuelta:
+                //wmTicket.setPkWmTicketId(...);
+                wmTicket.setTicketId(resultSetRev.getInt("Pes_ID"));
+                wmTicket.setTicketDatetimeArrival(resultSetRev.getDate("Pes_FecHorPri"));
+                wmTicket.setTicketDatetimeDeparture(resultSetRev.getDate("Pes_FecHorSeg"));
+                wmTicket.setCarrierId(resultSetRev.getString("Tra_ID"));
+                wmTicket.setCompany(SLibUtils.textToSql(resultSetRev.getString("Emp_Nombre")));
+                wmTicket.setDriverName(SLibUtils.textToSql(resultSetRev.getString("Pes_Chofer")));
+                wmTicket.setVehiclePlate(SLibUtils.textToSql(resultSetRev.getString("Pes_Placas")));
+                wmTicket.setWeightArrival(resultSetRev.getDouble("Pes_PesoPri"));
+                wmTicket.setWeightDeparture(resultSetRev.getDouble("Pes_PesoSeg"));
+                //wmTicket.setWeight(...);
+                wmTicket.setWmInfoArrival(true);
+                wmTicket.setWmInfoDeparture(true);
+                if (resultSetRev.getInt("Pes_Completo") == 1) {
+                    wmTicket.setTared(true);
+                    wmTicket.setAuxJustTared(true);
+                }
+                else {
+                    wmTicket.setTared(false);
+                    wmTicket.setAuxJustTared(false);
+                }
+                wmTicket.setClosed(false);
+                //wmTicket.setDeleted(...);
+                wmTicket.setSystem(true);
+                boolean isTicketTypeIn = resultSetRev.getDouble("Pes_PesoPri") >= resultSetRev.getDouble("Pes_PesoSeg");
+                wmTicket.setFkWmTicketTypeId(isTicketTypeIn ? SModSysConsts.SS_WM_TICKET_TP_IN : SModSysConsts.SS_WM_TICKET_TP_OUT);
+                wmTicket.setFkWmItemId(searchWmItemId(resultSetRev.getString("Pro_ID")));
+                wmTicket.setFkWmUserId(searchWmUserId(resultSetRev.getString("Usb_ID")));
+                /*
+                wmTicket.setFkUserTareId();
+                wmTicket.setFkUserClosedId();
+                wmTicket.setFkUserInsertId();
+                wmTicket.setFkUserUpdateId();
+                wmTicket.setTsUserTare();
+                wmTicket.setTsUserClosed();
+                wmTicket.setTsUserInsert();
+                wmTicket.setTsUserUpdate();
+                */
+                wmTicket.save(moSession);
             }
-
-            //wmTicket.setPkWmTicketId();
-            wmTicket.setTicketId(resultSetRev.getInt("Pes_id"));
-            wmTicket.setTicketDatetimeArrival(resultSetRev.getDate("Pes_FecHorPri"));
-            wmTicket.setTicketDatetimeDeparture(resultSetRev.getDate("Pes_FecHorSeg"));
-            wmTicket.setCompany(resultSetRev.getString("Emp_nombre"));
-            wmTicket.setDriverName(resultSetRev.getString("Pes_Chofer"));
-            wmTicket.setVehiclePlate(resultSetRev.getString("Pes_Placas"));
-            wmTicket.setWeightArrival(resultSetRev.getDouble("Pes_PesoPri"));
-            wmTicket.setWeightDeparture(resultSetRev.getDouble("Pes_PesoSeg"));
-            //wmTicket.setWeight();
-            wmTicket.setWmInfoArrival(true);
-            wmTicket.setWmInfoDeparture(true);
-            wmTicket.setTared(true);
-            wmTicket.setClosed(false);
-            //wmTicket.setDeleted();
-            wmTicket.setSystem(true);
-            boolean isIn = resultSetRev.getDouble("Pes_PesoPri") >= resultSetRev.getDouble("Pes_PesoSeg");
-            wmTicket.setFkWmTicketTypeId(isIn ? SModSysConsts.SS_WM_TICKET_TP_IN : SModSysConsts.SS_WM_TICKET_TP_OUT);
-            wmTicket.setFkWmItemId(searchWmItemId(resultSetRev.getString("Pro_ID")));
-            wmTicket.setFkWmUserId(searchWmUserId(resultSetRev.getString("Usb_ID")));
-            /*
-            wmTicket.setFkUserTareId();
-            wmTicket.setFkUserClosedId();
-            wmTicket.setFkUserInsertId();
-            wmTicket.setFkUserUpdateId();
-            wmTicket.setTsUserTare();
-            wmTicket.setTsUserClosed();
-            wmTicket.setTsUserInsert();
-            wmTicket.setTsUserUpdate();
-            */
-
-            wmTicket.setAuxJustTared(true);
-
-            wmTicket.save(moSession);
         }
     }
 
@@ -274,14 +271,15 @@ public class SSmsEtl {
         ResultSet resultSetSiie = moConnectionSiie.createStatement().executeQuery(sql);
         while (resultSetSiie.next()) {
             SDbErpDoc erpDoc = new SDbErpDoc();
-
+            System.out.println("importing " + resultSetSiie.getString("ts_edit")+ " SIIE Docs");
             sql = "SELECT id_erp_doc "
                     + "FROM " + SModConsts.TablesMap.get(SModConsts.S_ERP_DOC) + " "
                     + "WHERE erp_year_id = " + resultSetSiie.getInt("d.id_year") + " AND erp_doc_id = " + resultSetSiie.getInt("d.id_doc") + " "
                     + "ORDER BY id_erp_doc";
-            ResultSet resultSet = moSession.getStatement().executeQuery(sql);
-            if (resultSet.next()) {
-                erpDoc.read(moSession, new int[] { resultSet.getInt(1) });
+            try (ResultSet resultSet = moSession.getStatement().executeQuery(sql)) {
+                if (resultSet.next()) {
+                    erpDoc.read(moSession, new int[] { resultSet.getInt(1) });
+                }
             }
             //erpDoc.setPkErpDocId();
             erpDoc.setErpYearId(resultSetSiie.getInt("d.id_year"));
@@ -323,9 +321,11 @@ public class SSmsEtl {
     private void obtainLastErpDocEtlLog() throws Exception {
         String sql = "SELECT MAX(id_erp_doc_etl_log) "
                 + "FROM " + SModConsts.TablesMap.get(SModConsts.S_ERP_DOC_ETL_LOG);
-        ResultSet resultSet = moSession.getStatement().executeQuery(sql);
-        if (resultSet.next()) {
-            moLastErpDocEtlLog = (SDbErpDocEtlLog) moSession.readRegistry(SModConsts.S_ERP_DOC_ETL_LOG, new int[] { resultSet.getInt(1) });
+        
+        try (ResultSet resultSet = moSession.getStatement().executeQuery(sql)) {
+            if (resultSet.next()) {
+                moLastErpDocEtlLog = (SDbErpDocEtlLog) moSession.readRegistry(SModConsts.S_ERP_DOC_ETL_LOG, new int[] { resultSet.getInt(1) });
+            }
         }
     }
 
@@ -363,7 +363,7 @@ public class SSmsEtl {
         obtainLastErpDocEtlLog(); // must be invoked at the begining!
         importRevueltaWmUsers();
         importRevueltaWmItems();
-        importRevueltaWmTickets();
+        importRevueltaWmTickets("");
         importSiieDocs();
         createErpDocEtlLog(); // must be invoked at the end!
     }

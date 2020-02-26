@@ -19,11 +19,12 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Daniel López
+ * @author Daniel López, Isabel Servín
  */
 public class SDbShipper extends SDbRegistryUser {
     
     protected int mnPkShipperId;
+    protected String msCarrierId;
     protected String msCode;
     protected String msName;
     protected String msMail;
@@ -50,6 +51,7 @@ public class SDbShipper extends SDbRegistryUser {
      */
     
     public void setPkShipperId(int n) { mnPkShipperId = n; }
+    public void setCarrierId(String s) { msCarrierId = s; }
     public void setCode(String s) { msCode = s; }
     public void setName(String s) { msName = s; }
     public void setMail(String s) { msMail = s; }
@@ -62,6 +64,7 @@ public class SDbShipper extends SDbRegistryUser {
     public void setTsUserUpdate(Date t) { mtTsUserUpdate = t; }
     
     public int getPkShipperId() { return mnPkShipperId; }
+    public String getCarrierId() { return msCarrierId; }
     public String getCode() { return msCode; }
     public String getName() { return msName; }
     public String getMail() { return msMail; }
@@ -97,6 +100,7 @@ public class SDbShipper extends SDbRegistryUser {
         initBaseRegistry();
         
         mnPkShipperId = 0;
+        msCarrierId = "";
         msCode = "";
         msName = "";
         msMail = "";
@@ -154,6 +158,7 @@ public class SDbShipper extends SDbRegistryUser {
         }
         else {
             mnPkShipperId = resultSet.getInt("id_shipper");
+            msCarrierId = resultSet.getString("carr_id");
             msCode = resultSet.getString("code");
             msName = resultSet.getString("name");
             msMail = resultSet.getString("mail");
@@ -213,6 +218,7 @@ public class SDbShipper extends SDbRegistryUser {
             
             msSql = "INSERT INTO " + getSqlTable() + " VALUES (" +
                 mnPkShipperId + ", " + 
+                "'" + msCarrierId + "', " + 
                 "'" + msCode + "', " + 
                 "'" + msName + "', " + 
                 "'" + msMail + "', " + 
@@ -230,6 +236,7 @@ public class SDbShipper extends SDbRegistryUser {
             
             msSql = "UPDATE " + getSqlTable() + " SET " +
                 //"id_shipper = " + mnPkShipperId + ", " +
+                "carr_id = '" + msCarrierId + "', " +
                 "code = '" + msCode + "', " +
                 "name = '" + msName + "', " +
                 "mail = '" + msMail + "', " +
@@ -254,6 +261,7 @@ public class SDbShipper extends SDbRegistryUser {
         SDbShipper  registry = new SDbShipper();
         
         registry.setPkShipperId(this.getPkShipperId());
+        registry.setCarrierId(this.getCarrierId());
         registry.setCode(this.getCode());
         registry.setName(this.getName());
         registry.setMail(this.getMail());

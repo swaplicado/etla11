@@ -10,6 +10,7 @@ import etla.mod.sms.db.SDbCargoType;
 import etla.mod.sms.db.SDbComment;
 import etla.mod.sms.db.SDbConfigSms;
 import etla.mod.sms.db.SDbDestination;
+import etla.mod.sms.db.SDbErpDoc;
 import etla.mod.sms.db.SDbErpDocEtlLog;
 import etla.mod.sms.db.SDbHandlingType;
 import etla.mod.sms.db.SDbShipment;
@@ -17,6 +18,8 @@ import etla.mod.sms.db.SDbShipmentRow;
 import etla.mod.sms.db.SDbShipmentType;
 import etla.mod.sms.db.SDbShipper;
 import etla.mod.sms.db.SDbVehicleType;
+import etla.mod.sms.db.SDbWmItem;
+import etla.mod.sms.db.SDbWmTicket;
 import etla.mod.sms.db.SDbWmUser;
 import etla.mod.sms.form.SFormShipment;
 import etla.mod.sms.form.SFormShipper;
@@ -100,22 +103,35 @@ public class SModModuleSms extends SGuiModule {
             case SModConsts.SU_DESTIN:
                 registry = new SDbDestination();
                 break;
+            case SModConsts.SU_WM_ITEM:
+                registry = new SDbWmItem();
+                break;
+            case SModConsts.SU_WM_USER:
+                registry = new SDbWmUser();
+                break;
+            case SModConsts.S_CFG:
+                registry = new SDbConfigSms();
+                break;
             case SModConsts.S_SHIPT:
                 registry = new SDbShipment();
                 break;
             case SModConsts.S_SHIPT_ROW:
                 registry = new SDbShipmentRow();
                 break;
-            case SModConsts.SU_WM_USER:
-                registry = new SDbWmUser();
-                break;
             case SModConsts.S_EVIDENCE:
+                // Not supported yet!
                 break;
-            case SModConsts.S_CFG:
-                registry = new SDbConfigSms();
+            case SModConsts.S_ERP_DOC:
+                registry = new SDbErpDoc();
                 break;
             case SModConsts.S_ERP_DOC_ETL_LOG:
                 registry = new SDbErpDocEtlLog();
+                break;
+            case SModConsts.S_WM_TICKET:
+                registry = new SDbWmTicket();
+                break;
+            case SModConsts.S_WM_TICKET_LINK:
+                // Not supported yet!
                 break;
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
