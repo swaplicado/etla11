@@ -1,4 +1,11 @@
 ================================================================================
+2020-03-13, 1.1 004.1
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Inserción de un nuevo parámetro en el ReportMailer para realizar una conexion a la base de datos de Revuelta con la configuración de SOM.
+2) Inserción de un nuevo parámetro en el ReportMailerWeekly para realizar una conexion a la base de datos de Revuelta con la configuración de SOM.
+
+================================================================================
 2020-02-26, 1.1 004.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

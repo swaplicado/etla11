@@ -18,7 +18,7 @@ import sa.lib.SLibUtils;
  *
  * @author Isabel Servín
  */
-public abstract class SReportWeeklyHtml {
+public abstract class SReportMailerWeeklyHtml {
 
     public static String generateReportHtml(final Connection connection, final String reportType, final String mailSubject) throws Exception {
         // Define inicio y fin del reporte (hoy a menos 3 años)
@@ -93,11 +93,12 @@ public abstract class SReportWeeklyHtml {
         
         html += "<body>\n";
         html += "<h1>" + SLibUtils.textToHtml(mailSubject) + "</h1>\n";
+        html += "Hora de corte: 12:00 hr" + "\n";
         
         
         // Consulta de productos
         Statement statement = connection.createStatement();
-        String queryPro = "SELECT Pro_ID, Pro_Nombre FROM dba.Productos";
+        String queryPro = "SELECT Pro_ID, Pro_Nombre FROM dba.Productos ORDER BY Pro_Nombre";
         ResultSet resultSetPro = statement.executeQuery(queryPro);
         Statement statementUsb = connection.createStatement();
         
@@ -106,7 +107,7 @@ public abstract class SReportWeeklyHtml {
             String sqlxPro = "SELECT Pro_ID, YEAR(Pes_FecHorSeg) as Anio, MONTH(Pes_FecHorSeg) as Mes, SUM(Pes_Neto) as Total "
                 + "FROM dba.Pesadas "
                 + "WHERE YEAR(Pes_FecHorSeg) >= YEAR(" + SLibUtils.DbmsDateFormatDate.format(ancestorYear) + ") "
-                + "AND Pes_PesoPri - Pes_PesoSeg " + (reportType.equals(SReportWeeklyMailer.REP_TYPE_IN) ? ">" : "<") + " 0 "
+                + "AND Pes_PesoPri - Pes_PesoSeg " + (reportType.equals(SReportMailerWeekly.REP_TYPE_IN) ? ">" : "<") + " 0 "
                 + "AND Pro_ID = '" + resultSetPro.getString(idPro) + "' "
                 + "GROUP BY Pro_ID, Anio, Mes "
                 + "ORDER BY Mes , Anio DESC";

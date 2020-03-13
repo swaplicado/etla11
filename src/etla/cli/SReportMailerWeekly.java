@@ -39,15 +39,13 @@ import som.mod.som.db.SSomUtils;
  *
  * @author Isabel Servín
  */
-public class SReportMailer {
+public class SReportMailerWeekly {
     
     public static final String SYS_TYPE_ETL = "ETL";
     public static final String SYS_TYPE_SOM = "SOM";
     
-    public static final String REP_TYPE_IN_P = "EP";
-    public static final String REP_TYPE_IN_PA = "EPA";
-    public static final String REP_TYPE_OUT_P = "SP";
-    public static final String REP_TYPE_OUT_PA = "SPA";
+    public static final String REP_TYPE_IN = "E";
+    public static final String REP_TYPE_OUT = "S";
     
     private static final int ARG_SYS_TYPE = 0;
     private static final int ARG_REP_TYPE = 1;
@@ -57,21 +55,18 @@ public class SReportMailer {
     private static final String DEF_MAIL_BCC = "floresgtz@hotmail.com";
     private static final HashMap<String, String> ReportTypesMap = new HashMap<>();
     
-    private final static Logger LOGGER = Logger.getLogger("mailer.SReportMailer");
+    private final static Logger LOGGER = Logger.getLogger("mailer.SReportWeeklyMailer");
     
     static {
-        ReportTypesMap.put(REP_TYPE_IN_P, "Entradas");
-        ReportTypesMap.put(REP_TYPE_IN_PA, "Entradas");
-        ReportTypesMap.put(REP_TYPE_OUT_P, "Salidas");
-        ReportTypesMap.put(REP_TYPE_OUT_PA, "Salidas");
+        ReportTypesMap.put(REP_TYPE_IN, "Entradas");
+        ReportTypesMap.put(REP_TYPE_OUT, "Salidas");
     }
 
     /**
      * @param args Los argumentos de la interfaz de línea de comandos (CLI).
      * Argumentos esperados:
      * 1: Tipo de sistema quien convoca al reporte, puede ser ETL o SOM
-     * 2: Tipo de reporte indicado mediante una letra mayúscula: EP para entradas por productos, EPA para entradas por producto y asociado de negocio, 
-     *      SP para salidas por producto y SPA para salidas por producto y asociado de negocio.
+     * 2: Tipo de reporte indicado mediante una letra mayúscula: E para entradas y S para salidas.
      * 3: Buzones correo-e destinatarios (TO) (separados con punto y coma, sin espacios en blanco entre ellos, obviamente.)
      * 4: Buzones correo-e de copia oculta (BCC) (separados con punto y coma, sin espacios en blanco entre ellos, obviamente.)
      */
@@ -79,8 +74,8 @@ public class SReportMailer {
         try {
             // Definir los argumentos del programa:
             
-            String systemType = SYS_TYPE_ETL;
-            String reportType = REP_TYPE_IN_PA;
+            String systemType = SYS_TYPE_SOM;
+            String reportType = REP_TYPE_OUT;
             String mailTo = DEF_MAIL_TO;
             String mailBcc = DEF_MAIL_BCC;
             
@@ -97,13 +92,13 @@ public class SReportMailer {
                 mailBcc = args[ARG_MAIL_BCC];
             }
             
-            // Creacion de parámetros para la bitácora de erroes
+            // Creacion de parametros para la bitacora de erroes
             
             /*  Con el manejador de archivo, indicamos el archivo donde se mandaran los logs
                 El segundo argumento controla si se sobre escribe el archivo o se agregan los logs al final
                 Pase un true para agregar al final, false para sobre escribir todo el archivo
             */
-            Handler fileHandler = new FileHandler("mailer.log", true);
+            Handler fileHandler = new FileHandler("mailerWeekly.log", true);
             SimpleFormatter simpleFormatter = new SimpleFormatter();
             fileHandler.setFormatter(simpleFormatter);
             LOGGER.addHandler(fileHandler);
@@ -141,7 +136,7 @@ public class SReportMailer {
             int result = database.connect(
                     (String) configXml.getAttribute(SUtilConfigXml.ATT_DB_HOST).getValue(),
                     (String) configXml.getAttribute(SUtilConfigXml.ATT_DB_PORT).getValue(),
-                    bd, 
+                    bd, // TODO: oportunidad de mejora al parametrizar esta constante
                     (String) configXml.getAttribute(SUtilConfigXml.ATT_USR_NAME).getValue(),
                     (String) configXml.getAttribute(SUtilConfigXml.ATT_USR_PSWD).getValue());
 
@@ -157,7 +152,8 @@ public class SReportMailer {
             Connection connection = null;
             switch (systemType) {
                 case SYS_TYPE_ETL:
-                    // Leer configuración del módulo de embarques ETLA:
+                // Leer configuración del módulo de embarques ETLA:
+
                     SDbConfigSms configSms = new SDbConfigSms();
                     configSms.read(session, new int[] { 1 });
 
@@ -181,11 +177,12 @@ public class SReportMailer {
             
             // Generar el asunto del correo-e:
             
-            String mailSubject = "Informe " + ReportTypesMap.get(reportType) + " Báscula " + SLibUtils.DateFormatDate.format(new Date());
+            String mailSubject = "Informe Semanal " + ReportTypesMap.get(reportType) + " Báscula al " + SLibUtils.DateFormatDate.format(new Date());
 
             // Generar el cuerpo del correo-e en formato HTML:
 
-            String mailBody = SReportHtml.generateReportHtml(connection, reportType, mailSubject);
+            String mailBody = SReportMailerWeeklyHtml.generateReportHtml(connection, reportType, mailSubject);
+            
             
             // Preparar los destinatarios del correo-e:
             
@@ -203,8 +200,8 @@ public class SReportMailer {
             String mailPassword = "";
             
             switch (systemType) {
-                case SYS_TYPE_SOM:
-                    // Leer configuración de ETLA:
+                case SYS_TYPE_ETL:
+                // Leer configuración de ETLA:
                     SDbConfig config = new SDbConfig();
                     config.read(session, new int[] { 1 });
                     mailHost = config.getMailHost();
@@ -215,8 +212,8 @@ public class SReportMailer {
                     mailUser = config.getMailUser();
                     mailPassword = config.getMailPassword();
                     break;
-                    
-                case SYS_TYPE_ETL:
+                
+                case SYS_TYPE_SOM:
                     // Leer la configuración de SOM:
                     SDbCompany company = new SDbCompany();
                     company.read(session, new int[] { 1 });
@@ -231,6 +228,7 @@ public class SReportMailer {
                     
                 default:
             }
+            
             
             // Crear y enviar correo-e:
             
