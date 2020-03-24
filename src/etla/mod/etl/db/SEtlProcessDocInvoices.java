@@ -827,6 +827,44 @@ public class SEtlProcessDocInvoices {
                     
                     dataDps.getDbmsDpsNotes().add(dataDpsNotes);
                     
+                    if (dataDps.getFkCurrencyId() != erp.mod.SModSysConsts.CFGU_CUR_MXN) {
+                        String cur = "";
+                        SDataDpsNotes dataDpsNotesCur = new SDataDpsNotes();
+                        
+                        switch (dataDps.getFkCurrencyId()) {
+                            case erp.mod.SModSysConsts.CFGU_CUR_USD:
+                                cur = "DÓLARES ESTADOUNIDENSES";
+                                break;
+                            case erp.mod.SModSysConsts.CFGU_CUR_EUR:
+                                cur = "EUROS";
+                                break;
+                            default:
+                                cur = "MONEDA EXTRANJERA";
+                        }
+                        
+                        String notes = "ESTA FACTURA SE PODRÁ LIQUIDAR EN " + cur + " O "
+                                + "EN PESOS MEXICANOS AL TIPO DE CAMBIO QUE ESTÉ VIGENTE EL DÍA EN QUE SE LIQUIDE.";
+
+                        //dataDpsNotes.setPkYearId(...);    // set when saved
+                        //dataDpsNotes.setPkDocId(...);     // set when saved
+                        //dataDpsNotes.setPkNotesId(...);   // set when saved
+                        dataDpsNotesCur.setNotes(notes);
+                        //dataDpsNotes.setCfdComplementDisposition(...);
+                        //dataDpsNotes.setCfdComplementRule(...);
+                        dataDpsNotesCur.setIsAllDocs(true);
+                        dataDpsNotesCur.setIsPrintable(true);
+                        //dataDpsNotes.setIsCfdComplement(...);
+                        dataDpsNotesCur.setIsDeleted(false);
+                        dataDpsNotesCur.setFkUserNewId(((SDbUser) session.getUser()).getDesUserId());
+                        dataDpsNotesCur.setFkUserEditId(SDataConstantsSys.USRX_USER_NA);
+                        dataDpsNotesCur.setFkUserDeleteId(SDataConstantsSys.USRX_USER_NA);
+                        //dataDpsNotes.setUserNewTs(...);
+                        //dataDpsNotes.setUserEditTs(...);
+                        //dataDpsNotes.setUserDeleteTs(...);
+
+                        dataDps.getDbmsDpsNotes().add(dataDpsNotesCur);
+                    }
+                    
                     for (SDbInvoiceRow row : dbInvoice.getChildRows()) {
                         // Obtain entry item and check default SIIE unit (MSM):
                         
