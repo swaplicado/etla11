@@ -74,7 +74,7 @@ public class SReportMailerWeekly {
         try {
             // Definir los argumentos del programa:
             
-            String systemType = SYS_TYPE_SOM;
+            String systemType = SYS_TYPE_ETL;
             String reportType = REP_TYPE_OUT;
             String mailTo = DEF_MAIL_TO;
             String mailBcc = DEF_MAIL_BCC;
@@ -98,7 +98,7 @@ public class SReportMailerWeekly {
                 El segundo argumento controla si se sobre escribe el archivo o se agregan los logs al final
                 Pase un true para agregar al final, false para sobre escribir todo el archivo
             */
-            Handler fileHandler = new FileHandler("mailerWeekly.log", true);
+            Handler fileHandler = new FileHandler(ReportTypesMap.get(reportType) + "_mailerWeekly.log", true);
             SimpleFormatter simpleFormatter = new SimpleFormatter();
             fileHandler.setFormatter(simpleFormatter);
             LOGGER.addHandler(fileHandler);

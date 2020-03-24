@@ -103,7 +103,7 @@ public class SReportMailer {
                 El segundo argumento controla si se sobre escribe el archivo o se agregan los logs al final
                 Pase un true para agregar al final, false para sobre escribir todo el archivo
             */
-            Handler fileHandler = new FileHandler("mailer.log", true);
+            Handler fileHandler = new FileHandler(ReportTypesMap.get(reportType) + "_mailer.log", true);
             SimpleFormatter simpleFormatter = new SimpleFormatter();
             fileHandler.setFormatter(simpleFormatter);
             LOGGER.addHandler(fileHandler);
@@ -203,7 +203,7 @@ public class SReportMailer {
             String mailPassword = "";
             
             switch (systemType) {
-                case SYS_TYPE_SOM:
+                case SYS_TYPE_ETL:
                     // Leer configuración de ETLA:
                     SDbConfig config = new SDbConfig();
                     config.read(session, new int[] { 1 });
@@ -216,7 +216,7 @@ public class SReportMailer {
                     mailPassword = config.getMailPassword();
                     break;
                     
-                case SYS_TYPE_ETL:
+                case SYS_TYPE_SOM:
                     // Leer la configuración de SOM:
                     SDbCompany company = new SDbCompany();
                     company.read(session, new int[] { 1 });
