@@ -38,7 +38,7 @@ import sa.lib.gui.bean.SBeanFormDialog;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
 public class SDialogEtl extends SBeanFormDialog implements ActionListener, ItemListener {
     
@@ -643,7 +643,7 @@ public class SDialogEtl extends SBeanFormDialog implements ActionListener, ItemL
                     try {
                         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
-                        SEtlProcess.computeEtl(miClient.getSession(), 
+                        String message = SEtlProcess.computeEtl(miClient.getSession(), 
                                 moRadExportModeCat.isSelected() ? SEtlConsts.EXP_MODE_CAT : SEtlConsts.EXP_MODE_ALL, 
                                 moDatePeriodStart.getValue(), 
                                 moDatePeriodEnd.getValue(), 
@@ -652,7 +652,7 @@ public class SDialogEtl extends SBeanFormDialog implements ActionListener, ItemL
                                 moBoolUpdateData.getValue(), 
                                 moRadUpdateModeSel.isSelected() ? SEtlConsts.UPD_MODE_SEL : SEtlConsts.UPD_MODE_ALL);
 
-                        miClient.showMsgBoxInformation(SLibConsts.MSG_PROCESS_FINISHED);
+                        miClient.showMsgBoxInformation(SLibConsts.MSG_PROCESS_FINISHED + "\n" + message);
 
                         mnFormResult = SGuiConsts.FORM_RESULT_OK;
                         dispose();

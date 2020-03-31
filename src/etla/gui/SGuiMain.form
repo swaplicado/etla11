@@ -140,6 +140,13 @@
                 <Property name="text" type="java.lang.String" value="Transportistas"/>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jsFile5">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiSmsWeightComparisonReport">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reporte comparativo peso embarques vs. b&#xe1;scula"/>
+              </Properties>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jmWm">
@@ -149,7 +156,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jmiReports">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Reporte"/>
+                <Property name="text" type="java.lang.String" value="Reporte auditor&#xed;a de b&#xe1;scula"/>
               </Properties>
             </MenuItem>
           </SubComponents>

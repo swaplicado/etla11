@@ -41,7 +41,7 @@ import sa.lib.gui.SGuiReport;
 
 /**
  *
- * @author Daniel López, Alfredo Pérez, Sergio Flores
+ * @author Daniel López, Alfredo Pérez, Sergio Flores, Isabel Servín
  */
 public class SModModuleSms extends SGuiModule {
 
@@ -275,6 +275,10 @@ public class SModModuleSms extends SGuiModule {
             case SModConsts.SR_SHIPT:
                 report = new SGuiReport("reps/shipt.jasper", "Orden de embarque");
                 break;
+            case SModConsts.SR_WEIGHT_COMPAR:
+                report = new SGuiReport("reps/weight_compar.jasper", "Comparativo peso embarques vs. báscula");
+                break;
+            default:
         }
 
         return report;

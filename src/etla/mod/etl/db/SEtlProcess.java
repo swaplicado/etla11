@@ -16,17 +16,18 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
 public abstract class SEtlProcess {
     
-    public static void computeEtl(final SGuiSession session, final int mode, final Date periodStart, final Date periodEnd, final Date dateIssue, final int invoiceLot, final boolean updateData, final int updateMode) throws Exception {
+    public static String computeEtl(final SGuiSession session, final int mode, final Date periodStart, final Date periodEnd, final Date dateIssue, final int invoiceLot, final boolean updateData, final int updateMode) throws Exception {
         SDbEtlLog etlLog = new SDbEtlLog();
         SDbConfig config = (SDbConfig) session.getConfigSystem();
         SDbConfigAvista configAvista = config.getDbConfigAvista();
         Connection connectionSiie = null;
         Connection connectionAvista = null;
         SEtlPackage etlPackage = null;
+        String message = "";
         
         //etlLog.setPkEtlLogId(this.getPkEtlLogId());
         etlLog.setEtlMode(mode);
@@ -99,16 +100,16 @@ public abstract class SEtlProcess {
         
         // ETL customers:
         
-        SEtlProcessCatCustomers.computeEtlCustomers(session, etlPackage);
+        message += SEtlProcessCatCustomers.computeEtlCustomers(session, etlPackage);
         
         // ETL items:
         
-        SEtlProcessCatItems.computeEtlItems(session, etlPackage);
+        message += SEtlProcessCatItems.computeEtlItems(session, etlPackage);
         
         // ETL invoices:
         
-        if (mode == SEtlConsts.EXP_MODE_ALL) {
-            SEtlProcessDocInvoices.computeEtlInvoices(session, etlPackage);
+        if (mode == SEtlConsts.EXP_MODE_ALL) {            
+            message += SEtlProcessDocInvoices.computeEtlInvoices(session, etlPackage);
         }
         
         // Finishing ETL process:
@@ -117,6 +118,8 @@ public abstract class SEtlProcess {
         etlLog.setStepAux(SEtlConsts.STEP_AUX_NA);
         etlLog.setAuxClosed(true);
         etlLog.save(session);
+        
+        return message;
     }
     
     /**

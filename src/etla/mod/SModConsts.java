@@ -8,15 +8,13 @@ import java.util.HashMap;
 
 /**
  *
- * @author Sergio Flores, Alfredo Pérez
+ * @author Sergio Flores, Alfredo Pérez, Isabel Servín
  */
 public abstract class SModConsts {
 
     public static final int MOD_CFG = 110000;
     public static final int MOD_ETL = 210000;
     public static final int MOD_SMS = 220000;
-
-    public static final int SR_SHIPT = 2240001;
 
     public static final int SU_SYS = 110001;
     public static final int SU_COM = 110002;
@@ -69,6 +67,9 @@ public abstract class SModConsts {
     public static final int S_ERP_DOC_ETL_LOG = 223206;
     public static final int S_WM_TICKET = 223211;
     public static final int S_WM_TICKET_LINK = 223221;
+    
+    public static final int SR_SHIPT = 224011;
+    public static final int SR_WEIGHT_COMPAR = 224021; // weight comparison
 
     public static final int SX_SHIPT_ROW_ADDED = 225916;
 

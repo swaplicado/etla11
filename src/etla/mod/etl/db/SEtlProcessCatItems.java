@@ -20,12 +20,13 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
 public class SEtlProcessCatItems {
     
-    public static void computeEtlItems(final SGuiSession session, final SEtlPackage etlPackage) throws Exception {
+    public static String computeEtlItems(final SGuiSession session, final SEtlPackage etlPackage) throws Exception {
         int nCount = 0;
+        int nItems = 0;
         int nSiieItemId = 0;
         int nSiieItemAliveId = 0;
         int nSiieItemDeletedId = 0;
@@ -52,8 +53,24 @@ public class SEtlProcessCatItems {
         
         etlCatalogs = new SEtlCatalogs(session, false, false);
         
-        // Obtain items list from Avista:
+        // Obtener la cantidad de Items
         
+        sql = "SELECT DISTINCT COUNT(*) "
+                + "FROM dbo.CustomerInvoices AS ci "
+                + "INNER JOIN dbo.CustomerInvoiceItems AS cii ON cii.CustomerInvoiceKey=ci.CustomerInvoiceKey "
+                + "INNER JOIN dbo.CustomerOrder AS co ON co.OrderKey=cii.OrderKey "
+                + "INNER JOIN dbo.PlantEst AS pe ON pe.EstKey=co.EstKey "
+                + "INNER JOIN dbo.PlantBoardType AS pbt ON pbt.PlantBoardTypeKey=pe.PlantBoardTypeKey "
+                + "WHERE CAST(ci.Created AS DATE) BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodStart) + "' AND '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodEnd) + "' AND "
+                + "ci.CurrentStatusKey IN (" + SEtlConsts.AVISTA_INV_STA_APP + ", " + SEtlConsts.AVISTA_INV_STA_ARC + ") AND "
+                + "ci.CustomerInvoiceTypeKey=" + SEtlConsts.AVISTA_INV_TP_INV + " "
+                + (etlPackage.InvoiceBatch == SLibConsts.UNDEFINED ? "" : "AND ci.BatchNumber=" + etlPackage.InvoiceBatch + " ");
+        resultSetAvista = statementAvista.executeQuery(sql);
+        while (resultSetAvista.next()) {
+            nItems = resultSetAvista.getInt(1);
+        }
+        
+        // Obtain items list from Avista:
         sql = "SELECT DISTINCT pe.PlantBoardTypeKey, pbt.ShortDesc, pe.Flute "
                 + "FROM dbo.CustomerInvoices AS ci "
                 + "INNER JOIN dbo.CustomerInvoiceItems AS cii ON cii.CustomerInvoiceKey=ci.CustomerInvoiceKey "
@@ -302,11 +319,15 @@ public class SEtlProcessCatItems {
             etlPackage.EtlLog.save(session);
         }
         
+        String message = nCount + " items exportados de " + nItems + " encontrados.\n";
+        
         etlPackage.EtlLog.setStep(SEtlConsts.STEP_ITM_END);
         
         etlPackage.EtlLog.setStepAux(SEtlConsts.STEP_AUX_NA);
         etlPackage.EtlLog.save(session);
         
         session.notifySuscriptors(SModConsts.AU_ITM);
+        
+        return message;
     }
 }

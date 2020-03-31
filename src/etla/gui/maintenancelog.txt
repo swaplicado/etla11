@@ -1,4 +1,12 @@
 ================================================================================
+2020-03-31, 1.1 004.3
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se hizo opcional la importación de boletos en el reporte de auditoría de báscula a travez de un ConfirmBox.
+2) Creación del reporte comparativo peso embarques vs. báscula.
+3) Adición de un mensaje en la exportación a SIIE de la cantidad de clientes, items y facturas exportadas.
+
+================================================================================
 2020-03-23, 1.1 004.2
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------

@@ -28,7 +28,7 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
 public abstract class SEtlProcessCatCustomers {
     
@@ -115,8 +115,9 @@ public abstract class SEtlProcessCatCustomers {
         return dataBizPartnerCustomerBranchConfig;
     }
     
-    public static void computeEtlCustomers(final SGuiSession session, final SEtlPackage etlPackage) throws Exception {
+    public static String computeEtlCustomers(final SGuiSession session, final SEtlPackage etlPackage) throws Exception {
         int nCount = 0;
+        int nClients = 0;
         int nBizPartnerId = 0;
         int nBizPartnerAliveId = 0;
         int nBizPartnerDeletedId = 0;
@@ -237,10 +238,24 @@ public abstract class SEtlProcessCatCustomers {
         
         etlCatalogs = new SEtlCatalogs(session, true, false);
         
-        // II. Obtain customers list from Avista invoices:
-        
+        // Obtener la cantidad de clientes
         nCount = 0;
         
+        sql = "SELECT DISTINCT COUNT(*) "
+                + "FROM dbo.CustomerInvoices AS ci "
+                + "INNER JOIN dbo.Customers AS c ON c.CustomerId=ci.CustomerId "
+                + "LEFT OUTER JOIN dbo.StateCodes AS sc ON sc.StateCode=c.State "
+                + "LEFT OUTER JOIN dbo.CountryCodes AS cc ON cc.CountryCode=c.Country "
+                + "WHERE CAST(ci.Created AS DATE) BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodStart) + "' AND '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodEnd) + "' AND "
+                + "ci.CurrentStatusKey IN (" + SEtlConsts.AVISTA_INV_STA_APP + ", " + SEtlConsts.AVISTA_INV_STA_ARC + ") AND "
+                + "ci.CustomerInvoiceTypeKey=" + SEtlConsts.AVISTA_INV_TP_INV + " "
+                + (etlPackage.InvoiceBatch == SLibConsts.UNDEFINED ? "" : "AND ci.BatchNumber=" + etlPackage.InvoiceBatch + " ");
+        resultSetAvista = statementAvista.executeQuery(sql);
+        while (resultSetAvista.next()) {
+            nClients = resultSetAvista.getInt(1);
+        }
+        
+        // II. Obtain customers list from Avista invoices:
         sql = "SELECT DISTINCT c.CustomerId, c.TaxId, c.CustomerNumber, c.CustomerName, c.ShortName, c.Active, c.DeletedFlag, "
                 + "c.Address1, c.Address2, c.Address3, c.AddressInternalNumber, c.County AS Neighborhood, c.City, c.District AS County, "
                 + "c.State, sc.StateDescription, c.Country, cc.CountryDescription, c.Zip, c.Phone, c.Fax, "
@@ -747,6 +762,8 @@ public abstract class SEtlProcessCatCustomers {
             etlPackage.EtlLog.save(session);
         }
         
+        String message = nCount + " clientes exportados de " + nClients + " encontrados.\n";
+        
         etlPackage.EtlLog.setStep(SEtlConsts.STEP_CUS_END);
         
         etlPackage.EtlLog.setStepAux(SEtlConsts.STEP_AUX_NA);
@@ -754,5 +771,7 @@ public abstract class SEtlProcessCatCustomers {
         
         session.notifySuscriptors(SModConsts.AU_SAL_AGT);
         session.notifySuscriptors(SModConsts.AU_CUS);
+        
+        return message;
     }
 }

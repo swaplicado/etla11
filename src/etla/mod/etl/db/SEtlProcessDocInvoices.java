@@ -31,14 +31,15 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
 public class SEtlProcessDocInvoices {
     
-    public static void computeEtlInvoices(final SGuiSession session, final SEtlPackage etlPackage) throws Exception {
+    public static String computeEtlInvoices(final SGuiSession session, final SEtlPackage etlPackage) throws Exception {
         // Avista invoices variables:
         
         int nInvoicesCount = 0;
+        int nInvoces = 0;
         int idInvoice = 0;
         int idInvoiceSalesAgentDes = 0;
         int idInvoiceSalesSupervisorDes = 0;
@@ -150,6 +151,19 @@ public class SEtlProcessDocInvoices {
         nMiscDecsAmountUnit = SLibUtils.getDecimalFormatAmountUnitary().getMaximumFractionDigits();
         nMiscDefaultSiieUnitId = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(dbConfigAvista.getFkSrcDefaultUnitOfMeasureId())).getDesUnitOfMeasureId();
         dMisc1kFeetTo1kMeters = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(SModSysConsts.AS_UOM_MSF)).getConversionFactor();
+        
+        // Obtener la cantidad de facturas
+        sql = "SELECT COUNT(*) "
+                + "FROM dbo.CustomerInvoices AS ci "
+                + "WHERE CAST(ci.Created AS DATE) BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodStart) + "' AND '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodEnd) + "' AND "
+                + "ci.CurrentStatusKey IN (" + SEtlConsts.AVISTA_INV_STA_APP + ", " + SEtlConsts.AVISTA_INV_STA_ARC + ") AND "
+                + "ci.CustomerInvoiceTypeKey=" + SEtlConsts.AVISTA_INV_TP_INV + " "
+                + (etlPackage.InvoiceBatch == SLibConsts.UNDEFINED ? "" : "AND ci.BatchNumber=" + etlPackage.InvoiceBatch + " ");
+        
+        rsAvistaInvoiceList = stAvistaInvoiceList.executeQuery(sql);
+        while (rsAvistaInvoiceList.next()) {
+            nInvoces = rsAvistaInvoiceList.getInt(1);
+        }
         
         // Obtain invoices list from Avista:
         
@@ -1102,6 +1116,8 @@ public class SEtlProcessDocInvoices {
                 dbInvoice.save(session);
             }
         }
+
+        String message = nInvoicesCount + " facturas exportadas de " + nInvoces + " encontrados.";
         
         etlPackage.EtlLog.setStep(SEtlConsts.STEP_INV_END);
         
@@ -1109,5 +1125,7 @@ public class SEtlProcessDocInvoices {
         etlPackage.EtlLog.save(session);
         
         session.notifySuscriptors(SModConsts.A_INV);
+        
+        return message;
     }
 }

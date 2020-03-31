@@ -13,6 +13,8 @@ import etla.mod.etl.form.SDialogEtl;
 import etla.mod.etl.view.SViewInvoice;
 import etla.mod.sms.db.SSmsEtl;
 import etla.mod.sms.form.SDialogSendWmReport;
+import etla.mod.sms.form.SDialogWeightComparisonReport;
+import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -67,12 +69,12 @@ import sa.lib.xml.SXmlUtils;
 
 /**
  *
- * @author Sergio Flores, Alfredo Pérez
+ * @author Sergio Flores, Alfredo Pérez, Isabel Servín
  */
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 004.2"; // release: 2020-03-23
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 004.3"; // release: 2020-03-31
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -156,6 +158,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipmentsRel = new javax.swing.JMenuItem();
         jsFile4 = new javax.swing.JPopupMenu.Separator();
         jmiSmsShipper = new javax.swing.JMenuItem();
+        jsFile5 = new javax.swing.JPopupMenu.Separator();
+        jmiSmsWeightComparisonReport = new javax.swing.JMenuItem();
         jmWm = new javax.swing.JMenu();
         jmiReports = new javax.swing.JMenuItem();
         jmHelp = new javax.swing.JMenu();
@@ -320,12 +324,16 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
         jmiSmsShipper.setText("Transportistas");
         jmShip.add(jmiSmsShipper);
+        jmShip.add(jsFile5);
+
+        jmiSmsWeightComparisonReport.setText("Reporte comparativo peso embarques vs. báscula");
+        jmShip.add(jmiSmsWeightComparisonReport);
 
         jMenuBar.add(jmShip);
 
         jmWm.setText("Báscula");
 
-        jmiReports.setText("Reporte");
+        jmiReports.setText("Reporte auditoría de báscula");
         jmWm.add(jmiReports);
 
         jMenuBar.add(jmWm);
@@ -451,12 +459,14 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenuItem jmiSmsShipmentsRel;
     private javax.swing.JMenuItem jmiSmsShipmentsToRel;
     private javax.swing.JMenuItem jmiSmsShipper;
+    private javax.swing.JMenuItem jmiSmsWeightComparisonReport;
     private javax.swing.JPopupMenu.Separator jsEtl1;
     private javax.swing.JPopupMenu.Separator jsEtl2;
     private javax.swing.JPopupMenu.Separator jsFile1;
     private javax.swing.JPopupMenu.Separator jsFile2;
     private javax.swing.JPopupMenu.Separator jsFile3;
     private javax.swing.JPopupMenu.Separator jsFile4;
+    private javax.swing.JPopupMenu.Separator jsFile5;
     private javax.swing.JPopupMenu.Separator jsHelp1;
     private javax.swing.JTextField jtfSystemDate;
     private javax.swing.JTextField jtfUser;
@@ -555,6 +565,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipmentsToRel.addActionListener(this);
         jmiSmsShipmentsRel.addActionListener(this);
         jmiSmsShipper.addActionListener(this);
+        jmiSmsWeightComparisonReport.addActionListener(this);
 
         jmiReports.addActionListener(this);
 
@@ -1066,8 +1077,16 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             else if (menuItem == jmiSmsShipper) {
                 moSession.showView(SModConsts.SU_SHIPPER, SLibConsts.UNDEFINED, null);
             }
+            else if (menuItem == jmiSmsWeightComparisonReport) {
+                new SDialogWeightComparisonReport(moSession.getClient(),"Comparativo peso embarques vs. báscula").setVisible(true);
+            }
             else if (menuItem == jmiReports) {
-                importProcess();
+                if (showMsgBoxConfirm("¿Desea importar boletos Revuelta y documentos SIIE para procesar el reporte?\n"
+                        + "El proceso puede demorar varios minutos.") == JOptionPane.YES_OPTION) {
+                    this.jTabbedPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                    importProcess();
+                    this.jTabbedPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
                 actionSmsWmReport();
             }
             else if (menuItem == jmiHelpHelp) {

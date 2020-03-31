@@ -498,7 +498,7 @@ public class SDialogSendWmReport extends SBeanFormDialog implements ActionListen
                 config.getMailPassword(),
                 config.getMailUser());
 
-        String sql = "SELECT " + (moKeyES.getSelectedIndex() == 1 ? "mail_to_wm_in " : "mail_to_wm_out ")
+        String sql = "SELECT " + (moKeyES.getSelectedIndex() == 1 ? "mail_wm_in_to " : "mail_wm_out_to ")
                 + "FROM " + SModConsts.TablesMap.get(SModConsts.S_CFG) + ";";
 
         try (ResultSet resultSet = miClient.getSession().getStatement().executeQuery(sql)) {
