@@ -1045,7 +1045,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
                 moSession.showView(SModConsts.A_EXR, SLibConsts.UNDEFINED, null);
             }
             else if (menuItem == jmiEtlEtl) {
-                actionEtlEtl();
+                if (moSession.getUser().getPkUserId() > 3){
+                    actionEtlEtl();
+                }
+                else {
+                    showMsgBoxInformation("No tienes los permisos para ejecutar esta acción.");
+                }
             }
             else if (menuItem == jmiEtlInvoice) {
                 moSession.showView(SModConsts.A_INV, SViewInvoice.SUBTYPE_ALL, null);
