@@ -1,4 +1,11 @@
 ================================================================================
+2020-04-02, 1.1 004.4
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se agregó un campo a la clase SDbUser para poder restringir el acceso a algunas funcionalidades.
+2) Se restringio el acceso a la funcion "Exportación a SIIE" para algunos usuarios.
+
+================================================================================
 2020-03-31, 1.1 004.3
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

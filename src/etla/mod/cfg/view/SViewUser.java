@@ -53,6 +53,7 @@ public class SViewUser extends SGridPaneView {
                 + "v.id_usr AS " + SDbConsts.FIELD_ID + "1, "
                 + "v.name AS " + SDbConsts.FIELD_CODE + ", "
                 + "v.name AS " + SDbConsts.FIELD_NAME + ", "
+                + "v.b_right_etl AS b_right, "
                 + "v.b_del AS " + SDbConsts.FIELD_IS_DEL + ", "
                 + "v.b_sys AS " + SDbConsts.FIELD_IS_SYS + ", "
                 + "v.fk_usr_ins AS " + SDbConsts.FIELD_USER_INS_ID + ", "
@@ -82,6 +83,7 @@ public class SViewUser extends SGridPaneView {
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_USR, SDbConsts.FIELD_NAME, SGridConsts.COL_TITLE_NAME));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "ut.code", SGridConsts.COL_TITLE_TYPE));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_RAW, "v.des_usr_id", "ID usuario " + SEtlConsts.TXT_SYS_SIIE));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_RAW, "b_right", "Permisos"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, SDbConsts.FIELD_IS_DEL, SGridConsts.COL_TITLE_IS_DEL));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, SDbConsts.FIELD_IS_SYS, SGridConsts.COL_TITLE_IS_SYS));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_USR, SDbConsts.FIELD_USER_INS_NAME, SGridConsts.COL_TITLE_USER_INS_NAME));

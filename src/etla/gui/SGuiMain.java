@@ -74,7 +74,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 004.3"; // release: 2020-03-31
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 004.4"; // release: 2020-04-02
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -692,6 +692,13 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
                 jmiCfgUser.setEnabled(user.isSupervisor());
                 jmiFileWorkingDate.setEnabled(true);
                 jbWorkingDate.setEnabled(jmiFileWorkingDate.isEnabled());
+                
+                System.out.println(user.getPkUserId());
+                System.out.println(user.getName());
+                System.out.println(user.isRightEtl());
+                if (user.isRightEtl()){
+                    jmiEtlEtl.setEnabled(false);
+                }
 
                 //renderClientSession((SGuiMainSessionCustom) moSession.getSessionCustom());
                 if (!user.isSupervisor()) {
@@ -1045,12 +1052,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
                 moSession.showView(SModConsts.A_EXR, SLibConsts.UNDEFINED, null);
             }
             else if (menuItem == jmiEtlEtl) {
-                if (moSession.getUser().getPkUserId() > 3){
-                    actionEtlEtl();
-                }
-                else {
-                    showMsgBoxInformation("No tienes los permisos para ejecutar esta acción.");
-                }
+                actionEtlEtl();
             }
             else if (menuItem == jmiEtlInvoice) {
                 moSession.showView(SModConsts.A_INV, SViewInvoice.SUBTYPE_ALL, null);

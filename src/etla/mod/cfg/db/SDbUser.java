@@ -35,6 +35,7 @@ public class SDbUser extends SDbRegistryUser implements SGuiUser {
     protected int mnDesUserId;
     protected String msName;
     protected String msPassword;
+    protected boolean mbRightEtl;
     protected boolean mbWeb;
     /*
     protected boolean mbDeleted;
@@ -63,6 +64,7 @@ public class SDbUser extends SDbRegistryUser implements SGuiUser {
     public void setDesUserId(int n) { mnDesUserId = n; }
     public void setName(String s) { msName = s; }
     public void setPassword(String s) { msPassword = s; }
+    public void setRightEtl (boolean b) { mbRightEtl  = b; }
     public void setWeb(boolean b) { mbWeb = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
@@ -77,6 +79,7 @@ public class SDbUser extends SDbRegistryUser implements SGuiUser {
     public int getDesUserId() { return mnDesUserId; }
     public String getName() { return msName; }
     public String getPassword() { return msPassword; }
+    public boolean isRightEtl () { return mbRightEtl ; }
     public boolean isWeb() { return mbWeb; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
@@ -203,6 +206,7 @@ public class SDbUser extends SDbRegistryUser implements SGuiUser {
         mnDesUserId = 0;
         msName = "";
         msPassword = "";
+        mbRightEtl  = false;
         mbWeb = false;
         mbDeleted = false;
         mbSystem = false;
@@ -262,6 +266,7 @@ public class SDbUser extends SDbRegistryUser implements SGuiUser {
             mnDesUserId = resultSet.getInt("des_usr_id");
             msName = resultSet.getString("name");
             //msPassword = resultSet.getString("pswd");     // stored value is a string digestion, so it is useless
+            mbRightEtl  = resultSet.getBoolean("b_right_etl");
             mbWeb = resultSet.getBoolean("b_web");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
@@ -303,6 +308,7 @@ public class SDbUser extends SDbRegistryUser implements SGuiUser {
                     mnDesUserId + ", " + 
                     "'" + msName + "', " +
                     (mbAuxClearPasswordOnSave ? "''" : "PASSWORD('" + msPassword + "')") + ", " +
+                    (mbRightEtl  ? 1 : 0) + ", " + 
                     (mbWeb ? 1 : 0) + ", " + 
                     (mbDeleted ? 1 : 0) + ", " +
                     (mbSystem ? 1 : 0) + ", " +
@@ -322,6 +328,7 @@ public class SDbUser extends SDbRegistryUser implements SGuiUser {
                     "des_usr_id = " + mnDesUserId + ", " +
                     "name = '" + msName + "', " +
                     (mbAuxClearPasswordOnSave ? "pswd = '', " : (msPassword.isEmpty() ? "" : "pswd = PASSWORD('" + msPassword + "'), ")) +
+                    "b_right_etl = " + (mbRightEtl  ? 1 : 0) + ", " +
                     "b_web = " + (mbWeb ? 1 : 0) + ", " +
                     "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                     "b_sys = " + (mbSystem ? 1 : 0) + ", " +
@@ -347,6 +354,7 @@ public class SDbUser extends SDbRegistryUser implements SGuiUser {
         registry.setDesUserId(this.getDesUserId());
         registry.setName(this.getName());
         registry.setPassword(this.getPassword());
+        registry.setRightEtl (this.isRightEtl ());
         registry.setWeb(this.isWeb());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());
