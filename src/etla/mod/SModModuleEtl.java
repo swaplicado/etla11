@@ -7,6 +7,8 @@ package etla.mod;
 
 import etla.mod.etl.db.SDbConfigAvista;
 import etla.mod.etl.db.SDbCustomer;
+import etla.mod.etl.db.SDbCustomerInvoice;
+import etla.mod.etl.db.SDbCustomerInvoiceExcuse;
 import etla.mod.etl.db.SDbExchangeRate;
 import etla.mod.etl.db.SDbInvoice;
 import etla.mod.etl.db.SDbInvoiceRow;
@@ -15,15 +17,16 @@ import etla.mod.etl.db.SDbSalesAgent;
 import etla.mod.etl.db.SDbSysCurrency;
 import etla.mod.etl.db.SDbSysUnitOfMeasure;
 import etla.mod.etl.form.SFormCustomer;
+import etla.mod.etl.form.SFormCustomerInvoiceExcuse;
 import etla.mod.etl.form.SFormExchangeRate;
 import etla.mod.etl.form.SFormItem;
 import etla.mod.etl.form.SFormSalesAgent;
+import etla.mod.etl.view.SViewAvistaCustomerInvoicesPending;
 import etla.mod.etl.view.SViewCustomer;
 import etla.mod.etl.view.SViewExchangeRate;
 import etla.mod.etl.view.SViewInvoice;
 import etla.mod.etl.view.SViewItem;
 import etla.mod.etl.view.SViewSalesAgent;
-import etla.mod.etl.view.SViewAvistaCustomerInvoicesPending;
 import javax.swing.JMenu;
 import sa.lib.SLibConsts;
 import sa.lib.db.SDbConsts;
@@ -40,7 +43,7 @@ import sa.lib.gui.SGuiReport;
 
 /**
  *
- * @author Sergio Flores, Alfredo Pérez
+ * @author Sergio Flores, Alfredo Pérez, Isabel Servín
  */
 public class SModModuleEtl extends SGuiModule {
 
@@ -48,6 +51,7 @@ public class SModModuleEtl extends SGuiModule {
     private SFormCustomer moFormCustomer;
     private SFormItem moFormItem;
     private SFormExchangeRate moFormExchangeRate;
+    private SFormCustomerInvoiceExcuse moFormCustomerInvoiceExcuse;
 
     public SModModuleEtl(SGuiClient client) {
         super(client, SModConsts.MOD_ETL, SLibConsts.UNDEFINED);
@@ -96,6 +100,12 @@ public class SModModuleEtl extends SGuiModule {
                 break;
             case SModConsts.A_EXR:
                 registry = new SDbExchangeRate();
+                break;
+            case SModConsts.A_CUSTOMERINVOICES:
+                registry = new SDbCustomerInvoice();
+                break;
+            case SModConsts.A_CUSTOMERINVOICES_EXCUSES:
+                registry = new SDbCustomerInvoiceExcuse();
                 break;
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
@@ -150,6 +160,10 @@ public class SModModuleEtl extends SGuiModule {
                 break;
             case SModConsts.A_EXR:
                 break;
+            case SModConsts.A_CUSTOMERINVOICES:
+                break;
+            case SModConsts.A_CUSTOMERINVOICES_EXCUSES:
+                break;
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
         }
@@ -200,28 +214,13 @@ public class SModModuleEtl extends SGuiModule {
             case SModConsts.A_EXR:
                 view = new SViewExchangeRate(miClient, "Tipos cambio");
                 break;
+            case SModConsts.A_CUSTOMERINVOICES:
+                break;
+            case SModConsts.A_CUSTOMERINVOICES_EXCUSES:
+                break;
             case SModConsts.AX_CUST_INV_PEND:
                 view = new SViewAvistaCustomerInvoicesPending(miClient, "Remisiones x importar");
                 break;
-            /*
-            case SModConsts.RS_DB_TP:
-                break;
-            case SModConsts.RS_VER:
-                view = new SViewVersion(miClient, "Versiones SIIE");
-                break;
-            case SModConsts.RU_INS:
-                view = new SViewInstance(miClient, "Instancias SIIE");
-                break;
-            case SModConsts.RU_COM:
-                view = new SViewCompany(miClient, "Empresas instancias SIIE");
-                break;
-            case SModConsts.RU_GRP:
-                view = new SViewGroup(miClient, "Grupos consolidación");
-                break;
-            case SModConsts.RU_GRP_COM:
-                view = new SViewGroupCompany(miClient, "Empresas grupos consolidación");
-                break;
-            */
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
         }
@@ -264,6 +263,12 @@ public class SModModuleEtl extends SGuiModule {
             case SModConsts.A_EXR:
                 if (moFormExchangeRate == null) moFormExchangeRate = new SFormExchangeRate(miClient, "Tipo cambio");
                 form = moFormExchangeRate;
+                break;
+            case SModConsts.A_CUSTOMERINVOICES:
+                break;
+            case SModConsts.A_CUSTOMERINVOICES_EXCUSES:
+                if (moFormCustomerInvoiceExcuse == null) moFormCustomerInvoiceExcuse = new SFormCustomerInvoiceExcuse(miClient, "Excusa de no facturación de remisión");
+                form = moFormCustomerInvoiceExcuse;
                 break;
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);

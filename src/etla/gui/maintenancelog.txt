@@ -1,4 +1,11 @@
 ================================================================================
+2020-04-07, 1.1 006.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se crearon las clases SDbCustomerInvoice y SDbCustomerInvoiceExcuse.
+2) Se agregó la función de ingresar una excusa de no facturación en los remisiones Avista Axiom por importar.
+
+================================================================================
 2020-04-02, 1.1 004.4
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

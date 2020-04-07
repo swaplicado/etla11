@@ -30,6 +30,8 @@ public class SFormUser extends SBeanForm implements ActionListener {
 
     /**
      * Creates new form SFormUser
+     * @param client
+     * @param title
      */
     public SFormUser(SGuiClient client, String title) {
         setFormSettings(client, SGuiConsts.BEAN_FORM_EDIT, SModConsts.CU_USR, SLibConsts.UNDEFINED, title);
@@ -66,11 +68,13 @@ public class SFormUser extends SBeanForm implements ActionListener {
         moIntDesUserId = new sa.lib.gui.bean.SBeanFieldInteger();
         jbEditDesUserId = new javax.swing.JButton();
         jlSiie = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        moBoolRightEtl = new sa.lib.gui.bean.SBeanFieldBoolean();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos del registro:"));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setLayout(new java.awt.GridLayout(5, 1, 0, 5));
+        jPanel2.setLayout(new java.awt.GridLayout(6, 1, 0, 5));
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
@@ -141,6 +145,14 @@ public class SFormUser extends SBeanForm implements ActionListener {
 
         jPanel2.add(jPanel12);
 
+        jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        moBoolRightEtl.setText("Permiso ETL remisiones Avista Axiom");
+        moBoolRightEtl.setPreferredSize(new java.awt.Dimension(250, 23));
+        jPanel3.add(moBoolRightEtl);
+
+        jPanel2.add(jPanel3);
+
         jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -150,6 +162,7 @@ public class SFormUser extends SBeanForm implements ActionListener {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel8;
@@ -162,6 +175,7 @@ public class SFormUser extends SBeanForm implements ActionListener {
     private javax.swing.JLabel jlPassword;
     private javax.swing.JLabel jlSiie;
     private javax.swing.JLabel jlType;
+    private sa.lib.gui.bean.SBeanFieldBoolean moBoolRightEtl;
     private sa.lib.gui.bean.SBeanFieldInteger moIntDesUserId;
     private sa.lib.gui.bean.SBeanFieldKey moKeyType;
     private sa.lib.gui.bean.SBeanFieldPassword moPswdConfirm;
@@ -181,11 +195,13 @@ public class SFormUser extends SBeanForm implements ActionListener {
         moPswdPassword.setTextSettings(SGuiUtils.getLabelName(jlPassword), 16);
         moPswdConfirm.setTextSettings(SGuiUtils.getLabelName(jlConfirm), 16);
         moKeyType.setKeySettings(miClient, SGuiUtils.getLabelName(jlType), true);
+        moBoolRightEtl.setBooleanSettings(moBoolRightEtl.getText(), false);
         
         moFields.addField(moTextName);
         moFields.addField(moPswdPassword);
         moFields.addField(moPswdConfirm);
         moFields.addField(moKeyType);
+        moFields.addField(moBoolRightEtl);
         
         moFields.setFormButton(jbSave);
     }
@@ -264,6 +280,7 @@ public class SFormUser extends SBeanForm implements ActionListener {
         moPswdConfirm.setValue("");
         moKeyType.setValue(new int[] { moRegistry.getFkUserTypeId() });
         moIntDesUserId.setValue(moRegistry.getDesUserId());
+        moBoolRightEtl.setValue(moRegistry.isRightEtl());
 
         setFormEditable(true);
         
@@ -288,6 +305,7 @@ public class SFormUser extends SBeanForm implements ActionListener {
         registry.setDesUserId(moIntDesUserId.getValue());
         registry.setName(moTextName.getValue());
         registry.setPassword(new String(moPswdPassword.getPassword()));
+        registry.setRightEtl(moBoolRightEtl.getValue());
         registry.setWeb(false);
         //registry.setDeleted(this.isDeleted());
         //registry.setSystem(this.isSystem());

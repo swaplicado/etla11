@@ -74,7 +74,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 004.4"; // release: 2020-04-02
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 006.0"; // release: 2020-04-07
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -692,13 +692,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
                 jmiCfgUser.setEnabled(user.isSupervisor());
                 jmiFileWorkingDate.setEnabled(true);
                 jbWorkingDate.setEnabled(jmiFileWorkingDate.isEnabled());
-                
-                System.out.println(user.getPkUserId());
-                System.out.println(user.getName());
-                System.out.println(user.isRightEtl());
-                if (user.isRightEtl()){
-                    jmiEtlEtl.setEnabled(false);
-                }
+                jmiEtlEtl.setEnabled(user.isRightEtl());
 
                 //renderClientSession((SGuiMainSessionCustom) moSession.getSessionCustom());
                 if (!user.isSupervisor()) {
@@ -712,12 +706,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
                 SGuiUtils.setCursorDefault(this);
             }
-            catch(SQLException e) {
+            catch (SQLException e) {
                 SGuiUtils.setCursorDefault(this);
                 SLibUtils.showException(this, e);
                 actionFileExit();
             }
-            catch(Exception e) {
+            catch (Exception e) {
                 SGuiUtils.setCursorDefault(this);
                 SLibUtils.showException(this, e);
                 actionFileExit();

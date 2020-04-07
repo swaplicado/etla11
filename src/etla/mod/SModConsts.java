@@ -40,6 +40,7 @@ public abstract class SModConsts {
     public static final int A_EXR = 213061;
     public static final int A_ETL_LOG = 213501;
     public static final int A_CUSTOMERINVOICES = 213901;
+    public static final int A_CUSTOMERINVOICES_EXCUSES = 213906;
 
     public static final int AX_ETL = 215001;
     public static final int AX_CUST_INV_PEND = 215051;
@@ -100,6 +101,7 @@ public abstract class SModConsts {
         TablesMap.put(A_EXR, "a_exr");
         TablesMap.put(A_ETL_LOG, "a_etl_log");
         TablesMap.put(A_CUSTOMERINVOICES, "a_CustomerInvoices");
+        TablesMap.put(A_CUSTOMERINVOICES_EXCUSES, "a_CustomerInvoices_Excuses");
 
         TablesMap.put(SS_SHIPT_ST, "ss_shipt_st");
         TablesMap.put(SS_WEB_ROLE, "ss_web_role");
