@@ -562,10 +562,10 @@ public abstract class SEtlProcessCatCustomers {
                     dataBizPartnerBranchContact.setSkype01("");
                     dataBizPartnerBranchContact.setSkype02("");
                     dataBizPartnerBranchContact.setIsDeleted(false);
-                    dataBizPartnerBranchContact.setPkContactTypeId(SModSysConsts.BPSS_TP_CON_ADM);
-                    dataBizPartnerBranchContact.setPkTelephoneType01Id(SLibUtils.textToSql(resultSetAvista.getString("Phone")).isEmpty() ? SModSysConsts.BPSS_TP_TEL_NA : SModSysConsts.BPSS_TP_TEL_TEL);
-                    dataBizPartnerBranchContact.setPkTelephoneType02Id(SLibUtils.textToSql(resultSetAvista.getString("Fax")).isEmpty() ? SModSysConsts.BPSS_TP_TEL_NA : SModSysConsts.BPSS_TP_TEL_FAX);
-                    dataBizPartnerBranchContact.setPkTelephoneType03Id(SModSysConsts.BPSS_TP_TEL_NA);
+                    dataBizPartnerBranchContact.setFkContactTypeId(SModSysConsts.BPSS_TP_CON_ADM);
+                    dataBizPartnerBranchContact.setFkTelephoneType01Id(SLibUtils.textToSql(resultSetAvista.getString("Phone")).isEmpty() ? SModSysConsts.BPSS_TP_TEL_NA : SModSysConsts.BPSS_TP_TEL_TEL);
+                    dataBizPartnerBranchContact.setFkTelephoneType02Id(SLibUtils.textToSql(resultSetAvista.getString("Fax")).isEmpty() ? SModSysConsts.BPSS_TP_TEL_NA : SModSysConsts.BPSS_TP_TEL_FAX);
+                    dataBizPartnerBranchContact.setFkTelephoneType03Id(SModSysConsts.BPSS_TP_TEL_NA);
                     dataBizPartnerBranchContact.setFkUserNewId(((SDbUser) session.getUser()).getDesUserId());
                     dataBizPartnerBranchContact.setFkUserEditId(SDataConstantsSys.USRX_USER_NA);
                     dataBizPartnerBranchContact.setFkUserDeleteId(SDataConstantsSys.USRX_USER_NA);
