@@ -16,7 +16,7 @@ Isabel Danae GARCÍA SERVÍN
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
 1) Se agregó un campo a la clase SDbUser para poder restringir el acceso a algunas funcionalidades.
-2) Se restringio el acceso a la funcion "Exportación a SIIE" para algunos usuarios.
+2) Se restringió el acceso a la función "Exportación a SIIE" para algunos usuarios.
 
 ================================================================================
 2020-03-31, 1.1 004.3
