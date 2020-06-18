@@ -80,13 +80,13 @@ public class SReportMailerWeekly {
             String mailBcc = DEF_MAIL_BCC;
             
             if (args.length >= 1) {
-                reportType = args[ARG_SYS_TYPE];
+                systemType = args[ARG_SYS_TYPE];
             }
             if (args.length >= 2) {
-                mailTo = args[ARG_REP_TYPE];
+                reportType = args[ARG_REP_TYPE];
             }
             if (args.length >= 3) {
-                mailBcc = args[ARG_MAIL_TO];
+                mailTo = args[ARG_MAIL_TO];
             }
             if (args.length >= 4) {
                 mailBcc = args[ARG_MAIL_BCC];

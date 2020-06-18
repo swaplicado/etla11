@@ -9,7 +9,7 @@ Crear y programar las siguientes tareas en el Windows Task Scheduler (Programado
     Acción: iniciar un programa:
         "C:\Program Files\Java\jre1.8.0_202\bin\javaw.exe"
     Argumentos:
-        -classpath dist/etla11.jar etla.cli.SReportMailer EPA guadalupe.gonzalez@cajas.com.mx;gabriela.fuentes@cajas.com.mx;alma.marquez@cajas.com.mx;lilibeth.jimenez@cajas.com.mx;ivette.pinedo@cajas.com.mx;ernesto.guerra@cajas.com.mx ggomezs@aeth.mx;sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com
+        -classpath dist/etla11.jar etla.cli.SReportMailer ETL EPA guadalupe.gonzalez@cajas.com.mx;gabriela.fuentes@cajas.com.mx;alma.marquez@cajas.com.mx;lilibeth.jimenez@cajas.com.mx;ivette.pinedo@cajas.com.mx;ernesto.guerra@cajas.com.mx ggomezs@aeth.mx;sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com
     Iniciar en:
         <Ruta base del software ETLA>
 
@@ -19,7 +19,7 @@ Crear y programar las siguientes tareas en el Windows Task Scheduler (Programado
     Acción: iniciar un programa:
         "C:\Program Files\Java\jre1.8.0_202\bin\javaw.exe"
     Argumentos:
-        -classpath dist/etla11.jar etla.cli.SReportMailer SP guadalupe.gonzalez@cajas.com.mx;gabriela.fuentes@cajas.com.mx;alma.marquez@cajas.com.mx;lilibeth.jimenez@cajas.com.mx;ivette.pinedo@cajas.com.mx;ernesto.guerra@cajas.com.mx ggomezs@aeth.mx;sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com
+        -classpath dist/etla11.jar etla.cli.SReportMailer ETL SP guadalupe.gonzalez@cajas.com.mx;gabriela.fuentes@cajas.com.mx;alma.marquez@cajas.com.mx;lilibeth.jimenez@cajas.com.mx;ivette.pinedo@cajas.com.mx;ernesto.guerra@cajas.com.mx ggomezs@aeth.mx;sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com
     Iniciar en:
         <Ruta base del software ETLA>
 
@@ -29,7 +29,7 @@ Crear y programar las siguientes tareas en el Windows Task Scheduler (Programado
     Acción: iniciar un programa:
         "C:\Program Files\Java\jre1.8.0_202\bin\javaw.exe"
     Argumentos:
-        -classpath dist/etla11.jar etla.cli.SReportMailerWeekly E guadalupe.gonzalez@cajas.com.mx;gabriela.fuentes@cajas.com.mx;alma.marquez@cajas.com.mx;lilibeth.jimenez@cajas.com.mx;ivette.pinedo@cajas.com.mx;ernesto.guerra@cajas.com.mx ggomezs@aeth.mx;sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com
+        -classpath dist/etla11.jar etla.cli.SReportMailerWeekly ETL E guadalupe.gonzalez@cajas.com.mx;gabriela.fuentes@cajas.com.mx;alma.marquez@cajas.com.mx;lilibeth.jimenez@cajas.com.mx;ivette.pinedo@cajas.com.mx;ernesto.guerra@cajas.com.mx ggomezs@aeth.mx;sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com
     Iniciar en:
         <Ruta base del software ETLA>
 
@@ -39,7 +39,7 @@ Crear y programar las siguientes tareas en el Windows Task Scheduler (Programado
     Acción: iniciar un programa:
         "C:\Program Files\Java\jre1.8.0_202\bin\javaw.exe"
     Argumentos:
-        -classpath dist/etla11.jar etla.cli.SReportMailerWeekly S guadalupe.gonzalez@cajas.com.mx;gabriela.fuentes@cajas.com.mx;alma.marquez@cajas.com.mx;lilibeth.jimenez@cajas.com.mx;ivette.pinedo@cajas.com.mx;ernesto.guerra@cajas.com.mx ggomezs@aeth.mx;sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com
+        -classpath dist/etla11.jar etla.cli.SReportMailerWeekly ETL S guadalupe.gonzalez@cajas.com.mx;gabriela.fuentes@cajas.com.mx;alma.marquez@cajas.com.mx;lilibeth.jimenez@cajas.com.mx;ivette.pinedo@cajas.com.mx;ernesto.guerra@cajas.com.mx ggomezs@aeth.mx;sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com
     Iniciar en:
         <Ruta base del software ETLA>
 #eof
