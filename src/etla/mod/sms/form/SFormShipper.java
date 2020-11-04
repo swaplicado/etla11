@@ -5,6 +5,7 @@
  */
 package etla.mod.sms.form;
 
+import erp.lib.SLibUtilities;
 import etla.mod.SModConsts;
 import etla.mod.sms.db.SDbShipper;
 import sa.lib.SLibConsts;
@@ -238,7 +239,13 @@ public class SFormShipper extends SBeanForm {
     @Override
     public SGuiValidation validateForm() {
         SGuiValidation validation = moFields.validateFields();
-        
+        if (validation.isValid()) {
+            String validateMail = SLibUtilities.validateEmail(moTextMail.getText());
+            if (!validateMail.isEmpty()) {
+                validation.setMessage(validateMail);
+                validation.setComponent(moTextMail);
+            }
+        }
         return validation;
     }
 }

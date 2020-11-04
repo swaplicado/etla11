@@ -39,7 +39,7 @@ import sa.lib.img.SImgUtils;
 
 /**
  *
- * @author Daniel López, Claudio Peña
+ * @author Daniel López, Claudio Peña, Isabel Servín
  */
 public class SViewShipment extends SGridPaneView implements ActionListener{
     
@@ -223,12 +223,16 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
                 + "sh.ts_usr_upd AS " + SDbConsts.FIELD_USER_UPD_TS + ", "
                 + "sh.fk_usr_release, "
                 + "sh.ts_usr_release, "
+                + "sh.kg, "
+                + "sh.ticket_id, "
                 + "sht.name, "
                 + "shc.name, "
                 + "shh.name, "
                 + "ui.name AS " + SDbConsts.FIELD_USER_INS_NAME + ", "
                 + "uu.name AS " + SDbConsts.FIELD_USER_UPD_NAME + ", "
-                + "ur.name "
+                + "ur.name, "
+                + "tk.weight, "
+                + "tk.weight - sh.kg AS _difference "
                 + "FROM " + SModConsts.TablesMap.get(SModConsts.S_SHIPT) + " AS sh "
                 + "INNER JOIN " + SModConsts.TablesMap.get(SModConsts.SU_SHIPT_TP) + " AS sht ON "
                 + "sh.fk_shipt_tp = sht.id_shipt_tp "
@@ -250,6 +254,8 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
                 + "sh.fk_shipt_st = st.id_shipt_st "
                 + "LEFT OUTER JOIN " + SModConsts.TablesMap.get(SModConsts.S_SHIPT_ROW) + " AS sr ON "
                 + "sh.id_shipt = sr.id_shipt "
+                + "LEFT OUTER JOIN " + SModConsts.TablesMap.get(SModConsts.S_WM_TICKET) + " AS tk ON "
+                + "sh.ticket_id = tk.ticket_id "
                 + (sql.isEmpty() ? "" : "WHERE " + sql)
                 + "GROUP BY sh.number, sh.id_shipt "
                 + "ORDER BY sh.number, sh.id_shipt ";
@@ -270,6 +276,10 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "sh.driver_name", "Nombre chofer"));        
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "sh.driver_phone", "Teléfono chofer"));        
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, SDbConsts.FIELD_NAME, "Estatus"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "sh.kg", "Peso Axiom"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_RAW, "sh.ticket_id", "ID. boleto"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "tk.weight", "Peso boleto"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "_difference", "Diferencia peso"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, "sh.b_ann", "Anulado"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, SDbConsts.FIELD_IS_DEL, SGridConsts.COL_TITLE_IS_DEL));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, SDbConsts.FIELD_IS_SYS, SGridConsts.COL_TITLE_IS_SYS));
