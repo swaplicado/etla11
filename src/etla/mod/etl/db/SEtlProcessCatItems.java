@@ -139,6 +139,7 @@ public class SEtlProcessCatItems {
                     dataItem.setPresentation("");
                     dataItem.setPresentationShort("");
                     dataItem.setCode(sItemCodeRaw);
+                    dataItem.setPartNumber("");
                     dataItem.setIsInventoriable(true); // required to enable alternative unit type (when quantity is required as unit instead of surface)
                     dataItem.setIsLotApplying(false);
                     dataItem.setIsBulk(true);
