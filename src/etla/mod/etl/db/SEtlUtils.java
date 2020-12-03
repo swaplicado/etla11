@@ -23,7 +23,7 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
 public abstract class SEtlUtils {
     
@@ -139,14 +139,22 @@ public abstract class SEtlUtils {
     }
 
     private static int getLastExtractedCustomerInvoiceKey(SGuiSession session) throws Exception {
-        int lastId = 0;
+        int startId = 0;
         String sql = "SELECT MAX(CustomerInvoiceKey) "
                 + "FROM " + SModConsts.TablesMap.get(SModConsts.A_CUSTOMERINVOICES);
-        ResultSet resultSet = session.getStatement().executeQuery(sql);
+        ResultSet resultSet = session.getStatement().executeQuery(sql); 
         if (resultSet.next()) {
-            lastId = resultSet.getInt(1);
+            startId = resultSet.getInt(1);
         }
-        return lastId != 0 ? lastId : START_CUSTOMERINVOICE_KEY;
+        if (startId == 0) {
+            sql = "SELECT MIN(src_inv_id) "
+                    + "FROM " + SModConsts.TablesMap.get(SModConsts.A_INV);
+            resultSet = session.getStatement().executeQuery(sql);
+            if (resultSet.next()) {
+                startId = resultSet.getInt(1);
+            }
+        }
+        return startId != 0 ? startId : START_CUSTOMERINVOICE_KEY;
     }
 
     public static void extractCustomerInvoices(SGuiSession session) throws Exception {

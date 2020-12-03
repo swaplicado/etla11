@@ -103,7 +103,11 @@ public class SViewAvistaCustomerInvoicesPending extends SGridPaneView implements
                 + "cu.id_usr AS " + SDbConsts.FIELD_USER_INS_ID + ", "
                 + "cu.name AS " + SDbConsts.FIELD_USER_INS_NAME + ", "
                 + "ci.ts_usr_ins AS " + SDbConsts.FIELD_USER_INS_TS + ", "
-                + "cie.excuse "
+                + "cie.excuse, "
+                + "cu_exc.name AS " + SDbConsts.FIELD_USER_INS_NAME + "_excuse, "
+                + "cie.ts_usr_ins AS " + SDbConsts.FIELD_USER_INS_TS + "_excuse, "
+                + "cu_exc2.name AS " + SDbConsts.FIELD_USER_UPD_NAME + "_excuse, "
+                + "cie.ts_usr_upd AS " + SDbConsts.FIELD_USER_UPD_TS + "_excuse "
                 + "FROM "
                 + SModConsts.TablesMap.get(SModConsts.A_CUSTOMERINVOICES) + " AS ci "
                 + "INNER JOIN "
@@ -111,7 +115,11 @@ public class SViewAvistaCustomerInvoicesPending extends SGridPaneView implements
                 + "LEFT OUTER JOIN "
                 + SModConsts.TablesMap.get(SModConsts.AU_CUS) + " AS cus ON ci.CustomerId = cus.src_cus_id "
                 + "LEFT OUTER JOIN "
-                + SModConsts.TablesMap.get(SModConsts.A_CUSTOMERINVOICES_EXCUSES) +" AS cie ON ci.CustomerInvoiceKey = cie.CustomerInvoiceKey "
+                + SModConsts.TablesMap.get(SModConsts.A_CUSTOMERINVOICES_EXCUSES) + " AS cie ON ci.CustomerInvoiceKey = cie.CustomerInvoiceKey "
+                + "LEFT OUTER JOIN "
+                + SModConsts.TablesMap.get(SModConsts.CU_USR) + " AS cu_exc ON cie.fk_usr_ins = cu_exc.id_usr " 
+                + "LEFT OUTER JOIN "
+                + SModConsts.TablesMap.get(SModConsts.CU_USR) + " AS cu_exc2 ON cie.fk_usr_upd = cu_exc2.id_usr "
                 + "WHERE ci.CustomerInvoiceKey NOT IN (SELECT src_inv_id FROM " + SModConsts.TablesMap.get(SModConsts.A_INV) + ") AND NOT cus.b_etl_ign "
                 + "ORDER BY ci.InvoiceNumber, ci.CustomerInvoiceKey ";
     }
@@ -130,7 +138,11 @@ public class SViewAvistaCustomerInvoicesPending extends SGridPaneView implements
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "cus.tax_id", "RFC"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_USR, SDbConsts.FIELD_USER_INS_NAME, SGridConsts.COL_TITLE_USER_INS_NAME));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE_DATETIME, SDbConsts.FIELD_USER_INS_TS, SGridConsts.COL_TITLE_USER_INS_TS));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, "cie.excuse", "Excusa"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, "cie.excuse", "Excusa", 300));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, SDbConsts.FIELD_USER_INS_NAME + "_excuse", SGridConsts.COL_TITLE_USER_INS_NAME + " excusa"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, SDbConsts.FIELD_USER_INS_TS + "_excuse", SGridConsts.COL_TITLE_USER_INS_TS + " excusa"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, SDbConsts.FIELD_USER_UPD_NAME + "_excuse", SGridConsts.COL_TITLE_USER_UPD_NAME + " excusa"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, SDbConsts.FIELD_USER_UPD_TS + "_excuse", SGridConsts.COL_TITLE_USER_UPD_TS + " excusa"));
 
         return columns;
     }
