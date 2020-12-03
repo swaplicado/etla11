@@ -643,7 +643,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     
     private void actionPerfomedValidateTicket() {
         try {
+            /* XXX 2020-11-21 Sergio Flores: esta funcionalidad está temporalmente desactivada debido a un problema de conexión a Revuelta!
             moSmsEtl.importRevueltaWmTickets(moIntTicketId.getText());
+            */
             
             SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), moIntTicketId.getValue()) }, SDbConsts.MODE_STEALTH);
             
@@ -911,7 +913,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             
         }
         
+        /* XXX 2020-11-21 Sergio Flores: esta funcionalidad está temporalmente desactivada debido a un problema de conexión a Revuelta!
         moSmsEtl = new SSmsEtl(miClient.getSession());
+        */
        
         try {
             SDbConfigAvista configAvista = ((SDbConfig) miClient.getSession().getConfigSystem()).getDbConfigAvista();
