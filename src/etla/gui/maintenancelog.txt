@@ -1,9 +1,21 @@
 ================================================================================
-2020-12-03, 1.1 006.3
+2020-12-03, 1.1 006.4
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
 1) Se hizo una mejora en la importación de remisiones para cuando la tabla a_customerinvoices esté vacia, se tome el id minimo de la tabla a_inv.
 2) Se agregaron los campos "usr nvo excusa", "usr ts nvo excusa", "usr mod excusa" y "usr ts mod excusa" en la vista de "Remisiones x importar"
+
+================================================================================
+2020-11-21, 1.1 006.3*
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Desactivación temporal de conexión a Revuelta para validación de boletos de báscula en embarques.
+
+================================================================================
+2020-11-21, 1.1 006.3
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Incorporación del método número de parte en la exportación de ítems hacia SIIE.
 
 ================================================================================
 2020-11-04, 1.1 006.2
