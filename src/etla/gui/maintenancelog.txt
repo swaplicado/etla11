@@ -2,7 +2,7 @@
 2020-12-07, 1.1 007.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
-1) Se agregó un campo boleano en la tabla de configuración para habilitar o desactivar la validación de boletos de la báscula Revuelta.
+1) Se agregó un campo booleano en la tabla de configuración para habilitar o desactivar la validación de boletos de la báscula Revuelta.
 2) Implementación de la consideración de validación de boletos de báscula en la forma de captura de embarques.
 
 ================================================================================
