@@ -11,6 +11,7 @@ import etla.mod.cfg.db.SDbConfig;
 import etla.mod.etl.db.SDbConfigAvista;
 import etla.mod.etl.db.SEtlConsts;
 import etla.mod.etl.db.SEtlProcess;
+import etla.mod.sms.db.SDbConfigSms;
 import etla.mod.sms.db.SDbShipment;
 import etla.mod.sms.db.SDbShipmentRow;
 import etla.mod.sms.db.SDbWmTicket;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 import javax.swing.JButton;
+import sa.gui.util.SUtilConsts;
 import sa.lib.SLibConsts;
 import sa.lib.SLibTimeUtils;
 import sa.lib.SLibUtils;
@@ -56,6 +58,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private SDbShipment moRegistry;
     private SGridPaneForm moGridAvailableRows;
     private SGridPaneForm moGridSelectedRows;
+    private SDbConfigSms moConfigSms;
     private SSmsEtl moSmsEtl;
     private Connection miConnectionAvista;
     private boolean mbRowsShown;
@@ -515,6 +518,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private void initComponentsCustom() {
         SGuiUtils.setWindowBounds(this, 1024, 640);
         
+        moConfigSms = (SDbConfigSms) miClient.getSession().readRegistry(SModConsts.S_CFG, new int[] { SUtilConsts.BPR_CO_ID });
+        
         moDateDate.setDateSettings(miClient, SGuiUtils.getLabelName(jlDate), true);
         moKeyShipmentType.setKeySettings(miClient, SGuiUtils.getLabelName(jlShipmentType), true);
         moKeyCargoType.setKeySettings(miClient, SGuiUtils.getLabelName(jlCargoType), true);
@@ -643,9 +648,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     
     private void actionPerfomedValidateTicket() {
         try {
-            /* XXX 2020-11-21 Sergio Flores: esta funcionalidad está temporalmente desactivada debido a un problema de conexión a Revuelta!
-            moSmsEtl.importRevueltaWmTickets(moIntTicketId.getText());
-            */
+            if (moSmsEtl != null) {
+                moSmsEtl.importRevueltaWmTickets(moIntTicketId.getText());
+            }
             
             SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), moIntTicketId.getValue()) }, SDbConsts.MODE_STEALTH);
             
@@ -913,10 +918,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             
         }
         
-        /* XXX 2020-11-21 Sergio Flores: esta funcionalidad está temporalmente desactivada debido a un problema de conexión a Revuelta!
-        moSmsEtl = new SSmsEtl(miClient.getSession());
-        */
-       
+        if (moConfigSms.isWmTicketValidation()) {
+            moSmsEtl = new SSmsEtl(miClient.getSession());
+        }
+        
         try {
             SDbConfigAvista configAvista = ((SDbConfig) miClient.getSession().getConfigSystem()).getDbConfigAvista();
             miConnectionAvista = SEtlProcess.createConnection(

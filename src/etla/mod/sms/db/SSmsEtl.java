@@ -171,6 +171,8 @@ public class SSmsEtl {
         String sqlRev;
         if (ticketId.isEmpty() || ticketId.equals("0")) {
             // Si el argumento ticektId está vacío o es 0 se hace un importado masivo desde la ultima fecha en la que se realizó:
+            obtainLastErpDocEtlLog();
+            
             sqlRev = "SELECT Tra_ID, Pes_ID, pro.Pro_ID, Pes_FecHorPri, Pes_FecHorSeg, "
                     + "Emp_Nombre, Pes_Chofer, Pes_Placas, "
                     + "Pes_PesoPri, Pes_PesoSeg, "

@@ -26,6 +26,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     protected double mdWmInMaxVariationWeight;
     protected double mdWmOutMaxVariationPercent;
     protected double mdWmOutMaxVariationWeight;
+    protected boolean mbWmTicketValidation;
     protected String msMailWmInTo;
     protected String msMailWmInBcc;
     protected String msMailWmOutTo;
@@ -59,6 +60,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     public void setWmInMaxVariationWeight(double d) { mdWmInMaxVariationWeight = d; }
     public void setWmOutMaxVariationPercent(double d) { mdWmOutMaxVariationPercent = d; }
     public void setWmOutMaxVariationWeight(double d) { mdWmOutMaxVariationWeight = d; }
+    public void setWmTicketValidation(boolean b) { mbWmTicketValidation = b; }
     public void setMailWmInTo(String s) { msMailWmInTo = s; }
     public void setMailWmInBcc(String s) { msMailWmInBcc = s; }
     public void setMailWmOutTo(String s) { msMailWmOutTo = s; }
@@ -81,6 +83,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     public double getWmInMaxVariationWeight() { return mdWmInMaxVariationWeight; }
     public double getWmOutMaxVariationPercent() { return mdWmOutMaxVariationPercent; }
     public double getWmOutMaxVariationWeight() { return mdWmOutMaxVariationWeight; }
+    public boolean isWmTicketValidation() { return mbWmTicketValidation; }
     public String getMailWmInTo() { return msMailWmInTo; }
     public String getMailWmInBcc() { return msMailWmInBcc; }
     public String getMailWmOutTo() { return msMailWmOutTo; }
@@ -122,6 +125,7 @@ public class SDbConfigSms extends SDbRegistryUser{
         mdWmInMaxVariationWeight = 0;
         mdWmOutMaxVariationPercent = 0;
         mdWmOutMaxVariationWeight = 0;
+        mbWmTicketValidation = false;
         msMailWmInTo = "";
         msMailWmInBcc = "";
         msMailWmOutTo = "";
@@ -187,6 +191,7 @@ public class SDbConfigSms extends SDbRegistryUser{
             mdWmInMaxVariationWeight = resultSet.getDouble("wm_in_max_var_weight");
             mdWmOutMaxVariationPercent = resultSet.getDouble("wm_out_max_var_pct");
             mdWmOutMaxVariationWeight = resultSet.getDouble("wm_out_max_var_weight");
+            mbWmTicketValidation = resultSet.getBoolean("wm_ticket_val");
             msMailWmInTo = resultSet.getString("mail_wm_in_to");
             msMailWmInBcc = resultSet.getString("mail_wm_in_bcc");
             msMailWmOutTo = resultSet.getString("mail_wm_out_to");
@@ -228,6 +233,7 @@ public class SDbConfigSms extends SDbRegistryUser{
                 mdWmInMaxVariationWeight + ", " + 
                 mdWmOutMaxVariationPercent + ", " + 
                 mdWmOutMaxVariationWeight + ", " + 
+                (mbWmTicketValidation ? 1 : 0) + ", " + 
                 "'" + msMailWmInTo + "', " + 
                 "'" + msMailWmInBcc + "', " + 
                 "'" + msMailWmOutTo + "', " + 
@@ -255,6 +261,7 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "wm_in_max_var_weight = " + mdWmInMaxVariationWeight + ", " +
                 "wm_out_max_var_pct = " + mdWmOutMaxVariationPercent + ", " +
                 "wm_out_max_var_weight = " + mdWmOutMaxVariationWeight + ", " +
+                "wm_ticket_val = " + (mbWmTicketValidation ? 1 : 0) + ", " +
                 "mail_wm_in_to = '" + msMailWmInTo + "', " +
                 "mail_wm_in_bcc = '" + msMailWmInBcc + "', " +
                 "mail_wm_out_to = '" + msMailWmOutTo + "', " +
@@ -289,6 +296,7 @@ public class SDbConfigSms extends SDbRegistryUser{
         registry.setWmInMaxVariationWeight(this.getWmInMaxVariationWeight());
         registry.setWmOutMaxVariationPercent(this.getWmOutMaxVariationPercent());
         registry.setWmOutMaxVariationWeight(this.getWmOutMaxVariationWeight());
+        registry.setWmTicketValidation(this.isWmTicketValidation());
         registry.setMailWmInTo(this.getMailWmInTo());
         registry.setMailWmInBcc(this.getMailWmInBcc());
         registry.setMailWmOutTo(this.getMailWmOutTo());
