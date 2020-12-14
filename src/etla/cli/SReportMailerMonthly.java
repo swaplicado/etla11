@@ -58,8 +58,8 @@ public class SReportMailerMonthly {
     private final static Logger LOGGER = Logger.getLogger("mailer.SReportMonthlyMailer");
     
     static {
-        ReportTypesMap.put(REP_TYPE_IN, "entradas");
-        ReportTypesMap.put(REP_TYPE_OUT, "salidas");
+        ReportTypesMap.put(REP_TYPE_IN, "Entradas");
+        ReportTypesMap.put(REP_TYPE_OUT, "Salidas");
     }
 
     /**
@@ -178,7 +178,7 @@ public class SReportMailerMonthly {
             // Generar el asunto del correo-e:
             
             String mailSubject = systemType.equals(SYS_TYPE_ETL) ? "[SIIE] " : "[" + SYS_TYPE_SOM + "] ";
-            String mailTitle = "Informe mensual " + ReportTypesMap.get(reportType) + " báscula al " + SLibUtils.DateFormatDate.format(new Date());
+            String mailTitle = ReportTypesMap.get(reportType) + " mensuales báscula al " + SLibUtils.DateFormatDate.format(new Date());
             mailSubject += mailTitle;
 
             // Generar el cuerpo del correo-e en formato HTML:
