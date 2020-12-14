@@ -39,7 +39,7 @@ import som.mod.som.db.SSomUtils;
  *
  * @author Isabel Servín
  */
-public class SReportMailerWeekly {
+public class SReportMailerMonthly {
     
     public static final String SYS_TYPE_ETL = "ETL";
     public static final String SYS_TYPE_SOM = "SOM";
@@ -55,11 +55,11 @@ public class SReportMailerWeekly {
     private static final String DEF_MAIL_BCC = "floresgtz@hotmail.com";
     private static final HashMap<String, String> ReportTypesMap = new HashMap<>();
     
-    private final static Logger LOGGER = Logger.getLogger("mailer.SReportWeeklyMailer");
+    private final static Logger LOGGER = Logger.getLogger("mailer.SReportMonthlyMailer");
     
     static {
-        ReportTypesMap.put(REP_TYPE_IN, "Entradas");
-        ReportTypesMap.put(REP_TYPE_OUT, "Salidas");
+        ReportTypesMap.put(REP_TYPE_IN, "entradas");
+        ReportTypesMap.put(REP_TYPE_OUT, "salidas");
     }
 
     /**
@@ -98,7 +98,7 @@ public class SReportMailerWeekly {
                 El segundo argumento controla si se sobre escribe el archivo o se agregan los logs al final
                 Pase un true para agregar al final, false para sobre escribir todo el archivo
             */
-            Handler fileHandler = new FileHandler(ReportTypesMap.get(reportType) + "_mailerWeekly.log", true);
+            Handler fileHandler = new FileHandler(ReportTypesMap.get(reportType) + "_mailerMonthly.log", true);
             SimpleFormatter simpleFormatter = new SimpleFormatter();
             fileHandler.setFormatter(simpleFormatter);
             LOGGER.addHandler(fileHandler);
@@ -177,11 +177,13 @@ public class SReportMailerWeekly {
             
             // Generar el asunto del correo-e:
             
-            String mailSubject = "Informe Semanal " + ReportTypesMap.get(reportType) + " Báscula al " + SLibUtils.DateFormatDate.format(new Date());
+            String mailSubject = systemType.equals(SYS_TYPE_ETL) ? "[SIIE] " : "[" + SYS_TYPE_SOM + "] ";
+            String mailTitle = "Informe mensual " + ReportTypesMap.get(reportType) + " báscula al " + SLibUtils.DateFormatDate.format(new Date());
+            mailSubject += mailTitle;
 
             // Generar el cuerpo del correo-e en formato HTML:
 
-            String mailBody = SReportMailerWeeklyHtml.generateReportHtml(connection, reportType, mailSubject);
+            String mailBody = SReportMailerMonthlyHtml.generateReportHtml(connection, reportType, mailTitle);
             
             
             // Preparar los destinatarios del correo-e:

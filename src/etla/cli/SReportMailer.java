@@ -60,10 +60,10 @@ public class SReportMailer {
     private final static Logger LOGGER = Logger.getLogger("mailer.SReportMailer");
     
     static {
-        ReportTypesMap.put(REP_TYPE_IN_P, "Entradas");
-        ReportTypesMap.put(REP_TYPE_IN_PA, "Entradas");
-        ReportTypesMap.put(REP_TYPE_OUT_P, "Salidas");
-        ReportTypesMap.put(REP_TYPE_OUT_PA, "Salidas");
+        ReportTypesMap.put(REP_TYPE_IN_P, "entradas");
+        ReportTypesMap.put(REP_TYPE_IN_PA, "entradas");
+        ReportTypesMap.put(REP_TYPE_OUT_P, "salidas");
+        ReportTypesMap.put(REP_TYPE_OUT_PA, "salidas");
     }
 
     /**
@@ -181,11 +181,13 @@ public class SReportMailer {
             
             // Generar el asunto del correo-e:
             
-            String mailSubject = "Informe " + ReportTypesMap.get(reportType) + " Báscula " + SLibUtils.DateFormatDate.format(new Date());
-
+            String mailSubject = systemType.equals(SYS_TYPE_ETL) ? "[SIIE] " : "[" + SYS_TYPE_SOM + "] ";
+            String mailTitle = "Informe " + ReportTypesMap.get(reportType) + " báscula del " + SLibUtils.DateFormatDate.format(new Date());
+            mailSubject += mailTitle;
+            
             // Generar el cuerpo del correo-e en formato HTML:
 
-            String mailBody = SReportHtml.generateReportHtml(connection, reportType, mailSubject);
+            String mailBody = SReportHtml.generateReportHtml(connection, reportType, mailTitle);
             
             // Preparar los destinatarios del correo-e:
             

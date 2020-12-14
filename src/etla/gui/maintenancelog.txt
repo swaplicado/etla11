@@ -1,4 +1,12 @@
 ================================================================================
+2020-12-14, 1.1 007.1
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se le cambio el nombre al informe semanal de básula pasando a ser menual, aunque la frecuencia de ejecución sigue siendo semanal.
+2) Se hicieron modificaciones en la estructura de los correos de los informes diarios y mesnuales. 
+3) Se agregarón nuevos filtros al reporte de báscula vs Revuelta, además se agregó la variación como campo en el reporte.
+
+================================================================================
 2020-12-07, 1.1 007.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

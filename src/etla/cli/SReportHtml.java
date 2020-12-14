@@ -113,7 +113,7 @@ public abstract class SReportHtml {
         // Tablas HTML:
         // Cabeza de la tabla GLOBAL:
         
-        html += "<h2>RESUMEN GLOBAL</h2>\n" +
+        html += "<h2>RESUMEN DE TODAS LAS EMPRESAS</h2>\n" +
                 "<table>\n" +
                 "    <tr>\n" ;
         html += "        <th>Producto</th>\n" +
@@ -178,6 +178,7 @@ public abstract class SReportHtml {
                     if (encabezado == 0){
                        encabezado++; 
                        html += "<br>\n" +
+                            "<hr>\n" +
                             "<h2>" + SLibUtils.textToHtml(resultSetUsb.getString(nomUsrBas)) + "</h2>" +
                             "<table>\n" +
                             "    <tr>\n" ;
@@ -232,6 +233,7 @@ public abstract class SReportHtml {
                             encabezado++;
                             if (usuarioBas == 0){
                                 html += "<br>\n" +
+                                    "<hr>\n" +
                                     "<h2>" + SLibUtils.textToHtml(resultSetUsb.getString(nomUsrBas)) + "</h2>\n" ;
                                 usuarioBas++;
                             }
