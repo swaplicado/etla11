@@ -1,4 +1,15 @@
 ================================================================================
+2020-12-23, 1.1 007.2
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se mejoró y completó el reporte comparativo de embarques vs. boletos báscula,
+    haciéndolo más detallado con las opciones:
+    "Todos los embarques",
+    "Embarques sin diferencia",
+    "Embarques con diferencia tolerada" (con peso excedente y faltante) y
+    "Embarques con diferencia no tolerada" (con peso excedente y faltante).
+
+================================================================================
 2020-12-14, 1.1 007.1
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
