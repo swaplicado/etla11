@@ -6,6 +6,8 @@ package etla.mod.sms.form;
 
 import etla.mod.SModConsts;
 import etla.mod.sms.db.SDbConfigSms;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import sa.gui.util.SUtilConsts;
 import sa.lib.SLibTimeUtils;
@@ -20,9 +22,12 @@ import sa.lib.gui.bean.SBeanDialogReport;
  * @author Isabel Servín 
  * 
  */
-public class SDialogWeightComparisonReport extends SBeanDialogReport {
-    private SDbConfigSms moConfigSms;
-
+public class SDialogWeightComparisonReport extends SBeanDialogReport implements ActionListener {
+    
+    private double mnMaxVariationWeight;
+    private double mnMaxVariationPercent;
+    private String msLimitsMessage;
+    
     /**
      * Creates new form SDialogWeightComparisonReport
      * @param client
@@ -44,6 +49,7 @@ public class SDialogWeightComparisonReport extends SBeanDialogReport {
     private void initComponents() {
 
         bgReportType = new javax.swing.ButtonGroup();
+        bgDiferenceType = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
@@ -53,11 +59,18 @@ public class SDialogWeightComparisonReport extends SBeanDialogReport {
         jlDateEnd = new javax.swing.JLabel();
         moDateDateEnd = new sa.lib.gui.bean.SBeanFieldDate();
         jPanel13 = new javax.swing.JPanel();
-        jrbAll = new javax.swing.JRadioButton();
+        jrbAllShipment = new javax.swing.JRadioButton();
         jPanel14 = new javax.swing.JPanel();
-        jrbSurplus = new javax.swing.JRadioButton();
+        jrbWithoutDiference = new javax.swing.JRadioButton();
         jPanel15 = new javax.swing.JPanel();
+        jrbWithDiferenceTolerated = new javax.swing.JRadioButton();
+        jPanel16 = new javax.swing.JPanel();
+        jrbWithDiferenceNoToletared = new javax.swing.JRadioButton();
+        jPanel17 = new javax.swing.JPanel();
+        jrbSurplus = new javax.swing.JRadioButton();
+        jPanel18 = new javax.swing.JPanel();
         jrbMissing = new javax.swing.JRadioButton();
+        jlLimitsMessage = new javax.swing.JLabel();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Parámetros del reporte:"));
         jPanel1.setLayout(new java.awt.BorderLayout());
@@ -84,35 +97,66 @@ public class SDialogWeightComparisonReport extends SBeanDialogReport {
 
         jPanel13.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        bgReportType.add(jrbAll);
-        jrbAll.setText("Todos los embarques con diferencia en peso");
-        jPanel13.add(jrbAll);
+        bgReportType.add(jrbAllShipment);
+        jrbAllShipment.setSelected(true);
+        jrbAllShipment.setText("Todos los embarques");
+        jPanel13.add(jrbAllShipment);
 
         jPanel2.add(jPanel13);
 
         jPanel14.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        bgReportType.add(jrbSurplus);
-        jrbSurplus.setText("Sólo embarques con peso excedente");
-        jPanel14.add(jrbSurplus);
+        bgReportType.add(jrbWithoutDiference);
+        jrbWithoutDiference.setText("Sólo embarques sin diferencia");
+        jPanel14.add(jrbWithoutDiference);
 
         jPanel2.add(jPanel14);
 
         jPanel15.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        bgReportType.add(jrbMissing);
-        jrbMissing.setText("Sólo embarques con peso faltante");
-        jPanel15.add(jrbMissing);
+        bgReportType.add(jrbWithDiferenceTolerated);
+        jrbWithDiferenceTolerated.setText("Sólo embarques con diferencia tolerada");
+        jPanel15.add(jrbWithDiferenceTolerated);
 
         jPanel2.add(jPanel15);
 
+        jPanel16.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        bgReportType.add(jrbWithDiferenceNoToletared);
+        jrbWithDiferenceNoToletared.setText("Sólo embarques con diferencia no tolerada");
+        jPanel16.add(jrbWithDiferenceNoToletared);
+
+        jPanel2.add(jPanel16);
+
+        jPanel17.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        bgDiferenceType.add(jrbSurplus);
+        jrbSurplus.setText("Embarques con peso excedente");
+        jrbSurplus.setEnabled(false);
+        jPanel17.add(jrbSurplus);
+
+        jPanel2.add(jPanel17);
+
+        jPanel18.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        bgDiferenceType.add(jrbMissing);
+        jrbMissing.setText("Embarques con peso faltante");
+        jrbMissing.setEnabled(false);
+        jPanel18.add(jrbMissing);
+
+        jPanel2.add(jPanel18);
+
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
+
+        jlLimitsMessage.setText("jLabel1");
+        jPanel1.add(jlLimitsMessage, java.awt.BorderLayout.PAGE_END);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup bgDiferenceType;
     private javax.swing.ButtonGroup bgReportType;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
@@ -120,12 +164,19 @@ public class SDialogWeightComparisonReport extends SBeanDialogReport {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel jlDateEnd;
     private javax.swing.JLabel jlDateStart;
-    private javax.swing.JRadioButton jrbAll;
+    private javax.swing.JLabel jlLimitsMessage;
+    private javax.swing.JRadioButton jrbAllShipment;
     private javax.swing.JRadioButton jrbMissing;
     private javax.swing.JRadioButton jrbSurplus;
+    private javax.swing.JRadioButton jrbWithDiferenceNoToletared;
+    private javax.swing.JRadioButton jrbWithDiferenceTolerated;
+    private javax.swing.JRadioButton jrbWithoutDiference;
     private sa.lib.gui.bean.SBeanFieldDate moDateDateEnd;
     private sa.lib.gui.bean.SBeanFieldDate moDateDateStart;
     // End of variables declaration//GEN-END:variables
@@ -144,34 +195,21 @@ public class SDialogWeightComparisonReport extends SBeanDialogReport {
         moDateDateStart.setValue(SLibTimeUtils.getBeginOfYear(miClient.getSession().getCurrentDate()));
         moDateDateEnd.setValue(SLibTimeUtils.getEndOfYear(miClient.getSession().getCurrentDate()));
         
-        jrbAll.setSelected(true);
-
-        moConfigSms = (SDbConfigSms) miClient.getSession().readRegistry(SModConsts.S_CFG, new int[] { SUtilConsts.BPR_CO_ID });
+        jrbAllShipment.addActionListener(this);
+        jrbWithoutDiference.addActionListener(this);
+        jrbWithDiferenceTolerated.addActionListener(this);
+        jrbWithDiferenceNoToletared.addActionListener(this);
+        
+        SDbConfigSms moConfigSms = (SDbConfigSms) miClient.getSession().readRegistry(SModConsts.S_CFG, new int[] { SUtilConsts.BPR_CO_ID });
+        mnMaxVariationWeight = moConfigSms.getWmOutMaxVariationWeight();
+        mnMaxVariationPercent = moConfigSms.getWmOutMaxVariationPercent();
+        
+        msLimitsMessage = "Diferencia en peso no tolerada: > " + SLibUtils.DecimalFormatValue2D.format(mnMaxVariationWeight) + " kg ó "
+                + SLibUtils.DecimalFormatPercentage2D.format(mnMaxVariationPercent);
+        jlLimitsMessage.setText(msLimitsMessage);
     }
     
-    private int getTotalTicketsCant() {
-        int cant = 0;
-        try {
-            String sql = "SELECT COUNT(*) " +
-                "FROM s_shipt AS s " +
-                "INNER JOIN s_wm_ticket AS t ON s.ticket_id = t.ticket_id " +
-                "INNER JOIN su_vehic_tp AS v ON s.fk_vehic_tp = v.id_vehic_tp " +
-                "INNER JOIN su_shipper AS sh ON s.fk_shipper = sh.id_shipper " +
-                "WHERE s.b_del = 0 AND t.b_del = 0 " +
-                "AND s.shipt_date BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(moDateDateStart.getValue()) + "' " +
-                "AND '" + SLibUtils.DbmsDateFormatDate.format(moDateDateEnd.getValue()) + "' ";
-            ResultSet resultSet = miClient.getSession().getStatement().executeQuery(sql);
-            if (resultSet.next()) {
-                cant = resultSet.getInt(1);
-            }
-        }
-        catch (Exception e) {
-            miClient.showMsgBoxError(e.getMessage());
-        }
-        return cant;
-    }
-    
-    private int getSurplusTicketsCant() {
+    private int getTicketsCant(String sqlWhere) {
         int cant = 0;
         try {
             String sql = "SELECT COUNT(*) " +
@@ -182,8 +220,7 @@ public class SDialogWeightComparisonReport extends SBeanDialogReport {
                 "WHERE s.b_del = 0 AND t.b_del = 0 " +
                 "AND s.shipt_date BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(moDateDateStart.getValue()) + "' " +
                 "AND '" + SLibUtils.DbmsDateFormatDate.format(moDateDateEnd.getValue()) + "' " +
-                "AND (t.weight - s.kg > " + moConfigSms.getWmOutMaxVariationWeight() + " " + 
-                "OR (t.weight - s.kg)/t.weight > " + moConfigSms.getWmOutMaxVariationPercent() + ") ";
+                sqlWhere;
             ResultSet resultSet = miClient.getSession().getStatement().executeQuery(sql);
             if (resultSet.next()) {
                 cant = resultSet.getInt(1);
@@ -195,30 +232,6 @@ public class SDialogWeightComparisonReport extends SBeanDialogReport {
         return cant;
     }
     
-    private int getMissingTicketsCant() {
-        int cant = 0;
-        try {
-            String sql = "SELECT COUNT(*) " +
-                "FROM s_shipt AS s " +
-                "INNER JOIN s_wm_ticket AS t ON s.ticket_id = t.ticket_id " +
-                "INNER JOIN su_vehic_tp AS v ON s.fk_vehic_tp = v.id_vehic_tp " +
-                "INNER JOIN su_shipper AS sh ON s.fk_shipper = sh.id_shipper " +
-                "WHERE s.b_del = 0 AND t.b_del = 0 " +
-                "AND s.shipt_date BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(moDateDateStart.getValue()) + "' " +
-                "AND '" + SLibUtils.DbmsDateFormatDate.format(moDateDateEnd.getValue()) + "' " +
-                "AND (t.weight - s.kg < " + moConfigSms.getWmOutMaxVariationWeight() + " " + 
-                "OR (t.weight - s.kg)/t.weight < " + moConfigSms.getWmOutMaxVariationPercent() + ") ";
-            ResultSet resultSet = miClient.getSession().getStatement().executeQuery(sql);
-            if (resultSet.next()) {
-                cant = resultSet.getInt(1);
-            }
-        }
-        catch (Exception e) {
-            miClient.showMsgBoxError(e.getMessage());
-        }
-        return cant;
-    }
-
     @Override
     public SGuiValidation validateForm() {
         SGuiValidation validation = moFields.validateFields();
@@ -233,30 +246,73 @@ public class SDialogWeightComparisonReport extends SBeanDialogReport {
     public void createParamsMap() {
         moParamsMap = miClient.createReportParams();
         
-        String sqlWhere;
+        String sqlWithoutDiference = "AND ROUND(t.weight) = ROUND(s.kg) ";
+        String sqlWithDiference = "AND ROUND(t.weight) <> ROUND(s.kg) ";
+        String sqlTolerated = "AND (ABS(ROUND(t.weight) - ROUND(s.kg)) <= " + mnMaxVariationWeight + " "
+                + "AND (IF(ROUND(s.kg) = 0.0, 0.0, ABS(ROUND(t.weight) - ROUND(s.kg))) / ROUND(s.kg)) <= " + mnMaxVariationPercent + ") ";
+        String sqlNoTolerated = "AND (ABS(ROUND(t.weight) - ROUND(s.kg)) > " + mnMaxVariationWeight + " "
+                + "OR (IF(ROUND(s.kg) = 0.0, 0.0, ABS(ROUND(t.weight) - ROUND(s.kg))) / ROUND(s.kg)) > " + mnMaxVariationPercent + ") ";
+        String sqlSurplus = "AND ROUND(t.weight) > ROUND(s.kg) ";
+        String sqlMissing = "AND ROUND(t.weight) < ROUND(s.kg) ";
+        
+        String sqlWhere = "";
         String reportType;
-        if (jrbSurplus.isSelected()) {
-            sqlWhere = "AND (t.weight - s.kg > " + moConfigSms.getWmOutMaxVariationWeight() + " " + 
-                "OR (t.weight - s.kg)/t.weight > " + moConfigSms.getWmOutMaxVariationPercent() + ") ";
-            reportType = jrbSurplus.getText();
+        if (jrbWithoutDiference.isSelected()) {
+            sqlWhere = sqlWithoutDiference;
+            reportType = jrbWithoutDiference.getText();
         }
-        else if (jrbMissing.isSelected()) {
-            sqlWhere = "AND (t.weight - s.kg < " + moConfigSms.getWmOutMaxVariationWeight() + " " + 
-                "OR (t.weight - s.kg)/t.weight < " + moConfigSms.getWmOutMaxVariationPercent() + ") ";
-            reportType = jrbMissing.getText();
+        else if (jrbWithDiferenceTolerated.isSelected()) {
+            sqlWhere = sqlWithDiference + sqlTolerated;
+            reportType = jrbWithDiferenceTolerated.getText();
+        }
+        else if (jrbWithDiferenceNoToletared.isSelected()) {
+            sqlWhere = sqlWithDiference + sqlNoTolerated;
+            reportType = jrbWithDiferenceNoToletared.getText();
         }
         else {
-            sqlWhere = "AND t.weight - s.kg <> 0 ";
-            reportType = jrbAll.getText();
+            reportType = jrbAllShipment.getText();
+        }
+        if (jrbSurplus.isEnabled() && jrbSurplus.isSelected()) {
+            sqlWhere += sqlSurplus;
+            reportType += ", " + jrbSurplus.getText().toLowerCase();
+        }
+        else if (jrbMissing.isEnabled() && jrbMissing.isSelected()) {
+            sqlWhere += sqlMissing;
+            reportType += ", " + jrbMissing.getText().toLowerCase();
         }
         
         moParamsMap.put("tDateStart", moDateDateStart.getValue());
         moParamsMap.put("tDateEnd", moDateDateEnd.getValue());
         moParamsMap.put("sSqlWhere", sqlWhere);
-        moParamsMap.put("nTotalTicketsCant", getTotalTicketsCant());
-        moParamsMap.put("nSurplusTicketsCant", getSurplusTicketsCant());
-        moParamsMap.put("nMissingTicketsCant", getMissingTicketsCant());
+        moParamsMap.put("sLimitsMessage", msLimitsMessage);
+        
+        moParamsMap.put("nTotalTicketsCant", getTicketsCant(""));
+        moParamsMap.put("nWithoutDiferenceTicketsCant", getTicketsCant(sqlWithoutDiference));
+        
+        moParamsMap.put("nDiferenceToleratedTicketsCant", getTicketsCant(sqlWithDiference + sqlTolerated));
+        moParamsMap.put("nDiferenceToleratedSurplusTicketsCant", getTicketsCant(sqlWithDiference + sqlTolerated + sqlSurplus));
+        moParamsMap.put("nDiferenceToleratedMissingTicketsCant", getTicketsCant(sqlWithDiference + sqlTolerated + sqlMissing));
+        
+        moParamsMap.put("nDiferenceNoToleratedTicketsCant", getTicketsCant(sqlWithDiference + sqlNoTolerated));
+        moParamsMap.put("nDiferenceNoToleratedSurplusTicketsCant", getTicketsCant(sqlWithDiference + sqlNoTolerated + sqlSurplus));
+        moParamsMap.put("nDiferenceNoToleratedMissingTicketsCant", getTicketsCant(sqlWithDiference + sqlNoTolerated + sqlMissing));
+        
         moParamsMap.put("sReportType", reportType);
         
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (jrbWithDiferenceTolerated.isSelected() || jrbWithDiferenceNoToletared.isSelected()) {
+            jrbSurplus.setEnabled(true);
+            jrbSurplus.setSelected(true);
+            jrbMissing.setEnabled(true);
+        }
+        else {
+            jrbSurplus.setEnabled(false);
+            jrbSurplus.setSelected(false);
+            jrbMissing.setEnabled(false);
+            jrbMissing.setSelected(false);
+        }
     }
 }

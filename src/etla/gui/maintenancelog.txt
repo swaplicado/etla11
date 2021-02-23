@@ -199,3 +199,209 @@ Corrección a generación de sentencias SQL de inserción y actualización de la
 ================================================================================
 
 #eof
+================================================================================
+2020-12-23, 1.1 007.2
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se mejoró y completó el reporte comparativo de embarques vs. boletos báscula,
+    haciéndolo más detallado con las opciones:
+    "Todos los embarques",
+    "Embarques sin diferencia",
+    "Embarques con diferencia tolerada" (con peso excedente y faltante) y
+    "Embarques con diferencia no tolerada" (con peso excedente y faltante).
+
+================================================================================
+2020-12-14, 1.1 007.1
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se le cambio el nombre al informe semanal de básula pasando a ser menual, aunque la frecuencia de ejecución sigue siendo semanal.
+2) Se hicieron modificaciones en la estructura de los correos de los informes diarios y mesnuales. 
+3) Se agregarón nuevos filtros al reporte de báscula vs Revuelta, además se agregó la variación como campo en el reporte.
+
+================================================================================
+2020-12-07, 1.1 007.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se agregó un campo booleano en la tabla de configuración para habilitar o desactivar la validación de boletos de la báscula Revuelta.
+2) Implementación de la consideración de validación de boletos de báscula en la forma de captura de embarques.
+
+================================================================================
+2020-12-03, 1.1 006.4
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se hizo una mejora en la importación de remisiones para cuando la tabla a_customerinvoices esté vacia, se tome el id minimo de la tabla a_inv.
+2) Se agregaron los campos "usr nvo excusa", "usr ts nvo excusa", "usr mod excusa" y "usr ts mod excusa" en la vista de "Remisiones x importar"
+
+================================================================================
+2020-11-21, 1.1 006.3*
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Desactivación temporal de conexión a Revuelta para validación de boletos de báscula en embarques.
+
+================================================================================
+2020-11-21, 1.1 006.3
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Incorporación del método número de parte en la exportación de ítems hacia SIIE.
+
+================================================================================
+2020-11-04, 1.1 006.2
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Adición de las columnas "Peso Axiom", "ID. boleto" , "Peso boleto" y "Diferencia" en la vista de embarques.
+2) Se agregó la validacion de correo electrónico al momento de agregar un nuevo transportista.
+
+================================================================================
+2020-06-18, 1.1 006.1
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se modificaron las clases SReportMailer y SReportMailerWeekly debido a un error en la asignación de parámetros desde el programador de tareas.
+
+================================================================================
+2020-04-07, 1.1 006.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se crearon las clases SDbCustomerInvoice y SDbCustomerInvoiceExcuse.
+2) Se agregó la función de ingresar una excusa de no facturación en los remisiones Avista Axiom por importar.
+
+================================================================================
+2020-04-02, 1.1 004.4
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se agregó un campo a la clase SDbUser para poder restringir el acceso a algunas funcionalidades.
+2) Se restringió el acceso a la función "Exportación a SIIE" para algunos usuarios.
+
+================================================================================
+2020-03-31, 1.1 004.3
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se hizo opcional la importación de boletos en el reporte de auditoría de báscula a travez de un ConfirmBox.
+2) Creación del reporte comparativo peso embarques vs. báscula.
+3) Adición de un mensaje en la exportación a SIIE de la cantidad de clientes, items y facturas exportadas.
+
+================================================================================
+2020-03-23, 1.1 004.2
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Implementación de nota automática de advertencia de tipo de cambio para pago al exportarse a SIIE facturas en moneda extranjera.
+
+================================================================================
+2020-03-13, 1.1 004.1
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Inserción de un nuevo parámetro en el ReportMailer para realizar una conexion a la base de datos de Revuelta con la configuración de SOM.
+2) Inserción de un nuevo parámetro en el ReportMailerWeekly para realizar una conexion a la base de datos de Revuelta con la configuración de SOM.
+
+================================================================================
+2020-02-26, 1.1 004.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Habilitación de importación de boletos Revuelta y documentos SIIE.
+2) Implementación de informe diario de entradas y salidas de báscula vía mail.
+3) Implementación de informe semanal de entradas y salidas de báscula vía mail.
+4) Implementación de validación y extracción de datos de boleto Revuelta en captura de embarques.
+5) Refactorización general del código fuente.
+
+================================================================================
+2020-01-27, 1.1 003.10
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Mejoramiento al proceso de creación y actualización de clientes al importarse remisiones Axiom:
+    Apertura de opciones de búsqueda de asociados de negocio SIIE:
+        a) por ID Cliente Axiom en ID Externo;
+        b) por RFC;
+        c) por nombre;
+        d) por nombre comercial.
+
+================================================================================
+2020-01-08, 1.1 003.9
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 151:
+    Bandera "Precio de embarques requerido en ventas" para catálogo de Ítems.
+    Banderas y campos relacionados con precios de embarques en Renglones de Documentos.
+
+================================================================================
+2019-11-22, 1.1 003.8
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 147:
+    Partidas de DPS (tercero causante).
+
+================================================================================
+2019-11-06, 1.1 003.7
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Mejoramiento al manejo de la situación en la que la descripción del estado de un cliente es nula (null),
+    en el proceso de importación de facturas a SIIE.
+
+================================================================================
+2019-09-26, 1.1 003.6
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+Recompilación por liberación de SIIE 3.2 145.
+
+================================================================================
+2019-09-24, 1.1 003.5
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 144:
+    Notas de DPS.
+
+================================================================================
+2019-09-05, 1.1 003.4
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 142:
+    Categoría de asociados de negocios: tipo de operación DIOT.
+
+================================================================================
+2019-08-14, 1.1 003.3
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 137 a 140.
+
+================================================================================
+2019-05-15, 1.1 003.2
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+Recompilación por actualización de la estructura de la base de datos de SIIE 3.2 136.
+
+================================================================================
+2019-05-09, 1.1 003.1
+Luis Alfredo Pérez Zavala
+--------------------------------------------------------------------------------
+Correción en "remisiones importadas por facturar" y "remisiones por importar".
+
+================================================================================
+2019-03-22, 1.1 003.0
+Luis Alfredo Pérez Zavala
+--------------------------------------------------------------------------------
+Importación de usuarios báscula, productos y boletos de báscula de Revuelta.
+Importación de facturas y notas de crédito del sistema SIIE.
+Generación de resumen de báscula y envio del mismo por email.
+Vistas de remisiones por facturar y remisiones por importar.
+Incorporación del domicilio en la generación de embarques desde remisiones Axiom.
+
+================================================================================
+2019-03-04, 1.1 000.0
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+Creación versión 1.1.
+
+================================================================================
+2019-02-20, 1.0 013.05
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+Creación de nuevo identificador para grid de remisiones a embarcar en forma de captura SFormShipment, debido a que persiste el error de conversión de Integer a String al agregar remisiones.
+
+================================================================================
+2018-10-30, 1.0 013.04
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+Corrección a identificadores de grid en forma de captura SFormShipment puesto que los dos grids de la forma tienen los mismos identificadores.
+Corrección a generación de sentencias SQL de inserción y actualización de la clase SDbShipment, en relación al redondeo de m² y kg erróneamente realizado con formateador de decimales, lo cual incorpora comas como separador de miles.
+
+================================================================================
+
+#eof

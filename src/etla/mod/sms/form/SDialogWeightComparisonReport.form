@@ -4,6 +4,8 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="bgReportType">
     </Component>
+    <Component class="javax.swing.ButtonGroup" name="bgDiferenceType">
+    </Component>
   </NonVisualComponents>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="2"/>
@@ -96,12 +98,13 @@
                 <Property name="verticalGap" type="int" value="0"/>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JRadioButton" name="jrbAll">
+                <Component class="javax.swing.JRadioButton" name="jrbAllShipment">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="bgReportType"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Todos los embarques con diferencia en peso"/>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Todos los embarques"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -113,12 +116,12 @@
                 <Property name="verticalGap" type="int" value="0"/>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JRadioButton" name="jrbSurplus">
+                <Component class="javax.swing.JRadioButton" name="jrbWithoutDiference">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="bgReportType"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="S&#xf3;lo embarques con peso excedente"/>
+                    <Property name="text" type="java.lang.String" value="S&#xf3;lo embarques sin diferencia"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -130,18 +133,81 @@
                 <Property name="verticalGap" type="int" value="0"/>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JRadioButton" name="jrbMissing">
+                <Component class="javax.swing.JRadioButton" name="jrbWithDiferenceTolerated">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="bgReportType"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="S&#xf3;lo embarques con peso faltante"/>
+                    <Property name="text" type="java.lang.String" value="S&#xf3;lo embarques con diferencia tolerada"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel16">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                <Property name="alignment" type="int" value="0"/>
+                <Property name="verticalGap" type="int" value="0"/>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JRadioButton" name="jrbWithDiferenceNoToletared">
+                  <Properties>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="bgReportType"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="S&#xf3;lo embarques con diferencia no tolerada"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel17">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                <Property name="alignment" type="int" value="0"/>
+                <Property name="verticalGap" type="int" value="0"/>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JRadioButton" name="jrbSurplus">
+                  <Properties>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="bgDiferenceType"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Embarques con peso excedente"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel18">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                <Property name="alignment" type="int" value="0"/>
+                <Property name="verticalGap" type="int" value="0"/>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JRadioButton" name="jrbMissing">
+                  <Properties>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="bgDiferenceType"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Embarques con peso faltante"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
               </SubComponents>
             </Container>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JLabel" name="jlLimitsMessage">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="jLabel1"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="Last"/>
+            </Constraint>
+          </Constraints>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>
