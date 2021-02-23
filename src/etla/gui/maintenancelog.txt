@@ -1,4 +1,10 @@
 ================================================================================
+2021-02-23, 1.1 008.0
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Implementación de la configuración y adición de cargos extra a la facturación de remisiones Avista Axiom, p. ej., cargo adicional 2% por producción con gas LP.
+
+================================================================================
 2020-12-14, 1.1 007.1
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

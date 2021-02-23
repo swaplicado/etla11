@@ -30,7 +30,7 @@ public class SFormItem extends SBeanForm implements ActionListener {
     private SDbItem moRegistry;
     
     /**
-     * Creates new form SFormCustomer
+     * Creates new form SFormItem
      * @param client
      * @param title
      */

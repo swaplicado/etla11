@@ -38,6 +38,8 @@ public abstract class SModConsts {
     public static final int A_INV = 213051;
     public static final int A_INV_ROW = 213056;
     public static final int A_EXR = 213061;
+    public static final int A_CHARGE = 213071;
+    public static final int A_CHARGE_PERIOD = 213076;
     public static final int A_ETL_LOG = 213501;
     public static final int A_CUSTOMERINVOICES = 213901;
     public static final int A_CUSTOMERINVOICES_EXCUSES = 213906;
@@ -99,6 +101,8 @@ public abstract class SModConsts {
         TablesMap.put(A_INV, "a_inv");
         TablesMap.put(A_INV_ROW, "a_inv_row");
         TablesMap.put(A_EXR, "a_exr");
+        TablesMap.put(A_CHARGE, "a_charge");
+        TablesMap.put(A_CHARGE_PERIOD, "a_charge_period");
         TablesMap.put(A_ETL_LOG, "a_etl_log");
         TablesMap.put(A_CUSTOMERINVOICES, "a_CustomerInvoices");
         TablesMap.put(A_CUSTOMERINVOICES_EXCUSES, "a_CustomerInvoices_Excuses");

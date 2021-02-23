@@ -23,6 +23,7 @@ import etla.mod.cfg.db.SDbConfig;
 import etla.mod.cfg.db.SDbUser;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
 import sa.lib.SLibConsts;
 import sa.lib.SLibTimeUtils;
@@ -36,6 +37,8 @@ import sa.lib.gui.SGuiSession;
 public class SEtlProcessDocInvoices {
     
     public static String computeEtlInvoices(final SGuiSession session, final SEtlPackage etlPackage) throws Exception {
+        ArrayList<SDbExtraChargePeriod> array = SEtlUtils.getExtraChargePeriods(session, etlPackage.DateIssue);
+        
         // Avista invoices variables:
         
         int nInvoicesCount = 0;
@@ -152,7 +155,8 @@ public class SEtlProcessDocInvoices {
         nMiscDefaultSiieUnitId = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(dbConfigAvista.getFkSrcDefaultUnitOfMeasureId())).getDesUnitOfMeasureId();
         dMisc1kFeetTo1kMeters = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(SModSysConsts.AS_UOM_MSF)).getConversionFactor();
         
-        // Obtener la cantidad de facturas
+        // Get invoices count:
+        
         sql = "SELECT COUNT(*) "
                 + "FROM dbo.CustomerInvoices AS ci "
                 + "WHERE CAST(ci.Created AS DATE) BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodStart) + "' AND '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodEnd) + "' AND "
@@ -1089,9 +1093,185 @@ public class SEtlProcessDocInvoices {
                         dataDps.getDbmsDpsEntries().add(dataDpsEntry);
                     }
 
-                    // Save new invoice:
+                    // Process extra charges, if any:
                     
                     dataDps.calculateTotal(null);
+                    
+                    double subtotalCy = dataDps.getSubtotalCy_r(); // base amount for charges
+                    
+                    ArrayList<SDbExtraChargePeriod> periods = SEtlUtils.getExtraChargePeriods(session, dataDps.getDate());
+                    
+                    for (SDbExtraChargePeriod period : periods) {
+                        double chargeCy = SLibUtils.round(subtotalCy * period.getChargePercentage(), nMiscDecsAmount);
+                        
+                        dataDpsEntry = new SDataDpsEntry();
+                        
+                        //dataDpsEntry.setPkYearId(...);    // set when saved
+                        //dataDpsEntry.setPkDocId(...);     // set when saved
+                        //dataDpsEntry.setPkEntryId(...);   // set when saved
+                        dataDpsEntry.setConceptKey(period.getCode());
+                        dataDpsEntry.setConcept(period.getName());
+                        dataDpsEntry.setReference("");
+                        
+                        dataDpsEntry.setQuantity(1);
+                        
+                        dataDpsEntry.setIsDiscountDocApplying(true);
+                        dataDpsEntry.setIsDiscountUnitaryPercentage(false);
+                        dataDpsEntry.setIsDiscountUnitaryPercentageSystem(false);
+                        dataDpsEntry.setIsDiscountEntryPercentage(false);
+                        dataDpsEntry.setDiscountUnitaryPercentage(0);
+                        dataDpsEntry.setDiscountUnitaryPercentageSystem(0);
+                        dataDpsEntry.setDiscountEntryPercentage(0);
+                        
+                        dataDpsEntry.setOriginalQuantity(1);
+                        dataDpsEntry.setOriginalPriceUnitaryCy(chargeCy);
+                        dataDpsEntry.setOriginalPriceUnitarySystemCy(chargeCy);
+                        dataDpsEntry.setOriginalDiscountUnitaryCy(0);
+                        dataDpsEntry.setOriginalDiscountUnitarySystemCy(0);
+                        dataDpsEntry.setSalesPriceUnitaryCy(0);
+                        dataDpsEntry.setSalesFreightUnitaryCy(0);
+                        
+                        dataDpsEntry.setPriceUnitaryCy(chargeCy);
+                        dataDpsEntry.setPriceUnitarySystemCy(chargeCy);
+                        dataDpsEntry.setDiscountUnitaryCy(0);
+                        dataDpsEntry.setDiscountUnitarySystemCy(0);
+                        dataDpsEntry.setDiscountEntryCy(0);
+                        dataDpsEntry.setSubtotalProvisionalCy_r(SLibUtils.round(((dataDpsEntry.getPriceUnitaryCy() - dataDpsEntry.getDiscountUnitaryCy()) * dataDpsEntry.getQuantity()) - dataDpsEntry.getDiscountEntryCy(), nMiscDecsAmount));
+                        dataDpsEntry.setDiscountDocCy(0);
+                        dataDpsEntry.setSubtotalCy_r(SLibUtils.round(dataDpsEntry.getSubtotalProvisionalCy_r() - dataDpsEntry.getDiscountDocCy(), nMiscDecsAmount));
+                        dataDpsEntry.setTaxChargedCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() * SEtlConsts.SIIE_TAX_RATE, nMiscDecsAmount));
+                        dataDpsEntry.setTaxRetainedCy_r(0);
+                        dataDpsEntry.setTotalCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() + dataDpsEntry.getTaxChargedCy_r() - dataDpsEntry.getTaxRetainedCy_r(), nMiscDecsAmount));
+                        
+                        dataDpsEntry.setPriceUnitaryRealCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() / dataDpsEntry.getQuantity(), nMiscDecsAmountUnit));
+                        dataDpsEntry.setCommissionsCy_r(0);
+                        
+                        dEntryTotal = SLibUtils.round(dataDpsEntry.getTotalCy_r() * dataDps.getExchangeRate(), nMiscDecsAmount);
+                        dEntrySubtotal = SLibUtils.round(dEntryTotal / (1.0 + SEtlConsts.SIIE_TAX_RATE), nMiscDecsAmount);
+                        dEntryTaxRetained = 0;
+                        dEntryTaxCharged = SLibUtils.round(dEntryTotal - dEntrySubtotal, nMiscDecsAmount);
+                        
+                        if (dbInvoice.getFkSrcOriginalCurrencyId() == dbInvoice.getFkSrcFinalCurrencyId()) {
+                            dEntryPriceUnit = chargeCy;
+                        }
+                        else {
+                            dEntryPriceUnit = dEntrySubtotal / dataDpsEntry.getQuantity();
+                        }
+                        
+                        dataDpsEntry.setPriceUnitary(SLibUtils.round(dEntryPriceUnit, nMiscDecsAmount));
+                        dataDpsEntry.setPriceUnitarySystem(SLibUtils.round(dEntryPriceUnit, nMiscDecsAmount));
+                        dataDpsEntry.setDiscountUnitary(0);
+                        dataDpsEntry.setDiscountUnitarySystem(0);
+                        dataDpsEntry.setDiscountEntry(0);
+                        dataDpsEntry.setSubtotalProvisional_r(dEntrySubtotal);
+                        dataDpsEntry.setDiscountDoc(0);
+                        dataDpsEntry.setSubtotal_r(dEntrySubtotal);
+                        dataDpsEntry.setTaxCharged_r(dEntryTaxCharged);
+                        dataDpsEntry.setTaxRetained_r(dEntryTaxRetained);
+                        dataDpsEntry.setTotal_r(dEntryTotal);
+                        
+                        dataDpsEntry.setPriceUnitaryReal_r(SLibUtils.round(dataDpsEntry.getSubtotal_r() / dataDpsEntry.getQuantity(), nMiscDecsAmountUnit));
+                        dataDpsEntry.setCommissions_r(0);
+                        
+                        dataDpsEntry.setLength(0);
+                        dataDpsEntry.setSurface(0);
+                        dataDpsEntry.setVolume(0);
+                        dataDpsEntry.setMass(0);
+                        dataDpsEntry.setWeightPackagingExtra(0);
+                        dataDpsEntry.setWeightGross(0);
+                        dataDpsEntry.setWeightDelivery(0);
+                        dataDpsEntry.setSurplusPercentage(0);
+                        dataDpsEntry.setContractBase(0);
+                        dataDpsEntry.setContractFuture(0);
+                        dataDpsEntry.setContractFactor(0);
+                        dataDpsEntry.setContractPriceYear(0);
+                        dataDpsEntry.setContractPriceMonth(0);
+                        dataDpsEntry.setSealQuality("");
+                        dataDpsEntry.setSealSecurity("");
+                        dataDpsEntry.setDriver("");
+                        dataDpsEntry.setPlate("");
+                        dataDpsEntry.setTicket("");
+                        dataDpsEntry.setContainerTank("");
+                        dataDpsEntry.setVgm("");
+                        dataDpsEntry.setOperationsType(SDataConstantsSys.TRNX_OPS_TYPE_OPS_OPS);
+                        dataDpsEntry.setUserId(SLibConsts.UNDEFINED);
+                        //dataDpsEntry.setSortingPosition(...); // set when saved
+                        dataDpsEntry.setIsPrepayment(false);
+                        dataDpsEntry.setIsDiscountRetailChain(false);
+                        dataDpsEntry.setIsTaxesAutomaticApplying(true);
+                        dataDpsEntry.setIsPriceVariable(false);
+                        dataDpsEntry.setIsPriceConfirm(false);
+                        dataDpsEntry.setIsSalesFreightRequired(false);
+                        dataDpsEntry.setIsSalesFreightConfirm(false);
+                        dataDpsEntry.setIsSalesFreightAdd(false);
+                        dataDpsEntry.setIsInventoriable(false); // to prevent unnecessary stock supply status
+                        dataDpsEntry.setIsDeleted(false);
+                        dataDpsEntry.setFkItemId(period.getDbmsExtraCharge().getDesItemId());
+                        dataDpsEntry.setFkUnitId(period.getDbmsExtraCharge().getDesUnitOfMeasureId());
+                        dataDpsEntry.setFkOriginalUnitId(period.getDbmsExtraCharge().getDesUnitOfMeasureId());
+                        dataDpsEntry.setFkTaxRegionId(dataBizPartnerCustomer.getDbmsHqBranch().getFkTaxRegionId_n() == SLibConsts.UNDEFINED ? SEtlConsts.SIIE_DEFAULT : dataBizPartnerCustomer.getDbmsHqBranch().getFkTaxRegionId_n());
+                        dataDpsEntry.setFkThirdTaxCausingId_n(0);
+                        dataDpsEntry.setFkDpsAdjustmentTypeId(SDataConstantsSys.TRNS_STP_DPS_ADJ_NA_NA[0]);
+                        dataDpsEntry.setFkDpsAdjustmentSubtypeId(SDataConstantsSys.TRNS_STP_DPS_ADJ_NA_NA[1]);
+                        dataDpsEntry.setFkDpsEntryTypeId(SDataConstantsSys.TRNS_TP_DPS_ETY_ORDY);
+                        dataDpsEntry.setFkVehicleTypeId_n(SLibConsts.UNDEFINED);
+                        dataDpsEntry.setFkCashCompanyBranchId_n(SLibConsts.UNDEFINED);
+                        dataDpsEntry.setFkCashAccountId_n(SLibConsts.UNDEFINED);
+                        dataDpsEntry.setFkCostCenterId_n(dbConfigAvista.getDesDefaultCostCenterFk());
+                        dataDpsEntry.setFkItemRefId_n(SLibConsts.UNDEFINED);
+                        dataDpsEntry.setFkUserNewId(((SDbUser) session.getUser()).getDesUserId());
+                        dataDpsEntry.setFkUserEditId(SDataConstantsSys.USRX_USER_NA);
+                        dataDpsEntry.setFkUserDeleteId(SDataConstantsSys.USRX_USER_NA);
+                        //dataDpsEntry.setUserNewTs(...);
+                        //dataDpsEntry.setUserEditTs(...);
+                        //dataDpsEntry.setUserDeleteTs(...);
+                        
+                        dataDpsEntryNotes = new SDataDpsEntryNotes();
+                        
+                        //dataDpsEntryNotes.setPkYearId(...);
+                        //dataDpsEntryNotes.setPkDocId(...);
+                        //dataDpsEntryNotes.setPkEntryId(...);
+                        //dataDpsEntryNotes.setPkNotesId(...);
+                        dataDpsEntryNotes.setNotes("BASE: $" + SLibUtils.getDecimalFormatAmount().format(subtotalCy) + " " + dbInvoiceCurrencyReq.getCode() + ".");
+                        dataDpsEntryNotes.setIsAllDocs(true);
+                        dataDpsEntryNotes.setIsPrintable(true);
+                        dataDpsEntryNotes.setIsCfd(false);
+                        dataDpsEntryNotes.setIsDeleted(false);
+                        dataDpsEntryNotes.setFkUserNewId(((SDbUser) session.getUser()).getDesUserId());
+                        dataDpsEntryNotes.setFkUserEditId(SDataConstantsSys.USRX_USER_NA);
+                        dataDpsEntryNotes.setFkUserDeleteId(SDataConstantsSys.USRX_USER_NA);
+                        //dataDpsEntryNotes.setUserNewTs(...);
+                        //dataDpsEntryNotes.setUserEditTs(...);
+                        //dataDpsEntryNotes.setUserDeleteTs(...);
+                        
+                        dataDpsEntry.getDbmsEntryNotes().add(dataDpsEntryNotes);
+                        
+                        dataDpsEntryTax = new SDataDpsEntryTax();
+                        
+                        //dataDpsEntryTax.setPkYearId(...);     // set when saved
+                        //dataDpsEntryTax.setPkDocId(...);      // set when saved
+                        //dataDpsEntryTax.setPkEntryId(...);    // set when saved
+                        dataDpsEntryTax.setPkTaxBasicId(SEtlConsts.SIIE_TAX[0]);
+                        dataDpsEntryTax.setPkTaxId(SEtlConsts.SIIE_TAX[1]);
+                        dataDpsEntryTax.setPercentage(SEtlConsts.SIIE_TAX_RATE);
+                        dataDpsEntryTax.setValueUnitary(0);
+                        dataDpsEntryTax.setValue(0);
+                        dataDpsEntryTax.setTax(dataDpsEntry.getTaxCharged_r());
+                        dataDpsEntryTax.setTaxCy(dataDpsEntry.getTaxChargedCy_r());
+                        dataDpsEntryTax.setFkTaxTypeId(erp.mod.SModSysConsts.FINS_TP_TAX_CHARGED);
+                        dataDpsEntryTax.setFkTaxCalculationTypeId(erp.mod.SModSysConsts.FINS_TP_TAX_CAL_RATE);
+                        dataDpsEntryTax.setFkTaxApplicationTypeId(erp.mod.SModSysConsts.FINS_TP_TAX_APP_CASH);
+                        
+                        dataDpsEntry.getDbmsEntryTaxes().add(dataDpsEntryTax);
+                        
+                        dataDps.getDbmsDpsEntries().add(dataDpsEntry);
+                    }
+                    
+                    // Proceed to save invoice:
+                    
+                    if (!periods.isEmpty()) {
+                        dataDps.calculateTotal(null); // recalculate total
+                    }
 
                     if (dataDps.save(etlPackage.ConnectionSiie) != SLibConstants.DB_ACTION_SAVE_OK) {
                         throw new Exception(SEtlConsts.MSG_ERR_SIIE_ITM_INS + "'" + SLibUtils.textTrim(rsAvistaInvoiceData.getString("InvoiceNumber")) + "'."

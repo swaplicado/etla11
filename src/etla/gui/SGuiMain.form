@@ -55,6 +55,16 @@
             <Property name="text" type="java.lang.String" value="Configuraci&#xf3;n"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiCfgExtraChargePeriod">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Per&#xed;odos de cargos extra"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiCfgExtraCharge">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cargos extra"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiCfgUser">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Usuarios"/>
@@ -86,12 +96,12 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiEtlBolPending">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remisiones x importar"/>
+                <Property name="text" type="java.lang.String" value="Remisiones por importar"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiEtlInvoicePending">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Remisiones importadas x facturar"/>
+                <Property name="text" type="java.lang.String" value="Remisiones importadas por facturar"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jsEtl2">
@@ -108,7 +118,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiEtlSalesAgent">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Agentes ventas"/>
+                <Property name="text" type="java.lang.String" value="Agentes de ventas"/>
               </Properties>
             </MenuItem>
           </SubComponents>
@@ -154,7 +164,7 @@
             <Property name="text" type="java.lang.String" value="B&#xe1;scula"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jmiReports">
+            <MenuItem class="javax.swing.JMenuItem" name="jmiWmAuditReport">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Reporte auditor&#xed;a de b&#xe1;scula"/>
               </Properties>

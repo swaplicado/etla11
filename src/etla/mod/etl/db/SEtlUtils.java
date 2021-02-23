@@ -138,7 +138,7 @@ public abstract class SEtlUtils {
         return items;
     }
 
-    private static int getLastExtractedCustomerInvoiceKey(SGuiSession session) throws Exception {
+    private static int getLastExtractedCustomerInvoiceKey(final SGuiSession session) throws Exception {
         int startId = 0;
         String sql = "SELECT MAX(CustomerInvoiceKey) "
                 + "FROM " + SModConsts.TablesMap.get(SModConsts.A_CUSTOMERINVOICES);
@@ -157,7 +157,7 @@ public abstract class SEtlUtils {
         return startId != 0 ? startId : START_CUSTOMERINVOICE_KEY;
     }
 
-    public static void extractCustomerInvoices(SGuiSession session) throws Exception {
+    public static void extractCustomerInvoices(final SGuiSession session) throws Exception {
         String sql = "SELECT CustomerInvoiceKey, "
                 + "CustomerId, " 
                 + "InvoiceNumber, " 
@@ -191,5 +191,35 @@ public abstract class SEtlUtils {
             preparedStatement.setString(6, description == null ? "" : description);
             preparedStatement.execute();
         }
+    }
+    
+    public static ArrayList<SDbExtraChargePeriod> getExtraChargePeriods(final SGuiSession session, final Date datetime) throws Exception {
+        ArrayList<SDbExtraChargePeriod> periods = new ArrayList<>();
+        
+        String sql = "SELECT id_charge "
+                + "FROM " + SModConsts.TablesMap.get(SModConsts.A_CHARGE) + " "
+                + "WHERE NOT b_del AND b_act "
+                + "ORDER BY id_charge;";
+        try (Statement statement = session.getStatement().getConnection().createStatement(); Statement statement1 = session.getStatement().getConnection().createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                sql = "SELECT id_period "
+                        + "FROM " + SModConsts.TablesMap.get(SModConsts.A_CHARGE_PERIOD) + " "
+                        + "WHERE NOT b_del AND fk_charge = " + resultSet.getInt("id_charge") + " AND "
+                        + "dt_sta <= '" + SLibUtils.DbmsDateFormatDate.format(datetime) + "' AND ("
+                        + "dt_end_n IS NULL OR dt_end_n >= '" + SLibUtils.DbmsDateFormatDate.format(datetime) + "') "
+                        + "ORDER BY dt_sta, id_period "
+                        + "LIMIT 1;";
+                ResultSet resultSet1 = statement1.executeQuery(sql);
+                if (resultSet1.next()) {
+                    SDbExtraChargePeriod period = (SDbExtraChargePeriod) session.readRegistry(SModConsts.A_CHARGE_PERIOD, new int[] { resultSet1.getInt("id_period") });
+                    periods.add(period);
+                }
+                resultSet1.close();
+            }
+            resultSet.close();
+        }
+        
+        return periods;
     }
 }

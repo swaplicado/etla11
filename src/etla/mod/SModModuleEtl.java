@@ -10,6 +10,8 @@ import etla.mod.etl.db.SDbCustomer;
 import etla.mod.etl.db.SDbCustomerInvoice;
 import etla.mod.etl.db.SDbCustomerInvoiceExcuse;
 import etla.mod.etl.db.SDbExchangeRate;
+import etla.mod.etl.db.SDbExtraCharge;
+import etla.mod.etl.db.SDbExtraChargePeriod;
 import etla.mod.etl.db.SDbInvoice;
 import etla.mod.etl.db.SDbInvoiceRow;
 import etla.mod.etl.db.SDbItem;
@@ -19,11 +21,15 @@ import etla.mod.etl.db.SDbSysUnitOfMeasure;
 import etla.mod.etl.form.SFormCustomer;
 import etla.mod.etl.form.SFormCustomerInvoiceExcuse;
 import etla.mod.etl.form.SFormExchangeRate;
+import etla.mod.etl.form.SFormExtraCharge;
+import etla.mod.etl.form.SFormExtraChargePeriod;
 import etla.mod.etl.form.SFormItem;
 import etla.mod.etl.form.SFormSalesAgent;
 import etla.mod.etl.view.SViewAvistaCustomerInvoicesPending;
 import etla.mod.etl.view.SViewCustomer;
 import etla.mod.etl.view.SViewExchangeRate;
+import etla.mod.etl.view.SViewExtraCharge;
+import etla.mod.etl.view.SViewExtraChargePeriod;
 import etla.mod.etl.view.SViewInvoice;
 import etla.mod.etl.view.SViewItem;
 import etla.mod.etl.view.SViewSalesAgent;
@@ -50,6 +56,8 @@ public class SModModuleEtl extends SGuiModule {
     private SFormSalesAgent moFormSalesAgent;
     private SFormCustomer moFormCustomer;
     private SFormItem moFormItem;
+    private SFormExtraCharge moFormExtraCharge;
+    private SFormExtraChargePeriod moFormExtraChargePeriod;
     private SFormExchangeRate moFormExchangeRate;
     private SFormCustomerInvoiceExcuse moFormCustomerInvoiceExcuse;
 
@@ -100,6 +108,12 @@ public class SModModuleEtl extends SGuiModule {
                 break;
             case SModConsts.A_EXR:
                 registry = new SDbExchangeRate();
+                break;
+            case SModConsts.A_CHARGE:
+                registry = new SDbExtraCharge();
+                break;
+            case SModConsts.A_CHARGE_PERIOD:
+                registry = new SDbExtraChargePeriod();
                 break;
             case SModConsts.A_CUSTOMERINVOICES:
                 registry = new SDbCustomerInvoice();
@@ -160,6 +174,13 @@ public class SModModuleEtl extends SGuiModule {
                 break;
             case SModConsts.A_EXR:
                 break;
+            case SModConsts.A_CHARGE:
+                settings = new SGuiCatalogueSettings("Cargo extra", 1);
+                sql = "SELECT id_charge AS " + SDbConsts.FIELD_ID + "1, CONCAT(name, ' (', code, ')') AS " + SDbConsts.FIELD_ITEM + " "
+                        + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, code, id_charge ";
+                break;
+            case SModConsts.A_CHARGE_PERIOD:
+                break;
             case SModConsts.A_CUSTOMERINVOICES:
                 break;
             case SModConsts.A_CUSTOMERINVOICES_EXCUSES:
@@ -214,6 +235,12 @@ public class SModModuleEtl extends SGuiModule {
             case SModConsts.A_EXR:
                 view = new SViewExchangeRate(miClient, "Tipos cambio");
                 break;
+            case SModConsts.A_CHARGE:
+                view = new SViewExtraCharge(miClient, "Cargos extra");
+                break;
+            case SModConsts.A_CHARGE_PERIOD:
+                view = new SViewExtraChargePeriod(miClient, "Períodos cargos extra");
+                break;
             case SModConsts.A_CUSTOMERINVOICES:
                 break;
             case SModConsts.A_CUSTOMERINVOICES_EXCUSES:
@@ -263,6 +290,14 @@ public class SModModuleEtl extends SGuiModule {
             case SModConsts.A_EXR:
                 if (moFormExchangeRate == null) moFormExchangeRate = new SFormExchangeRate(miClient, "Tipo cambio");
                 form = moFormExchangeRate;
+                break;
+            case SModConsts.A_CHARGE:
+                if (moFormExtraCharge == null) moFormExtraCharge = new SFormExtraCharge(miClient, "Cargo extra");
+                form = moFormExtraCharge;
+                break;
+            case SModConsts.A_CHARGE_PERIOD:
+                if (moFormExtraChargePeriod == null) moFormExtraChargePeriod = new SFormExtraChargePeriod(miClient, "Período cargo extra");
+                form = moFormExtraChargePeriod;
                 break;
             case SModConsts.A_CUSTOMERINVOICES:
                 break;

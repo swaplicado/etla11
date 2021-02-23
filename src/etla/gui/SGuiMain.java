@@ -74,7 +74,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 007.1"; // release: 2020-12-14
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 008.0"; // release: 2021-02-23
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -140,6 +140,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jsFile3 = new javax.swing.JPopupMenu.Separator();
         jmiFileExit = new javax.swing.JMenuItem();
         jmCfg = new javax.swing.JMenu();
+        jmiCfgExtraChargePeriod = new javax.swing.JMenuItem();
+        jmiCfgExtraCharge = new javax.swing.JMenuItem();
         jmiCfgUser = new javax.swing.JMenuItem();
         jmEtl = new javax.swing.JMenu();
         jmiEtlExchangeRate = new javax.swing.JMenuItem();
@@ -161,7 +163,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jsFile5 = new javax.swing.JPopupMenu.Separator();
         jmiSmsWeightComparisonReport = new javax.swing.JMenuItem();
         jmWm = new javax.swing.JMenu();
-        jmiReports = new javax.swing.JMenuItem();
+        jmiWmAuditReport = new javax.swing.JMenuItem();
         jmHelp = new javax.swing.JMenu();
         jmiHelpHelp = new javax.swing.JMenuItem();
         jsHelp1 = new javax.swing.JPopupMenu.Separator();
@@ -275,6 +277,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
         jmCfg.setText("Configuración");
 
+        jmiCfgExtraChargePeriod.setText("Períodos de cargos extra");
+        jmCfg.add(jmiCfgExtraChargePeriod);
+
+        jmiCfgExtraCharge.setText("Cargos extra");
+        jmCfg.add(jmiCfgExtraCharge);
+
         jmiCfgUser.setText("Usuarios");
         jmCfg.add(jmiCfgUser);
 
@@ -292,10 +300,10 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiEtlInvoice.setText("Facturas");
         jmEtl.add(jmiEtlInvoice);
 
-        jmiEtlBolPending.setText("Remisiones x importar");
+        jmiEtlBolPending.setText("Remisiones por importar");
         jmEtl.add(jmiEtlBolPending);
 
-        jmiEtlInvoicePending.setText("Remisiones importadas x facturar");
+        jmiEtlInvoicePending.setText("Remisiones importadas por facturar");
         jmEtl.add(jmiEtlInvoicePending);
         jmEtl.add(jsEtl2);
 
@@ -305,7 +313,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiEtlCustomer.setText("Clientes");
         jmEtl.add(jmiEtlCustomer);
 
-        jmiEtlSalesAgent.setText("Agentes ventas");
+        jmiEtlSalesAgent.setText("Agentes de ventas");
         jmEtl.add(jmiEtlSalesAgent);
 
         jMenuBar.add(jmEtl);
@@ -333,8 +341,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
         jmWm.setText("Báscula");
 
-        jmiReports.setText("Reporte auditoría de báscula");
-        jmWm.add(jmiReports);
+        jmiWmAuditReport.setText("Reporte auditoría de báscula");
+        jmWm.add(jmiWmAuditReport);
 
         jMenuBar.add(jmWm);
 
@@ -437,6 +445,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenu jmHelp;
     private javax.swing.JMenu jmShip;
     private javax.swing.JMenu jmWm;
+    private javax.swing.JMenuItem jmiCfgExtraCharge;
+    private javax.swing.JMenuItem jmiCfgExtraChargePeriod;
     private javax.swing.JMenuItem jmiCfgUser;
     private javax.swing.JMenuItem jmiEtlBolPending;
     private javax.swing.JMenuItem jmiEtlCustomer;
@@ -454,12 +464,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenuItem jmiFileWorkingDate;
     private javax.swing.JMenuItem jmiHelpAbout;
     private javax.swing.JMenuItem jmiHelpHelp;
-    private javax.swing.JMenuItem jmiReports;
     private javax.swing.JMenuItem jmiSmsShipments;
     private javax.swing.JMenuItem jmiSmsShipmentsRel;
     private javax.swing.JMenuItem jmiSmsShipmentsToRel;
     private javax.swing.JMenuItem jmiSmsShipper;
     private javax.swing.JMenuItem jmiSmsWeightComparisonReport;
+    private javax.swing.JMenuItem jmiWmAuditReport;
     private javax.swing.JPopupMenu.Separator jsEtl1;
     private javax.swing.JPopupMenu.Separator jsEtl2;
     private javax.swing.JPopupMenu.Separator jsFile1;
@@ -550,6 +560,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiFileCloseSession.addActionListener(this);
         jmiFileExit.addActionListener(this);
 
+        jmiCfgExtraChargePeriod.addActionListener(this);
+        jmiCfgExtraCharge.addActionListener(this);
         jmiCfgUser.addActionListener(this);
 
         jmiEtlExchangeRate.addActionListener(this);
@@ -567,7 +579,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipper.addActionListener(this);
         jmiSmsWeightComparisonReport.addActionListener(this);
 
-        jmiReports.addActionListener(this);
+        jmiWmAuditReport.addActionListener(this);
 
         jmiHelpHelp.addActionListener(this);
         jmiHelpAbout.addActionListener(this);
@@ -615,6 +627,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmEtl.setEnabled(false);
         jmShip.setEnabled(false);
         jmHelp.setEnabled(false);
+        jmiCfgExtraChargePeriod.setEnabled(false);
+        jmiCfgExtraCharge.setEnabled(false);
         jmiCfgUser.setEnabled(false);
         jmiFileWorkingDate.setEnabled(false);
         jbWorkingDate.setEnabled(false);
@@ -689,6 +703,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
                 jmEtl.setEnabled(true);
                 jmShip.setEnabled(true);
                 jmHelp.setEnabled(true);
+                jmiCfgExtraChargePeriod.setEnabled(user.isAdministrator());
+                jmiCfgExtraCharge.setEnabled(user.isAdministrator());
                 jmiCfgUser.setEnabled(user.isSupervisor());
                 jmiFileWorkingDate.setEnabled(true);
                 jbWorkingDate.setEnabled(jmiFileWorkingDate.isEnabled());
@@ -934,7 +950,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     @Override
     public HashMap<String, Object> createReportParams() {
-        HashMap<String, Object> params = new HashMap<String, Object>();
+        HashMap<String, Object> params = new HashMap<>();
 
         params.put("sAppName", APP_NAME);
         params.put("sAppRelease", APP_RELEASE);
@@ -1039,6 +1055,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             else if (menuItem == jmiFileExit) {
                 actionFileExit();
             }
+            else if (menuItem == jmiCfgExtraChargePeriod) {
+                moSession.showView(SModConsts.A_CHARGE_PERIOD, SLibConsts.UNDEFINED, null);
+            }
+            else if (menuItem == jmiCfgExtraCharge) {
+                moSession.showView(SModConsts.A_CHARGE, SLibConsts.UNDEFINED, null);
+            }
             else if (menuItem == jmiCfgUser) {
                 moSession.showView(SModConsts.CU_USR, SLibConsts.UNDEFINED, null);
             }
@@ -1081,7 +1103,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             else if (menuItem == jmiSmsWeightComparisonReport) {
                 new SDialogWeightComparisonReport(moSession.getClient(),"Comparativo peso embarques vs. báscula").setVisible(true);
             }
-            else if (menuItem == jmiReports) {
+            else if (menuItem == jmiWmAuditReport) {
                 if (showMsgBoxConfirm("¿Desea importar boletos Revuelta y documentos SIIE para procesar el reporte?\n"
                         + "El proceso puede demorar varios minutos.") == JOptionPane.YES_OPTION) {
                     this.jTabbedPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
