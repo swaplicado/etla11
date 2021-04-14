@@ -278,6 +278,12 @@ public class SModModuleSms extends SGuiModule {
             case SModConsts.SR_WEIGHT_COMPAR:
                 report = new SGuiReport("reps/weight_compar.jasper", "Comparativo peso embarques vs. báscula");
                 break;
+            case SModConsts.SR_SHIPT_CAPACITY:
+                report = new SGuiReport("reps/shipt_capacity.jasper", "Capacidad utilizada en m² por embarque");
+                break;
+            case SModConsts.SR_SHIPT_TRIPS:
+                report = new SGuiReport("reps/shipt_trips.jasper", "Número de viajes por cliente");
+                break;
             default:
         }
 

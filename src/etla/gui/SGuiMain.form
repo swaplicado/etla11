@@ -157,6 +157,16 @@
                 <Property name="text" type="java.lang.String" value="Reporte comparativo peso embarques vs. b&#xe1;scula"/>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiCapacityUsedPerShipmentReport">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reporte de capacidad utilizada en m&#xb2; por embarque"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiNumberOfTripsPerCustomer">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reporte de n&#xfa;mero de viajes por cliente"/>
+              </Properties>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jmWm">

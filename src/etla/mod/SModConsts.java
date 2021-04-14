@@ -73,6 +73,8 @@ public abstract class SModConsts {
     
     public static final int SR_SHIPT = 224011;
     public static final int SR_WEIGHT_COMPAR = 224021; // weight comparison
+    public static final int SR_SHIPT_CAPACITY = 224022; 
+    public static final int SR_SHIPT_TRIPS = 224023; 
 
     public static final int SX_SHIPT_ROW_ADDED = 225916;
 

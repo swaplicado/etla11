@@ -8,6 +8,9 @@ package etla.mod.sms.form;
 import erp.lib.SLibUtilities;
 import etla.mod.SModConsts;
 import etla.mod.sms.db.SDbShipper;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import sa.lib.SLibConsts;
 import sa.lib.SLibUtils;
 import sa.lib.db.SDbRegistry;
@@ -21,7 +24,7 @@ import sa.lib.gui.bean.SBeanForm;
  *
  * @author Daniel López, Isabel Servín
  */
-public class SFormShipper extends SBeanForm {
+public class SFormShipper extends SBeanForm implements ActionListener {
     
     private SDbShipper moRegistry;
     
@@ -53,6 +56,11 @@ public class SFormShipper extends SBeanForm {
         jPanel4 = new javax.swing.JPanel();
         jlName = new javax.swing.JLabel();
         moTextName = new sa.lib.gui.bean.SBeanFieldText();
+        jPanel8 = new javax.swing.JPanel();
+        jlDesSupplierId = new javax.swing.JLabel();
+        moIntDesSupplierId = new sa.lib.gui.bean.SBeanFieldInteger();
+        jbEditDesSupplierId = new javax.swing.JButton();
+        jlSiie = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jlMail = new javax.swing.JLabel();
         moTextMail = new sa.lib.gui.bean.SBeanFieldText();
@@ -65,7 +73,7 @@ public class SFormShipper extends SBeanForm {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos del registro:"));
         jPanel1.setLayout(new java.awt.BorderLayout(0, 5));
 
-        jPanel2.setLayout(new java.awt.GridLayout(4, 1, 0, 5));
+        jPanel2.setLayout(new java.awt.GridLayout(5, 1, 0, 5));
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
@@ -86,6 +94,25 @@ public class SFormShipper extends SBeanForm {
         jPanel4.add(moTextName);
 
         jPanel2.add(jPanel4);
+
+        jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        jlDesSupplierId.setText("ID asoc. negocios:");
+        jlDesSupplierId.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel8.add(jlDesSupplierId);
+        jPanel8.add(moIntDesSupplierId);
+
+        jbEditDesSupplierId.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sa/lib/img/cmd_std_edit.gif"))); // NOI18N
+        jbEditDesSupplierId.setToolTipText("Modificar");
+        jbEditDesSupplierId.setPreferredSize(new java.awt.Dimension(23, 23));
+        jPanel8.add(jbEditDesSupplierId);
+
+        jlSiie.setForeground(java.awt.Color.gray);
+        jlSiie.setText("(Primary Key SIIE)");
+        jlSiie.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel8.add(jlSiie);
+
+        jPanel2.add(jPanel8);
 
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
@@ -130,10 +157,15 @@ public class SFormShipper extends SBeanForm {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JButton jbEditDesSupplierId;
     private javax.swing.JLabel jlCarrierId;
     private javax.swing.JLabel jlCode;
+    private javax.swing.JLabel jlDesSupplierId;
     private javax.swing.JLabel jlMail;
     private javax.swing.JLabel jlName;
+    private javax.swing.JLabel jlSiie;
+    private sa.lib.gui.bean.SBeanFieldInteger moIntDesSupplierId;
     private sa.lib.gui.bean.SBeanFieldText moTextCarrierId;
     private sa.lib.gui.bean.SBeanFieldText moTextCode;
     private sa.lib.gui.bean.SBeanFieldText moTextMail;
@@ -147,6 +179,8 @@ public class SFormShipper extends SBeanForm {
     private void initComponentsCustom() {              
         SGuiUtils.setWindowBounds(this, 560, 350);
         
+        moIntDesSupplierId.setIntegerSettings(SGuiUtils.getLabelName(jlDesSupplierId), SGuiConsts.GUI_TYPE_INT_RAW, false);
+        
         moTextCode.setTextSettings(SGuiUtils.getLabelName(jlCode), 10);
         moTextName.setTextSettings(SGuiUtils.getLabelName(jlName), 100);
         moTextMail.setTextSettings(SGuiUtils.getLabelName(jlMail), 100);
@@ -155,11 +189,23 @@ public class SFormShipper extends SBeanForm {
         
         moFields.addField(moTextCode);
         moFields.addField(moTextName);
+        moFields.addField(moIntDesSupplierId);
         moFields.addField(moTextMail);
         moFields.addField(moTextCarrierId);
         
         moFields.setFormButton(jbSave);
     }    
+    
+    private void enableEditDesSupplierId(boolean enable) {
+        moIntDesSupplierId.setEditable(enable);
+        jbEditDesSupplierId.setEnabled(!enable);
+    }
+    
+    private void actionEditDesSupplierId() {
+        enableEditDesSupplierId(true);
+        moIntDesSupplierId.requestFocus();
+    }
+    
     /*
      * Public methods
      */
@@ -170,12 +216,12 @@ public class SFormShipper extends SBeanForm {
     
     @Override
     public void addAllListeners() {
-        
+        jbEditDesSupplierId.addActionListener(this);
     }
 
     @Override
     public void removeAllListeners() {
-        
+        jbEditDesSupplierId.removeActionListener(this);
     }
 
     @Override
@@ -202,14 +248,17 @@ public class SFormShipper extends SBeanForm {
 
         moTextCode.setText(moRegistry.getCode());
         moTextName.setText(moRegistry.getName());
+        moIntDesSupplierId.setValue(moRegistry.getDesSupplierId());
         moTextMail.setText(moRegistry.getMail());
         moTextCarrierId.setText(moRegistry.getCarrierId());
        
         setFormEditable(true);
         
         if (moRegistry.isRegistryNew()) {
+            actionEditDesSupplierId();
         }
         else {
+            enableEditDesSupplierId(false);
         }
         
         addAllListeners();
@@ -224,6 +273,7 @@ public class SFormShipper extends SBeanForm {
         //registry.setPkShipperId(...);
         registry.setCarrierId(moTextCarrierId.getValue());
         registry.setCode(moTextCode.getValue());
+        registry.setDesSupplierId(moIntDesSupplierId.getValue());
         registry.setName(moTextName.getValue());
         registry.setMail(moTextMail.getValue());
         //registry.setDeleted(...);
@@ -247,5 +297,16 @@ public class SFormShipper extends SBeanForm {
             }
         }
         return validation;
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof JButton) {
+            JButton button = (JButton) e.getSource();
+            
+            if (button == jbEditDesSupplierId) {
+                actionEditDesSupplierId();
+            }
+        }
     }
 }

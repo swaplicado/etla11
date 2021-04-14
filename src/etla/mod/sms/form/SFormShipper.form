@@ -46,7 +46,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
             <Property name="columns" type="int" value="1"/>
-            <Property name="rows" type="int" value="4"/>
+            <Property name="rows" type="int" value="5"/>
             <Property name="verticalGap" type="int" value="5"/>
           </Layout>
           <SubComponents>
@@ -88,6 +88,47 @@
                   <Properties>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[300, 23]"/>
+                    </Property>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel8">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                <Property name="alignment" type="int" value="0"/>
+                <Property name="verticalGap" type="int" value="0"/>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JLabel" name="jlDesSupplierId">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="ID asoc. negocios:"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 23]"/>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="sa.lib.gui.bean.SBeanFieldInteger" name="moIntDesSupplierId">
+                </Component>
+                <Component class="javax.swing.JButton" name="jbEditDesSupplierId">
+                  <Properties>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                      <Image iconType="3" name="/sa/lib/img/cmd_std_edit.gif"/>
+                    </Property>
+                    <Property name="toolTipText" type="java.lang.String" value="Modificar"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[23, 23]"/>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jlSiie">
+                  <Properties>
+                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="80" green="80" id="gray" palette="1" red="80" type="palette"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="(Primary Key SIIE)"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 23]"/>
                     </Property>
                   </Properties>
                 </Component>

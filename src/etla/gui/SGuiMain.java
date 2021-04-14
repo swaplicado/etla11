@@ -12,6 +12,8 @@ import etla.mod.cfg.db.SDbUserGui;
 import etla.mod.etl.form.SDialogEtl;
 import etla.mod.etl.view.SViewInvoice;
 import etla.mod.sms.db.SSmsEtl;
+import etla.mod.sms.form.SDialogCapacityUsedPerShipment;
+import etla.mod.sms.form.SDialogNumberOfTripsPerCustomer;
 import etla.mod.sms.form.SDialogSendWmReport;
 import etla.mod.sms.form.SDialogWeightComparisonReport;
 import java.awt.Cursor;
@@ -74,7 +76,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 008.0"; // release: 2021-02-23
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 009.0"; // release: 2021-04-14
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -162,6 +164,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipper = new javax.swing.JMenuItem();
         jsFile5 = new javax.swing.JPopupMenu.Separator();
         jmiSmsWeightComparisonReport = new javax.swing.JMenuItem();
+        jmiCapacityUsedPerShipmentReport = new javax.swing.JMenuItem();
+        jmiNumberOfTripsPerCustomer = new javax.swing.JMenuItem();
         jmWm = new javax.swing.JMenu();
         jmiWmAuditReport = new javax.swing.JMenuItem();
         jmHelp = new javax.swing.JMenu();
@@ -337,6 +341,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsWeightComparisonReport.setText("Reporte comparativo peso embarques vs. báscula");
         jmShip.add(jmiSmsWeightComparisonReport);
 
+        jmiCapacityUsedPerShipmentReport.setText("Reporte de capacidad utilizada en m² por embarque");
+        jmShip.add(jmiCapacityUsedPerShipmentReport);
+
+        jmiNumberOfTripsPerCustomer.setText("Reporte de número de viajes por cliente");
+        jmShip.add(jmiNumberOfTripsPerCustomer);
+
         jMenuBar.add(jmShip);
 
         jmWm.setText("Báscula");
@@ -445,6 +455,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenu jmHelp;
     private javax.swing.JMenu jmShip;
     private javax.swing.JMenu jmWm;
+    private javax.swing.JMenuItem jmiCapacityUsedPerShipmentReport;
     private javax.swing.JMenuItem jmiCfgExtraCharge;
     private javax.swing.JMenuItem jmiCfgExtraChargePeriod;
     private javax.swing.JMenuItem jmiCfgUser;
@@ -464,6 +475,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenuItem jmiFileWorkingDate;
     private javax.swing.JMenuItem jmiHelpAbout;
     private javax.swing.JMenuItem jmiHelpHelp;
+    private javax.swing.JMenuItem jmiNumberOfTripsPerCustomer;
     private javax.swing.JMenuItem jmiSmsShipments;
     private javax.swing.JMenuItem jmiSmsShipmentsRel;
     private javax.swing.JMenuItem jmiSmsShipmentsToRel;
@@ -578,6 +590,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipmentsRel.addActionListener(this);
         jmiSmsShipper.addActionListener(this);
         jmiSmsWeightComparisonReport.addActionListener(this);
+        jmiCapacityUsedPerShipmentReport.addActionListener(this);
+        jmiNumberOfTripsPerCustomer.addActionListener(this);
 
         jmiWmAuditReport.addActionListener(this);
 
@@ -1102,6 +1116,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             }
             else if (menuItem == jmiSmsWeightComparisonReport) {
                 new SDialogWeightComparisonReport(moSession.getClient(),"Comparativo peso embarques vs. báscula").setVisible(true);
+            }
+            else if (menuItem == jmiCapacityUsedPerShipmentReport) {
+                new SDialogCapacityUsedPerShipment(moSession.getClient(), "Capacidad utilizada en m² por embarque").setVisible(true);
+            }
+            else if (menuItem == jmiNumberOfTripsPerCustomer) {
+                new SDialogNumberOfTripsPerCustomer(moSession.getClient(), "Número de viajes por cliente").setVisible(true);
             }
             else if (menuItem == jmiWmAuditReport) {
                 if (showMsgBoxConfirm("¿Desea importar boletos Revuelta y documentos SIIE para procesar el reporte?\n"

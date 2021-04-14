@@ -1,4 +1,13 @@
 ================================================================================
+2021-04-14, 1.1 009.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se crearon dos reportes en el módulo de embarques:
+    "Reporte de capacidad utilizada en m² por embarque."
+    "Reporte de número de viajes por cleinte."
+2) Se agregó el campo de ID asoc. de negocio en el catálogo de transportistas.
+
+================================================================================
 2021-02-23, 1.1 008.0
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
