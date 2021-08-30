@@ -20,7 +20,7 @@ import sa.lib.gui.SGuiSession;
  *
  * @author Daniel López, Sergio Flores, Alfredo Pérez
  */
-public class SDbShipmentRow extends SDbRegistryUser{
+public class SDbShipmentRow extends SDbRegistryUser {
 
     protected int mnPkShipmentId;
     protected int mnPkRowId;

@@ -10,7 +10,9 @@ import etla.mod.SModSysConsts;
 import etla.mod.cfg.db.SDbConfig;
 import etla.mod.sms.db.SDbConfigSms;
 import etla.mod.sms.db.SDbShipment;
+import etla.mod.sms.db.SDbShipmentPrinting;
 import etla.mod.sms.db.SShippingUtils;
+import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -138,15 +140,29 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
                     miClient.showMsgBoxWarning(SGridConsts.ERR_MSG_ROW_TYPE_DATA);
                 }
                 else {
-                    SDbShipment shipment = (SDbShipment) miClient.getSession().readRegistry(SModConsts.S_SHIPT, getSelectedGridRow().getRowPrimaryKey());
 
                     try {
+                        miClient.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                        
+                        SDbShipment shipment = (SDbShipment) miClient.getSession().readRegistry(SModConsts.S_SHIPT, getSelectedGridRow().getRowPrimaryKey());
+                        
+                        // preserve number of this shipment printings:
+                        
+                        SDbShipmentPrinting printing = new SDbShipmentPrinting();
+                        printing.setPkShipmentId(shipment.getPkShipmentId());
+                        printing.save(miClient.getSession());
+
+                        populateGrid(SGridConsts.REFRESH_MODE_RELOAD); // to update number of printings
+                        
+                        // prepare printing:
+                        
                         HashMap<String, Object> map = miClient.createReportParams();
                         
                         map.put("nShiptId", shipment.getPkShipmentId());
                         map.put("bReleased", shipment.getFkShipmentStatusId() >= SModSysConsts.SS_SHIPT_ST_REL);
                         
-                        //Create QR for shipment order and server address
+                        // create QR for shipment order and server address:
+                        
                         SDbConfigSms configSms = ((SDbConfig) miClient.getSession().getConfigSystem()).getDbConfigSms();
                         BufferedImage imageQr = SImgUtils.createQrCodeBufferedImageCfdi33(configSms.getUrlSms() + "/url.php?key=" + shipment.getWebKey(), 400, 400);
 
@@ -154,10 +170,15 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
                             map.put("oImageQr", imageQr.getScaledInstance(imageQr.getWidth(), imageQr.getHeight(), Image.SCALE_DEFAULT));
                         }
 
+                        // print:
+                        
                         miClient.getSession().printReport(SModConsts.SR_SHIPT, SLibConsts.UNDEFINED, null, map);
                     }
                     catch (Exception e) {
                         SLibUtils.showException(this, e);
+                    }
+                    finally {
+                        miClient.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     }
                 }
             }
@@ -205,7 +226,7 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
             sql += (sql.isEmpty() ? "" : "AND ") + "sh.fk_shipt_st = " + SModSysConsts.SS_SHIPT_ST_REL + " ";
         }
         
-        msSql = "SELECT st.name AS " + SDbConsts.FIELD_NAME + ", "
+        msSql = "SELECT "
                 + "sp.name, "
                 + "vh.name, "
                 + "sh.vehic_plate, "
@@ -213,6 +234,7 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
                 + "sh.driver_phone, "
                 + "sh.id_shipt AS " + SDbConsts.FIELD_ID + "1, "
                 + "sh.number AS " + SDbConsts.FIELD_CODE + ", "
+                + "sh.number AS " + SDbConsts.FIELD_NAME + ", "
                 + "sh.shipt_date AS " + SDbConsts.FIELD_DATE + ", "
                 + "sh.b_ann, "
                 + "sh.b_del AS " + SDbConsts.FIELD_IS_DEL + ", "
@@ -226,16 +248,20 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
                 + "sh.kg, "
                 + "sh.ticket_id, "
                 + "sht.name, "
+                + "shs.name, "
                 + "shc.name, "
                 + "shh.name, "
                 + "ui.name AS " + SDbConsts.FIELD_USER_INS_NAME + ", "
                 + "uu.name AS " + SDbConsts.FIELD_USER_UPD_NAME + ", "
                 + "ur.name, "
                 + "tk.weight, "
-                + "tk.weight - sh.kg AS _difference "
+                + "sh.kg - tk.weight AS _weight_diff, "
+                + "(SELECT COUNT(*) FROM " + SModConsts.TablesMap.get(SModConsts.S_SHIPT_PRT) +  " AS prt WHERE prt.id_shipt = sh.id_shipt) AS _printings "
                 + "FROM " + SModConsts.TablesMap.get(SModConsts.S_SHIPT) + " AS sh "
                 + "INNER JOIN " + SModConsts.TablesMap.get(SModConsts.SU_SHIPT_TP) + " AS sht ON "
                 + "sh.fk_shipt_tp = sht.id_shipt_tp "
+                + "INNER JOIN " + SModConsts.TablesMap.get(SModConsts.SS_SHIPT_ST) + " AS shs ON "
+                + "sh.fk_shipt_st = shs.id_shipt_st "
                 + "INNER JOIN " + SModConsts.TablesMap.get(SModConsts.SU_CARGO_TP) + " AS shc ON "
                 + "sh.fk_cargo_tp = shc.id_cargo_tp "
                 + "INNER JOIN " + SModConsts.TablesMap.get(SModConsts.SU_HANDG_TP) + " AS shh ON "
@@ -250,8 +276,6 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
                 + "sh.fk_usr_upd = uu.id_usr "
                 + "INNER JOIN " + SModConsts.TablesMap.get(SModConsts.CU_USR) + " AS ur ON "
                 + "sh.fk_usr_release = ur.id_usr "
-                + "INNER JOIN " + SModConsts.TablesMap.get(SModConsts.SS_SHIPT_ST) + " AS st ON "
-                + "sh.fk_shipt_st = st.id_shipt_st "
                 + "LEFT OUTER JOIN " + SModConsts.TablesMap.get(SModConsts.S_SHIPT_ROW) + " AS sr ON "
                 + "sh.id_shipt = sr.id_shipt "
                 + "LEFT OUTER JOIN " + SModConsts.TablesMap.get(SModConsts.S_WM_TICKET) + " AS tk ON "
@@ -263,8 +287,8 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
     
     @Override
     public ArrayList<SGridColumnView> createGridColumns() {
-        ArrayList<SGridColumnView> columns = new ArrayList<SGridColumnView>();
-
+        ArrayList<SGridColumnView> columns = new ArrayList<>();
+      
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_RAW, SDbConsts.FIELD_CODE, "Folio"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE, SDbConsts.FIELD_DATE, SGridConsts.COL_TITLE_DATE));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "sht.name", "Tipo embarque"));
@@ -275,20 +299,21 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "sh.vehic_plate", "Placas vehículo"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "sh.driver_name", "Nombre chofer"));        
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "sh.driver_phone", "Teléfono chofer"));        
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, SDbConsts.FIELD_NAME, "Estatus"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "sh.kg", "Peso Axiom"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_RAW, "sh.ticket_id", "ID. boleto"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "tk.weight", "Peso boleto"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "_difference", "Diferencia peso"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "shs.name", "Estatus embarque"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_RAW, "sh.ticket_id", "ID boleto Revuelta"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "tk.weight", "Peso Revuelta (kg)"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "sh.kg", "Peso Axiom (kg)"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_8B, "_weight_diff", "Diferencia peso (kg)"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_2B, "_printings", "Impresiones"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, "sh.b_ann", "Anulado"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_USR, "ur.name", "Usr Libera"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE_DATETIME, "sh.ts_usr_release", "Usr TS Libera"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, SDbConsts.FIELD_IS_DEL, SGridConsts.COL_TITLE_IS_DEL));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, SDbConsts.FIELD_IS_SYS, SGridConsts.COL_TITLE_IS_SYS));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_USR, SDbConsts.FIELD_USER_INS_NAME, SGridConsts.COL_TITLE_USER_INS_NAME));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE_DATETIME, SDbConsts.FIELD_USER_INS_TS, SGridConsts.COL_TITLE_USER_INS_TS));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_USR, SDbConsts.FIELD_USER_UPD_NAME, SGridConsts.COL_TITLE_USER_UPD_NAME));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE_DATETIME, SDbConsts.FIELD_USER_UPD_TS, SGridConsts.COL_TITLE_USER_UPD_TS));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_USR, "ur.name", "Usr Libera"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE_DATETIME, "sh.ts_usr_release", "Usr TS Libera"));
 
         return columns;
     }

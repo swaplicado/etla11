@@ -78,6 +78,7 @@ public abstract class SEtlProcessCatCustomers {
         SDataCustomerConfig dataBizPartnerCustomerConfig = new SDataCustomerConfig();
         
         //dataBizPartnerCustomerConfig.setPkCustomerId(...); // set by business partner
+        dataBizPartnerCustomerConfig.setIsSignRestricted(false);
         dataBizPartnerCustomerConfig.setIsFreeDiscountDoc(false);
         dataBizPartnerCustomerConfig.setIsFreeCommissions(false);
         dataBizPartnerCustomerConfig.setIsDeleted(false);
