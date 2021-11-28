@@ -43,6 +43,7 @@ public abstract class SEtlProcessCatCustomers {
         dataBizPartnerCategory.setDaysOfCredit(SLibUtils.parseInt(resultSet.getString("PayTermCode")));
         dataBizPartnerCategory.setDaysOfGrace(0);
         dataBizPartnerCategory.setGuarantee(0);
+        dataBizPartnerCategory.setGuaranteeType("");
         dataBizPartnerCategory.setInsurance(0);
         dataBizPartnerCategory.setDateStart(SLibTimeUtils.getBeginOfYear(etlPackage.PeriodStart));
         dataBizPartnerCategory.setDateEnd_n(null);
@@ -510,6 +511,7 @@ public abstract class SEtlProcessCatCustomers {
                     
                     //dataBizPartnerBranchAddress.setPkBizPartnerBranchId(...); // set by business-partner branch
                     //dataBizPartnerBranchAddress.setPkAddressId(...); // set on save
+                    dataBizPartnerBranchAddress.setAddressCode("");
                     dataBizPartnerBranchAddress.setAddress(SModSysConsts.TXT_OFFICIAL);
                     dataBizPartnerBranchAddress.setStreet(SLibUtils.textToSql(resultSetAvista.getString("Address1")).replaceAll("'", "''"));
                     dataBizPartnerBranchAddress.setStreetNumberExt(SLibUtils.textToSql(resultSetAvista.getString("Address2")).replaceAll("'", "''"));
