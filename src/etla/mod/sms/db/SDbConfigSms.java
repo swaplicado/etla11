@@ -36,6 +36,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     protected String msRevueltaName;
     protected String msRevueltaUser;
     protected String msRevueltaPassword;
+    protected boolean mbShiptmentMail;
 
     /*
     protected boolean mbDeleted;
@@ -70,6 +71,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     public void setRevueltaName(String s) { msRevueltaName = s; }
     public void setRevueltaUser(String s) { msRevueltaUser = s; }
     public void setRevueltaPassword(String s) { msRevueltaPassword = s; }
+    public void setShiptmentMail(boolean b) { mbShiptmentMail = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
     public void setFkUserInsertId(int n) { mnFkUserInsertId = n; }
@@ -93,6 +95,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     public String getRevueltaName() { return msRevueltaName; }
     public String getRevueltaUser() { return msRevueltaUser; }
     public String getRevueltaPassword() { return msRevueltaPassword; }
+    public boolean isShiptmentMail() { return mbShiptmentMail; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
     public int getFkUserInsertId() { return mnFkUserInsertId; }
@@ -135,6 +138,7 @@ public class SDbConfigSms extends SDbRegistryUser{
         msRevueltaName = "";
         msRevueltaUser = "";
         msRevueltaPassword = "";
+        mbShiptmentMail = false;
         mbDeleted = false;
         mbSystem = false;
         mnFkUserInsertId = 0;
@@ -201,6 +205,7 @@ public class SDbConfigSms extends SDbRegistryUser{
             msRevueltaName = resultSet.getString("rev_name");
             msRevueltaUser = resultSet.getString("rev_user");
             msRevueltaPassword = resultSet.getString("rev_pswd");
+            mbShiptmentMail = resultSet.getBoolean("b_shipt_mail");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
             mnFkUserInsertId = resultSet.getInt("fk_usr_ins");
@@ -243,6 +248,7 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "'" + msRevueltaName + "', " + 
                 "'" + msRevueltaUser + "', " + 
                 "'" + msRevueltaPassword + "', " + 
+                (mbShiptmentMail ? 1 : 0) + ", " + 
                 (mbDeleted ? 1 : 0) + ", " + 
                 (mbSystem ? 1 : 0) + ", " + 
                 mnFkUserInsertId + ", " + 
@@ -271,6 +277,7 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "rev_name = '" + msRevueltaName + "', " +
                 "rev_user = '" + msRevueltaUser + "', " +
                 "rev_pswd = '" + msRevueltaPassword + "', " +
+                "b_shipt_mail = " + (mbShiptmentMail ? 1 : 0) + ", " +
                 "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                 "b_sys = " + (mbSystem ? 1 : 0) + ", " +
                 //"fk_usr_ins = " + mnFkUserInsertId + ", " +
@@ -306,6 +313,7 @@ public class SDbConfigSms extends SDbRegistryUser{
         registry.setRevueltaName(this.getRevueltaName());
         registry.setRevueltaUser(this.getRevueltaUser());
         registry.setRevueltaPassword(this.getRevueltaPassword());
+        registry.setShiptmentMail(this.isShiptmentMail());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());
         registry.setFkUserInsertId(this.getFkUserInsertId());

@@ -76,8 +76,19 @@ public abstract class SModConsts {
     public static final int SR_WEIGHT_COMPAR = 224021; // weight comparison
     public static final int SR_SHIPT_CAPACITY = 224022; 
     public static final int SR_SHIPT_TRIPS = 224023; 
-
+    
     public static final int SX_SHIPT_ROW_ADDED = 225916;
+
+    /*
+     * Localities
+     */
+
+    public static final int LOCU_CTY = 1032001;
+    public static final int LOCU_STA = 1032002;
+    public static final int LOCS_BOL_ZIP_CODE = 1032003;
+    public static final int LOCS_BOL_COUNTY = 1032004;
+    public static final int LOCS_BOL_LOCALITY = 1032005;
+
 
     public static final HashMap<Integer, String> TablesMap = new HashMap<>();
 

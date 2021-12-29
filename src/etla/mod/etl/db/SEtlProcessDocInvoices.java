@@ -783,6 +783,7 @@ public class SEtlProcessDocInvoices {
                     dataDps.setFkCarrierId_n(SLibConsts.UNDEFINED);
                     dataDps.setFkVehicleTypeId_n(SLibConsts.UNDEFINED);
                     dataDps.setFkVehicleId_n(SLibConsts.UNDEFINED);
+                    dataDps.setFkBillOfLading_n(SLibConsts.UNDEFINED);
                     dataDps.setFkSourceYearId_n(SLibConsts.UNDEFINED);
                     dataDps.setFkSourceDocId_n(SLibConsts.UNDEFINED);
                     dataDps.setFkMfgYearId_n(SLibConsts.UNDEFINED);

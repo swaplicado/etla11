@@ -6,6 +6,7 @@
 package etla.mod.sms.db;
 
 import etla.mod.SModConsts;
+import etla.mod.etl.db.SDbCustomer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -40,9 +41,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
     protected int mnFkDestinationId;
 
     protected String msDbmsCustomer;
+    protected String msDbmsCustomerTaxId;
     protected String msDbmsDestination;
+    protected int mnDbmsSiteLocationId;
     protected String msDbmsAddress1;
     protected String msDbmsAddress2;
+    protected String msDbmsZip;
 
     protected int mnAuxSiteLocationId;
     protected boolean mbAuxDestinationCreated;
@@ -90,14 +94,20 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public int getFkDestinationId() { return mnFkDestinationId; }
 
     public void setDbmsCustomer(String s) { msDbmsCustomer = s; }
+    public void setDbmsCustomerTaxId(String s) { msDbmsCustomerTaxId = s; }
     public void setDbmsDestination(String s) { msDbmsDestination = s; }
+    public void setDbmsSiteLocationId(int n) { mnDbmsSiteLocationId = n; }
     public void setDbmsAddress1(String s) { msDbmsAddress1 = s; }
     public void setDbmsAddress2(String s) { msDbmsAddress2 = s; }
+    public void setDbmsZip(String s) { msDbmsZip = s; }
 
     public String getDbmsCustomer() { return msDbmsCustomer; }
+    public String getDbmsCustomerTaxId() { return msDbmsCustomerTaxId; }
     public String getDbmsDestination() { return msDbmsDestination; }
+    public int getDbmsSiteLocationId() { return mnDbmsSiteLocationId; }
     public String getDbmsAddress1() { return msDbmsAddress1; }
     public String getDbmsAddress2() { return msDbmsAddress2; }
+    public String getDbmsZip() { return msDbmsZip; }
 
     public void setAuxSiteLocationId(int n) { mnAuxSiteLocationId = n; }
     public void setAuxDestinationCreated(boolean b) { mbAuxDestinationCreated = b; }
@@ -142,9 +152,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
         mnFkDestinationId = 0;
 
         msDbmsCustomer = "";
+        msDbmsCustomerTaxId = "";
         msDbmsDestination = "";
+        mnDbmsSiteLocationId = 0;
         msDbmsAddress1 = "";
         msDbmsAddress2 = "";
+        msDbmsZip = "";
 
         mnAuxSiteLocationId = 0;
         mbAuxDestinationCreated = false;
@@ -212,11 +225,15 @@ public class SDbShipmentRow extends SDbRegistryUser {
             mnFkDestinationId = resultSet.getInt("fk_destin");
 
             msDbmsCustomer = (String) session.readField(SModConsts.AU_CUS, new int[] { mnFkCustomerId }, SDbRegistry.FIELD_NAME);
+            SDbCustomer cus = (SDbCustomer) session.readRegistry(SModConsts.AU_CUS, new int[] { mnFkCustomerId });
+            msDbmsCustomerTaxId = cus.getTaxId();
             
             SDbDestination destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId });
             msDbmsDestination = destination.getName();
+            mnDbmsSiteLocationId = destination.getSiteLocationId();
             msDbmsAddress1 = destination.getAddress1();
             msDbmsAddress2 = destination.getAddress2();
+            msDbmsZip = destination.getZip();
 
             mbRegistryNew = false;
         }
@@ -240,8 +257,10 @@ public class SDbShipmentRow extends SDbRegistryUser {
                     !destination.getAddress1().equalsIgnoreCase(msDbmsAddress1) ||
                     !destination.getAddress2().equalsIgnoreCase(msDbmsAddress2)) {
                 destination.setName(msDbmsDestination);
+                destination.setSiteLocationId(mnDbmsSiteLocationId);
                 destination.setAddress1(msDbmsAddress1);
                 destination.setAddress2(msDbmsAddress2);
+                destination.setZip(msDbmsZip);
                 destination.save(session);
             }
         }
@@ -252,8 +271,10 @@ public class SDbShipmentRow extends SDbRegistryUser {
             destination.setSiteLocationId(mnAuxSiteLocationId);
             destination.setCode("");
             destination.setName(msDbmsDestination);
+            destination.setSiteLocationId(mnDbmsSiteLocationId);
             destination.setAddress1(msDbmsAddress1);
             destination.setAddress2(msDbmsAddress2);
+            destination.setZip(msDbmsZip);
             //destination.setDeleted(...);
             //destination.setSystem(...);
             //destination.setFkUserInsertId(...);
