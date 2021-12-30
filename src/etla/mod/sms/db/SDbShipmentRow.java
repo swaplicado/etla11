@@ -363,6 +363,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
         registry.setDbmsDestination(this.getDbmsDestination());
         registry.setDbmsAddress1(this.getDbmsAddress1());
         registry.setDbmsAddress2(this.getDbmsAddress2());
+        registry.setDbmsZip(this.getDbmsZip());
         
         registry.setAuxSiteLocationId(this.getAuxSiteLocationId());
         registry.setAuxDestinationCreated(this.isAuxDestinationCreated());

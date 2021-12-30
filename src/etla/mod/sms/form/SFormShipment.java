@@ -13,6 +13,7 @@ import etla.mod.SModConsts;
 import etla.mod.SModSysConsts;
 import etla.mod.cfg.db.SDbConfig;
 import etla.mod.etl.db.SDbConfigAvista;
+import etla.mod.etl.db.SDbCustomer;
 import etla.mod.etl.db.SEtlConsts;
 import etla.mod.etl.db.SEtlProcess;
 import static etla.mod.etl.db.SEtlProcess.createConnection;
@@ -841,7 +842,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             // Preparar los destinatarios del correo-e:
 
             ArrayList<String> recipientsTo = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode(mailAddress, ";")));
-            ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("floresgtz@hotmail.com", ";")));
+            //ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("floresgtz@hotmail.com", ";")));
 
             
              // Leer configuración de ETLA:
@@ -861,7 +862,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             SMailSender sender = new SMailSender(mailHost, mailPort, mailProtocol, mailStartTls, mailAuth, mailUser, mailPassword, mailUser);
 
             SMail mail = new SMail(sender, SMailUtils.encodeSubjectUtf8(SLibUtils.textToAscii(mailSubject)), SLibUtils.textToAscii(mailBody), recipientsTo);
-            mail.getBccRecipients().addAll(recipientsBcc);
+            //mail.getBccRecipients().addAll(recipientsBcc);
             mail.setContentType(SMailConsts.CONT_TP_TEXT_PLAIN);
             mail.send();
 
@@ -889,7 +890,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     String county = "";
                     mailBody += "Ubicacion " + (i + 1) + ":\n";
                     SDbShipmentRow row = ((SRowShipmentRow) moGridSelectedRows.getGridRow(i)).getShipmentRow();
-                    String sql = "SELECT * FROM erp.locs_bol_zip_code WHERE id_zip_code = '" + row.getDbmsZip() + "' AND NOT b_del;";
+                    String zipCode = row.getDbmsZip();
+                    if (!zipCode.isEmpty()) {
+                        SDbCustomer cus = (SDbCustomer) miClient.getSession().readRegistry(SModConsts.AU_CUS, new int[] { row.getFkCustomerId() });
+                        zipCode = cus.getZip();
+                    }
+                    String sql = "SELECT * FROM erp.locs_bol_zip_code WHERE id_zip_code = '" + zipCode + "' AND NOT b_del;";
                     ResultSet resultSet = statement.executeQuery(sql);
                     if (resultSet.next()) {
                         stateCode = resultSet.getString("id_sta_code");
@@ -967,7 +973,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         if (config.isShiptmentMail()) {
             SDbShipper shipper = (SDbShipper) miClient.getSession().readRegistry(SModConsts.SU_SHIPPER, moKeyShipper.getValue());
             String mail = shipper.getMail().toLowerCase();
-            if (miClient.showMsgBoxConfirm("Se enviara un correo a " + mail + "\n ¿Desea continuar?") == JOptionPane.OK_OPTION) {
+            if (miClient.showMsgBoxConfirm("Se enviara un correo con la información del embarque a " + mail + "\n ¿Desea continuar?") == JOptionPane.OK_OPTION) {
                 sendMail(mail);
             }
         }
