@@ -891,7 +891,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     mailBody += "Ubicacion " + (i + 1) + ":\n";
                     SDbShipmentRow row = ((SRowShipmentRow) moGridSelectedRows.getGridRow(i)).getShipmentRow();
                     String zipCode = row.getDbmsZip();
-                    if (!zipCode.isEmpty()) {
+                    if (zipCode.isEmpty()) {
                         SDbCustomer cus = (SDbCustomer) miClient.getSession().readRegistry(SModConsts.AU_CUS, new int[] { row.getFkCustomerId() });
                         zipCode = cus.getZip();
                     }
