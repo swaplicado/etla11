@@ -9,6 +9,7 @@ import erp.lib.SLibUtilities;
 import erp.mod.SModDataUtils;
 import erp.mtrn.data.SDataDps;
 import erp.mtrn.data.SDataDpsEntry;
+import etla.gui.SGuiMain;
 import etla.mod.SModConsts;
 import etla.mod.SModSysConsts;
 import etla.mod.cfg.db.SDbConfig;
@@ -842,7 +843,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             // Preparar los destinatarios del correo-e:
 
             ArrayList<String> recipientsTo = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode(mailAddress, ";")));
-            //ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("floresgtz@hotmail.com", ";")));
+//            ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("sflores@swaplicado.com.mx", ";")));
 
             
              // Leer configuración de ETLA:
@@ -888,7 +889,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     String stateCode = "";
                     String locality = "";
                     String county = "";
-                    mailBody += "Ubicacion " + (i + 1) + ":\n";
+                    mailBody += "\n\nUBICACION " + (i + 1) + ":\n";
                     SDbShipmentRow row = ((SRowShipmentRow) moGridSelectedRows.getGridRow(i)).getShipmentRow();
                     String zipCode = row.getDbmsZip();
                     if (zipCode.isEmpty()) {
@@ -906,13 +907,29 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     if (!countyCode.isEmpty()) {
                         county = SModDataUtils.getLocCatalogNameByCode(miClient.getSession(), SModConsts.LOCS_BOL_COUNTY, countyCode, stateCode);
                     }
+                    else {
+                        countyCode = "(NO APLICA)";
+                        county = "(NO APLICA)";
+                    }
+                    
                     if (!localityCode.isEmpty()) {
                         locality = SModDataUtils.getLocCatalogNameByCode(miClient.getSession(), SModConsts.LOCS_BOL_LOCALITY, localityCode, stateCode);
                     }
+                    else {
+                        localityCode = "(NO APLICA)";
+                        locality = "(NO APLICA)";
+                    }
+                    
+                    if (zipCode.isEmpty()) {
+                        zipCode = "00000";
+                    }
+                    
                     String locationId = "DE" + String.format("%06d", row.getDbmsSiteLocationId());
-                    mailBody += "ID Destino: " + locationId + ", destinatario: " + row.getDbmsCustomer() + ", RFC: " + row.getDbmsCustomerTaxId()+ " \n " + 
-                            "Localidad: " + locality + ", código localidad: " + localityCode + ", municipio: " + county + 
-                            ", código municipio: " + countyCode + ", código estado: " + stateCode + ", código postal: " + row.getDbmsZip() + "\n";
+                    mailBody += "ID Destino: " + locationId + "\n- Destinatario. Nombre: " + row.getDbmsCustomer() + "; RFC: " + row.getDbmsCustomerTaxId()+ "\n" + 
+                            "- Localidad. Clave SAT: " + localityCode + "; Nombre: " + locality + "\n" +
+                            "- Municipio. Clave SAT: " + countyCode + "; Nombre: " + county + "\n" +
+                            "- Estado. Clave SAT: " + stateCode + "\n" +
+                            "- Código postal: " + zipCode + "\n";
                     
                     // Datos de los ítems:
                     
@@ -928,14 +945,24 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                                 "WHERE id_item = " + entry.getFkItemId();
                         resultSet = statement.executeQuery(sql);
                         if (resultSet.next()) {
-                            item = "Producto: " + resultSet.getString("name") + ", Clave producto/servicio: " + (resultSet.getString("item_code") == null ? resultSet.getString("igen_code") : resultSet.getString("item_code")) + 
-                                    ", kg: " + SLibUtils.round(entry.getMass(), 3) + "\n";
+                            item = "- Producto. Clave SAT " + (resultSet.getString("item_code") == null ? resultSet.getString("igen_code") : resultSet.getString("item_code")) + 
+                                    "; Descripcion: " + resultSet.getString("name") + "\nPeso: " + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(entry.getMass(), 3)) + " kg \n";
                         }
                         mailBody += item;
                     }
                 }
-                mailBody += "\n\n";
+                mailBody += "\n";
             }
+            mailBody += "Sugerencia Embalaje (aunque no requerido). Clave SAT: Z01; Nombre: No requerido\n\n";
+            
+            mailBody += "-------------------------------------------------------------------------------------\n" +
+                "Favor de no responder este mail, fue generado de forma automática." +
+                "\n" +
+               SGuiMain.APP_NAME + " " + SGuiMain.APP_COPYRIGHT + " " +
+                "\n" +
+                SGuiMain.APP_PROVIDER +
+                "\n" +
+                SGuiMain.APP_RELEASE;
         }
         catch (Exception e) {
             miClient.showMsgBoxError(e.getMessage());
