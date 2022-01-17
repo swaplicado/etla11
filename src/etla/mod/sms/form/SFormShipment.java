@@ -22,6 +22,7 @@ import etla.mod.sms.db.SDbConfigSms;
 import etla.mod.sms.db.SDbShipment;
 import etla.mod.sms.db.SDbShipmentRow;
 import etla.mod.sms.db.SDbShipper;
+import etla.mod.sms.db.SDbVehicleType;
 import etla.mod.sms.db.SDbWmTicket;
 import etla.mod.sms.db.SRowShipmentRow;
 import etla.mod.sms.db.SShippingUtils;
@@ -827,25 +828,23 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         }
     }
     
-    private void sendMail(String mailAddress) {
+    private void sendMail(String mailAddress, String shipperName, String shipperCode) {
         try {
             // Generar el asunto del correo-e:
 
-            String mailSubject = "Información del embarque";
+            String mailSubject = "[Cartro] Información embarque #" + jtfNumber.getText() + " " + SLibUtils.DateFormatDate.format(moDateDate.getValue());
             String mailTitle = "";
             mailSubject += mailTitle;
 
             // Generar el cuerpo del correo-e en formato HTML:
 
-            String mailBody = getMailBody();
-
+            String mailBody = getMailBody(shipperName, shipperCode);
 
             // Preparar los destinatarios del correo-e:
 
             ArrayList<String> recipientsTo = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode(mailAddress, ";")));
 //            ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("sflores@swaplicado.com.mx", ";")));
-
-            
+   
              // Leer configuración de ETLA:
             SDbConfig config = new SDbConfig();
             config.read(miClient.getSession(), new int[] { 1 });
@@ -863,7 +862,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             SMailSender sender = new SMailSender(mailHost, mailPort, mailProtocol, mailStartTls, mailAuth, mailUser, mailPassword, mailUser);
 
             SMail mail = new SMail(sender, SMailUtils.encodeSubjectUtf8(SLibUtils.textToAscii(mailSubject)), SLibUtils.textToAscii(mailBody), recipientsTo);
-            //mail.getBccRecipients().addAll(recipientsBcc);
+//            mail.getBccRecipients().addAll(recipientsBcc);
             mail.setContentType(SMailConsts.CONT_TP_TEXT_PLAIN);
             mail.send();
 
@@ -874,9 +873,18 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         }
     }
     
-    private String getMailBody() {
+    private String getMailBody(String shipperName, String ShipperCode) {
         String mailBody = "";
         try {
+            
+            SDbVehicleType vehicleType = (SDbVehicleType) miClient.getSession().readRegistry(SModConsts.SU_VEHIC_TP, moKeyVehicleType.getValue());
+            
+            mailBody = "Embarque: #" + jtfNumber.getText() + " " + SLibUtils.DateFormatDate.format(moDateDate.getValue()) + "\n" +
+                    "Transportista: " + shipperName + "; " + ShipperCode + "\n" + 
+                    "Camion: " + vehicleType.getName() + "; " + moTextVehiclePlate.getValue() + "\n" + 
+                    "Chofer: " + moTextDriverName.getValue() + "; " + (moTextDriverPhone.getText().isEmpty() || moTextDriverPhone.getText().equals("0") ? "(SIN TELEFONO)" : moTextDriverPhone.getText()) +"\n" +
+                    "Boleto bascula: " + moIntTicketId.getValue() + "\n";
+            
             if (moGridSelectedRows.getTable().getRowCount() > 0) {
                 for (int i = 0; i < moGridSelectedRows.getTable().getRowCount(); i++) {
                     
@@ -887,8 +895,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     String localityCode = "";
                     String countyCode = "";
                     String stateCode = "";
-                    String locality = "";
-                    String county = "";
+                    String locality;
+                    String county;
                     mailBody += "\n\nUBICACION " + (i + 1) + ":\n";
                     SDbShipmentRow row = ((SRowShipmentRow) moGridSelectedRows.getGridRow(i)).getShipmentRow();
                     String zipCode = row.getDbmsZip();
@@ -925,7 +933,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     }
                     
                     String locationId = "DE" + String.format("%06d", row.getDbmsSiteLocationId());
-                    mailBody += "ID Destino: " + locationId + "\n- Destinatario. Nombre: " + row.getDbmsCustomer() + "; RFC: " + row.getDbmsCustomerTaxId()+ "\n" + 
+                    mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + row.getDbmsCustomer() + "; RFC: " + row.getDbmsCustomerTaxId()+ "\n" + 
                             "- Localidad. Clave SAT: " + localityCode + "; Nombre: " + locality + "\n" +
                             "- Municipio. Clave SAT: " + countyCode + "; Nombre: " + county + "\n" +
                             "- Estado. Clave SAT: " + stateCode + "\n" +
@@ -938,7 +946,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     Vector<SDataDpsEntry> entries = dps.getDbmsDpsEntries();
                     for (SDataDpsEntry entry : entries) {
                         String item = "";
-                        sql = "SELECT i.name, icfd.code AS item_code, igencfd.code AS igen_code FROM erp.itmu_item AS i " +
+                        sql = "SELECT i.name, icfd.code AS item_code, igencfd.code AS igen_code, igencfd.name AS sat_name FROM erp.itmu_item AS i " +
                                 "INNER JOIN erp.itmu_igen AS igen ON i.fid_igen = igen.id_igen " +
                                 "INNER JOIN erp.itms_cfd_prod_serv AS igencfd ON igencfd.id_cfd_prod_serv = igen.fid_cfd_prod_serv " +
                                 "LEFT OUTER JOIN erp.itms_cfd_prod_serv AS icfd ON icfd.id_cfd_prod_serv = i.fid_cfd_prod_serv_n " +
@@ -946,14 +954,14 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                         resultSet = statement.executeQuery(sql);
                         if (resultSet.next()) {
                             item = "- Producto. Clave SAT " + (resultSet.getString("item_code") == null ? resultSet.getString("igen_code") : resultSet.getString("item_code")) + 
-                                    "; Descripcion: " + resultSet.getString("name") + "\nPeso: " + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(entry.getMass(), 3)) + " kg \n";
+                                    "; Descripcion SAT: " + resultSet.getString("sat_name") + "; Descripcion factura: " + resultSet.getString("name") + "\nPeso: " + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(entry.getMass(), 3)) + " kg \n";
                         }
                         mailBody += item;
                     }
                 }
                 mailBody += "\n";
             }
-            mailBody += "Sugerencia Embalaje (aunque no requerido). Clave SAT: Z01; Nombre: No requerido\n\n";
+            mailBody += "Embalaje (sugerido aunque no requerido). Clave SAT: Z01; Descripcion SAT: No requerido\n\n";
             
             mailBody += "-------------------------------------------------------------------------------------\n" +
                 "Favor de no responder este mail, fue generado de forma automática." +
@@ -963,6 +971,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                 SGuiMain.APP_PROVIDER +
                 "\n" +
                 SGuiMain.APP_RELEASE;
+            mailBody = mailBody.replace("©", "(c)");
         }
         catch (Exception e) {
             miClient.showMsgBoxError(e.getMessage());
@@ -1001,7 +1010,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             SDbShipper shipper = (SDbShipper) miClient.getSession().readRegistry(SModConsts.SU_SHIPPER, moKeyShipper.getValue());
             String mail = shipper.getMail().toLowerCase();
             if (miClient.showMsgBoxConfirm("Se enviara un correo con la información del embarque a " + mail + "\n ¿Desea continuar?") == JOptionPane.OK_OPTION) {
-                sendMail(mail);
+                sendMail(mail, shipper.getName(), shipper.getCode());
             }
         }
     }
