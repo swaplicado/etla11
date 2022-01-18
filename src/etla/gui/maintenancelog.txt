@@ -2,7 +2,7 @@
 2021-12-29, 1.1 011.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
-1) Implementación del envío automático de un correo electronico con los datos del embarque al guardarlo.
+1) Implementación del envío automático de un correo electrónico con los datos para Carta Porte de los embarques al guardarlos.
 
 ================================================================================
 2021-11-11, 1.1 010.2
