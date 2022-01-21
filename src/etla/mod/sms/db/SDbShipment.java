@@ -621,62 +621,23 @@ public class SDbShipment extends SDbRegistryUser{
         save(session);
     }
     
-    private void sendMail(SGuiSession session) {
-        SDbConfigSms config = (SDbConfigSms) session.readRegistry(SModConsts.S_CFG, new int[] { 1 });
-        if (config.isShiptmentMail()) {
-            SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
-            String mail = shipper.getMail().toLowerCase();
-            if (mbAuxSendMail) {
-                try {
-                    // Generar el asunto del correo-e:
-
-                    String mailSubject = "[Cartro] Información embarque #" + mnNumber + " " + SLibUtils.DateFormatDate.format(mtShiptmentDate);
-                    String mailTitle = "";
-                    mailSubject += mailTitle;
-
-                    // Generar el cuerpo del correo-e en formato HTML:
-
-                    String mailBody = getMailBody(session, shipper.getName(), shipper.getCode());
-
-                    // Preparar los destinatarios del correo-e:
-
-                    ArrayList<String> recipientsTo = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode(mail, ";")));
-//                    ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("sflores@swaplicado.com.mx", ";")));
-
-                     // Leer configuración de ETLA:
-                    SDbConfig configEtla = new SDbConfig();
-                    configEtla.read(session, new int[] { 1 });
-                    String mailHost = configEtla.getMailHost();
-                    String mailPort = configEtla.getMailPort();
-                    String mailProtocol = configEtla.getMailProtocol();
-                    boolean mailStartTls = configEtla.isMailStartTls();
-                    boolean mailAuth = configEtla.isMailAuth();
-                    String mailUser = configEtla.getMailUser();
-                    String mailPassword = configEtla.getMailPassword();
-
-                    // Crear y enviar correo-e:
-
-                    //SMailSender sender = new SMailSender("mail.tron.com.mx", "26", "smtp", false, true, "som@aeth.mx", "AETHSOM", "som@aeth.mx");
-                    SMailSender sender = new SMailSender(mailHost, mailPort, mailProtocol, mailStartTls, mailAuth, mailUser, mailPassword, mailUser);
-
-                    SMail mailSender = new SMail(sender, SMailUtils.encodeSubjectUtf8(SLibUtils.textToAscii(mailSubject)), SLibUtils.textToAscii(mailBody), recipientsTo);
-//                    mailSender.getBccRecipients().addAll(recipientsBcc);
-                    mailSender.setContentType(SMailConsts.CONT_TP_TEXT_PLAIN);
-                    mailSender.send();
-
-                    System.out.println("Mail send!");
-                }
-                catch (Exception e) {
-                    System.err.println("");
-                }
-            }
-        }
+    private Statement getStatementSiie(SGuiSession session) throws Exception {
+        SDbConfig config = (SDbConfig) session.getConfigSystem();
+        Connection connectionSiie = createConnection(
+                SEtlConsts.DB_MYSQL, 
+                config.getSiieHost(), 
+                config.getSiiePort(), 
+                config.getSiieName(), 
+                config.getSiieUser(), 
+                config.getSiiePassword());
+        
+        return connectionSiie.createStatement();
     }
     
-    private String getMailBody(SGuiSession session, String shipperName, String ShipperCode) {
+    private String composeMailBody(SGuiSession session, String shipperName, String ShipperCode) {
         String mailBody = "";
+        
         try {
-            
             SDbVehicleType vehicleType = (SDbVehicleType) session.readRegistry(SModConsts.SU_VEHIC_TP, new int[] { mnFkVehicleTypeId });
             
             mailBody = "Embarque: #" + mnNumber + " " + SLibUtils.DateFormatDate.format(mtShiptmentDate) + "\n" +
@@ -687,24 +648,24 @@ public class SDbShipment extends SDbRegistryUser{
             
             if (!maChildRows.isEmpty()) {
                 for (SDbShipmentRow child : maChildRows) {
+                    // Datos de ubicaciones y destinatarios:
                     
-                    // Datos de la ubicación y destinatario:
-                    
-                    Statement statement = session.getDatabase().getConnection().createStatement();
-                    Statement stSiie = getStatementSiie(session);
-                    String localityCode = "";
-                    String countyCode = "";
                     String stateCode = "";
-                    String locality;
-                    String county;
+                    String countyCode = "";
+                    String localityCode = "";
+                    String countyName;
+                    String localityName;
+                    
                     mailBody += "\n\nUBICACION " + child.getPkRowId() + ":\n";
-                    SDbDestination destin = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { child.getFkDestinationId() });
-                    SDbCustomer cus = (SDbCustomer) session.readRegistry(SModConsts.AU_CUS, new int[] { child.getFkDestinationId() });
-                    String zipCode = destin.getZip();
+                    SDbDestination destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { child.getFkDestinationId() });
+                    SDbCustomer customer = (SDbCustomer) session.readRegistry(SModConsts.AU_CUS, new int[] { child.getFkDestinationId() });
+                    String zipCode = destination.getZip();
                     if (zipCode.isEmpty()) {
-                        zipCode = cus.getZip();
+                        zipCode = customer.getZip();
                     }
+                    
                     String sql = "SELECT * FROM erp.locs_bol_zip_code WHERE id_zip_code = '" + zipCode + "' AND NOT b_del;";
+                    Statement statement = session.getDatabase().getConnection().createStatement();
                     ResultSet resultSet = statement.executeQuery(sql);
                     if (resultSet.next()) {
                         stateCode = resultSet.getString("id_sta_code");
@@ -713,36 +674,37 @@ public class SDbShipment extends SDbRegistryUser{
                     }
                     
                     if (!countyCode.isEmpty()) {
-                        county = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_COUNTY, countyCode, stateCode);
+                        countyName = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_COUNTY, countyCode, stateCode);
                     }
                     else {
                         countyCode = "(NO APLICA)";
-                        county = "(NO APLICA)";
+                        countyName = "(NO APLICA)";
                     }
                     
                     if (!localityCode.isEmpty()) {
-                        locality = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_LOCALITY, localityCode, stateCode);
+                        localityName = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_LOCALITY, localityCode, stateCode);
                     }
                     else {
                         localityCode = "(NO APLICA)";
-                        locality = "(NO APLICA)";
+                        localityName = "(NO APLICA)";
                     }
                     
                     if (zipCode.isEmpty()) {
                         zipCode = "00000";
                     }
                     
-                    String locationId = "DE" + String.format("%06d", destin.getPkDestinationId());
-                    mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + cus.getName() + "; RFC: " + cus.getTaxId() + "\n" + 
-                            "- Localidad. Clave SAT: " + localityCode + "; Nombre: " + locality + "\n" +
-                            "- Municipio. Clave SAT: " + countyCode + "; Nombre: " + county + "\n" +
+                    String locationId = "DE" + String.format("%06d", destination.getPkDestinationId());
+                    mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + customer.getName() + "; RFC: " + customer.getTaxId() + "\n" + 
+                            "- Localidad. Clave SAT: " + localityCode + "; Nombre: " + localityName + "\n" +
+                            "- Municipio. Clave SAT: " + countyCode + "; Nombre: " + countyName + "\n" +
                             "- Estado. Clave SAT: " + stateCode + "\n" +
                             "- Código postal: " + zipCode + "\n";
                     
                     // Datos de los ítems:
                     
+                    Statement statementSiie = getStatementSiie(session);
                     SDataDps dps = new SDataDps();
-                    dps.read(new int[] { child.getInvoiceIdYear(), child.getInvoiceIdYear() }, stSiie);
+                    dps.read(new int[] { child.getInvoiceIdYear(), child.getInvoiceIdYear() }, statementSiie);
                     Vector<SDataDpsEntry> entries = dps.getDbmsDpsEntries();
                     for (SDataDpsEntry entry : entries) {
                         String item = "";
@@ -761,35 +723,70 @@ public class SDbShipment extends SDbRegistryUser{
                 }
                 mailBody += "\n";
             }
+            
             mailBody += "Embalaje (sugerido aunque no requerido). Clave SAT: Z01; Descripcion SAT: No requerido\n\n";
             
             mailBody += "-------------------------------------------------------------------------------------\n" +
-                "Favor de no responder este mail, fue generado de forma automática." +
-                "\n" +
-               SGuiMain.APP_NAME + " " + SGuiMain.APP_COPYRIGHT + " " +
-                "\n" +
-                SGuiMain.APP_PROVIDER +
-                "\n" +
+                "Favor de no responder este mail, fue generado de forma automática.\n" +
+               SGuiMain.APP_NAME + " " + SGuiMain.APP_COPYRIGHT + "\n" +
+                SGuiMain.APP_PROVIDER + "\n" +
                 SGuiMain.APP_RELEASE;
             mailBody = mailBody.replace("©", "(c)");
         }
         catch (Exception e) {
+            SLibUtils.printException(this, e);
         }
+        
         return mailBody;
     }
     
-    private Statement getStatementSiie(SGuiSession session) throws Exception {
-        
-        SDbConfig config = (SDbConfig) session.getConfigSystem();
-        Connection connectionSiie = createConnection(
-                SEtlConsts.DB_MYSQL, 
-                config.getSiieHost(), 
-                config.getSiiePort(), 
-                config.getSiieName(), 
-                config.getSiieUser(), 
-                config.getSiiePassword());
-        
-        
-        return connectionSiie.createStatement();
+    private void sendMail(SGuiSession session) {
+        if (mbAuxSendMail) {
+            try {
+                SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
+                String mail = shipper.getMail().toLowerCase();
+
+                // Generar asunto del correo-e:
+
+                String mailSubject = "[Cartro] Información embarque #" + mnNumber + " " + SLibUtils.DateFormatDate.format(mtShiptmentDate);
+                String mailTitle = "";
+                mailSubject += mailTitle;
+
+                // Generar cuerpo del correo-e en formato HTML:
+
+                String mailBody = composeMailBody(session, shipper.getName(), shipper.getCode());
+
+                // Preparar destinatarios del correo-e:
+
+                ArrayList<String> recipientsTo = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode(mail, ";")));
+//                    ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("sflores@swaplicado.com.mx", ";")));
+
+                 // Leer configuración de ETLA:
+                SDbConfig configEtla = new SDbConfig();
+                configEtla.read(session, new int[] { 1 });
+                String mailHost = configEtla.getMailHost();
+                String mailPort = configEtla.getMailPort();
+                String mailProtocol = configEtla.getMailProtocol();
+                boolean mailStartTls = configEtla.isMailStartTls();
+                boolean mailAuth = configEtla.isMailAuth();
+                String mailUser = configEtla.getMailUser();
+                String mailPassword = configEtla.getMailPassword();
+
+                // Crear y enviar correo-e:
+
+                //SMailSender sender = new SMailSender("mail.tron.com.mx", "26", "smtp", false, true, "som@aeth.mx", "AETHSOM", "som@aeth.mx");
+                SMailSender sender = new SMailSender(mailHost, mailPort, mailProtocol, mailStartTls, mailAuth, mailUser, mailPassword, mailUser);
+
+                SMail mailSender = new SMail(sender, SMailUtils.encodeSubjectUtf8(SLibUtils.textToAscii(mailSubject)), SLibUtils.textToAscii(mailBody), recipientsTo);
+//                    mailSender.getBccRecipients().addAll(recipientsBcc);
+                mailSender.setContentType(SMailConsts.CONT_TP_TEXT_PLAIN);
+                mailSender.send();
+
+                System.out.println("Mail send!");
+            }
+            catch (Exception e) {
+                SLibUtils.printException(this, e);
+            }
+        }
     }
 }

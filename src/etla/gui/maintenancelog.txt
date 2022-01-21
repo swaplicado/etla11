@@ -1,4 +1,11 @@
 ================================================================================
+2022-01-21, 1.1 011.1
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Corrección a la confirmación de envío de mail al guardarse los embarques,
+se solicitaba confirmación dos veces si en la primera se indicaba que no se deseaba enviar mail.
+
+================================================================================
 2021-12-29, 1.1 011.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

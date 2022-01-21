@@ -64,6 +64,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private SSmsEtl moSmsEtl;
     private Connection miConnectionAvista;
     private boolean mbRowsShown;
+    private boolean mbMailConfirmationRequested;
     
     /**
      * Creates new form SFormShipmentOrder
@@ -71,7 +72,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
      * @param title
      */
     public SFormShipment(SGuiClient client, String title) {
-        setFormSettings(client, SGuiConsts.BEAN_FORM_EDIT, SModConsts.S_SHIPT, SLibConsts.UNDEFINED, title);
+        setFormSettings(client, SGuiConsts.BEAN_FORM_EDIT, SModConsts.S_SHIPT, 0, title);
         initComponents();
         initComponentsCustom();
     }
@@ -640,10 +641,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     
     private void checkRowToAdd(final SDbShipmentRow shipmentRow) throws Exception {
         // validate customer:
-        if (shipmentRow.getFkCustomerId() == SLibConsts.UNDEFINED) {
+        if (shipmentRow.getFkCustomerId() == 0) {
             throw new Exception("La remisión no tiene un cliente identificado.");
         }
-        if (shipmentRow.getInvoiceIdYear() == SLibConsts.UNDEFINED || shipmentRow.getInvoiceIdDoc() == SLibConsts.UNDEFINED) {
+        if (shipmentRow.getInvoiceIdYear() == 0 || shipmentRow.getInvoiceIdDoc() == 0) {
             throw new Exception("La remisión no está facturada.");
         }
     }
@@ -853,12 +854,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
     @Override
     public void reloadCatalogues() {
-        miClient.getSession().populateCatalogue(moKeyShipmentType, SModConsts.SU_SHIPT_TP, SLibConsts.UNDEFINED, null);
-        miClient.getSession().populateCatalogue(moKeyCargoType, SModConsts.SU_CARGO_TP, SLibConsts.UNDEFINED, null);
-        miClient.getSession().populateCatalogue(moKeyHandlingType, SModConsts.SU_HANDG_TP, SLibConsts.UNDEFINED, null);
-        miClient.getSession().populateCatalogue(moKeyShipper, SModConsts.SU_SHIPPER, SLibConsts.UNDEFINED, null);
-        miClient.getSession().populateCatalogue(moKeyVehicleType, SModConsts.SU_VEHIC_TP, SLibConsts.UNDEFINED, null);
-        miClient.getSession().populateCatalogue(moKeyComment, SModConsts.SU_COMMENT, SLibConsts.UNDEFINED, null);
+        miClient.getSession().populateCatalogue(moKeyShipmentType, SModConsts.SU_SHIPT_TP, 0, null);
+        miClient.getSession().populateCatalogue(moKeyCargoType, SModConsts.SU_CARGO_TP, 0, null);
+        miClient.getSession().populateCatalogue(moKeyHandlingType, SModConsts.SU_HANDG_TP, 0, null);
+        miClient.getSession().populateCatalogue(moKeyShipper, SModConsts.SU_SHIPPER, 0, null);
+        miClient.getSession().populateCatalogue(moKeyVehicleType, SModConsts.SU_VEHIC_TP, 0, null);
+        miClient.getSession().populateCatalogue(moKeyComment, SModConsts.SU_COMMENT, 0, null);
     }
 
     @Override
@@ -867,6 +868,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         
         mnFormResult = SLibConsts.UNDEFINED;
         mbFirstActivation = true;
+        mbMailConfirmationRequested = false;
 
         removeAllListeners();
         reloadCatalogues();
@@ -985,11 +987,18 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             registry.getChildRows().add(((SRowShipmentRow) moGridSelectedRows.getGridRow(i)).getShipmentRow());
         }
         
-        SDbShipper shipper = (SDbShipper) miClient.getSession().readRegistry(SModConsts.SU_SHIPPER, moKeyShipper.getValue());
-        String mail = shipper.getMail().toLowerCase();
-        if (!registry.getAuxSendMail()) {
-            if (miClient.showMsgBoxConfirm("Se enviara un correo con la información del embarque a " + mail + "\n ¿Desea continuar?") == JOptionPane.OK_OPTION) {
-                registry.setAuxSendMail(true);
+        if (!mbMailConfirmationRequested) {
+            mbMailConfirmationRequested = true;
+            
+            SDbConfigSms configSms = (SDbConfigSms) miClient.getSession().readRegistry(SModConsts.S_CFG, new int[] { SUtilConsts.BPR_CO_ID });
+            
+            if (configSms.isShiptmentMail()) {
+                SDbShipper shipper = (SDbShipper) miClient.getSession().readRegistry(SModConsts.SU_SHIPPER, moKeyShipper.getValue());
+                String mail = shipper.getMail().toLowerCase();
+                if (miClient.showMsgBoxConfirm("Se enviará un correo con la información del embarque al transportista:"
+                        + "'" + shipper.getName() + "', al buzón '" + mail + "'.\n¿Desea continuar?") == JOptionPane.OK_OPTION) {
+                    registry.setAuxSendMail(true);
+                }
             }
         }
 
