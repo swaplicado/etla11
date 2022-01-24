@@ -995,8 +995,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             if (configSms.isShiptmentMail()) {
                 SDbShipper shipper = (SDbShipper) miClient.getSession().readRegistry(SModConsts.SU_SHIPPER, moKeyShipper.getValue());
                 String mail = shipper.getMail().toLowerCase();
-                if (miClient.showMsgBoxConfirm("Se enviará un correo con la información del embarque al transportista:"
-                        + "'" + shipper.getName() + "', al buzón '" + mail + "'.\n¿Desea continuar?") == JOptionPane.OK_OPTION) {
+                if (miClient.showMsgBoxConfirm("Se enviará un correo con la información del embarque al transportista:\n"
+                        + "'" + shipper.getName() + "', al buzón '" + mail + "'.\n"
+                        + "Favor de confirmar el envío.") == JOptionPane.OK_OPTION) {
                     registry.setAuxSendMail(true);
                 }
             }
