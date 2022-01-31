@@ -999,6 +999,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                         + "'" + shipper.getName() + "', al buzón '" + mail + "'.\n"
                         + "Favor de confirmar el envío.") == JOptionPane.OK_OPTION) {
                     registry.setAuxSendMail(true);
+                    moRegistry.setAuxSendMail(true);
                 }
             }
         }
