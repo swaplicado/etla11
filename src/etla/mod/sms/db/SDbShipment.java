@@ -745,7 +745,7 @@ public class SDbShipment extends SDbRegistryUser{
         if (mbAuxSendMail) {
             try {
                 SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
-                String mail = "isabel.garcia@swaplicado.com.mx";//shipper.getMail().toLowerCase();
+                String mail = shipper.getMail().toLowerCase();
 
                 // Generar asunto del correo-e:
 
@@ -760,7 +760,7 @@ public class SDbShipment extends SDbRegistryUser{
                 // Preparar destinatarios del correo-e:
 
                 ArrayList<String> recipientsTo = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode(mail, ";")));
-                ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("sflores@swaplicado.com.mx", ";")));
+//                ArrayList<String> recipientsBcc = new ArrayList<>(Arrays.asList(SLibUtilities.textExplode("sflores@swaplicado.com.mx", ";")));
 
                  // Leer configuración de ETLA:
                 SDbConfig configEtla = new SDbConfig();
@@ -779,7 +779,7 @@ public class SDbShipment extends SDbRegistryUser{
                 SMailSender sender = new SMailSender(mailHost, mailPort, mailProtocol, mailStartTls, mailAuth, mailUser, mailPassword, mailUser);
 
                 SMail mailSender = new SMail(sender, SMailUtils.encodeSubjectUtf8(SLibUtils.textToAscii(mailSubject)), SLibUtils.textToAscii(mailBody), recipientsTo);
-                mailSender.getBccRecipients().addAll(recipientsBcc);
+//                mailSender.getBccRecipients().addAll(recipientsBcc);
                 mailSender.setContentType(SMailConsts.CONT_TP_TEXT_PLAIN);
                 mailSender.send();
 
