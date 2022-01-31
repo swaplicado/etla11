@@ -705,7 +705,7 @@ public class SDbShipment extends SDbRegistryUser{
                     
                     Statement statementSiie = getStatementSiie(session);
                     SDataDps dps = new SDataDps();
-                    dps.read(new int[] { child.getInvoiceIdYear(), child.getInvoiceIdYear() }, statementSiie);
+                    dps.read(new int[] { child.getInvoiceIdYear(), child.getInvoiceIdDoc()}, statementSiie);
                     Vector<SDataDpsEntry> entries = dps.getDbmsDpsEntries();
                     for (SDataDpsEntry entry : entries) {
                         String item = "";
@@ -720,6 +720,14 @@ public class SDbShipment extends SDbRegistryUser{
                                     "; Descripcion SAT: " + resultSet.getString("sat_name") + "; Descripcion factura: " + resultSet.getString("name") + "\nPeso: " + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(entry.getMass(), 3)) + " kg \n";
                         }
                         mailBody += item;
+                    }
+                    sql = "SELECT i.fin_amt, c.code FROM a_inv AS i " +
+                            "INNER JOIN as_cur AS c ON i.fk_src_fin_cur = c.id_cur " +
+                            "WHERE i.des_inv_yea_id = " + child.getInvoiceIdYear() + " " +
+                            "AND i.des_inv_doc_id = " + child.getInvoiceIdDoc() + ";";
+                    resultSet = statement.executeQuery(sql);
+                    if (resultSet.next()) {
+                        mailBody += "- Monto factura: $" + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(resultSet.getDouble(1), 2)) + " " + resultSet.getString(2) + "\n"; 
                     }
                 }
                 mailBody += "\n";
