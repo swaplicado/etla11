@@ -176,8 +176,20 @@ public class SModModuleSms extends SGuiModule {
                 break;
             case SModConsts.SU_SHIPPER:
                 settings = new SGuiCatalogueSettings("Transportista", 1);
-                sql = "SELECT id_shipper AS " + SDbConsts.FIELD_ID + "1, name AS " + SDbConsts.FIELD_ITEM + " "                        
-                        + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_shipper ";
+                switch(subtype) {
+                    case SModSysConsts.S_CFG_SHIPPER_CODE_NAME:
+                        sql = "SELECT id_shipper AS " + SDbConsts.FIELD_ID + "1, CONCAT(code, ' - ', name) AS " + SDbConsts.FIELD_ITEM + " "                        
+                                + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_shipper ";
+                        break;
+                    case SModSysConsts.S_CFG_SHIPPER_NAME_CODE:
+                        sql = "SELECT id_shipper AS " + SDbConsts.FIELD_ID + "1, CONCAT(name, ' - ', code) AS " + SDbConsts.FIELD_ITEM + " "                        
+                                + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_shipper ";
+                        break;
+                    default:
+                        sql = "SELECT id_shipper AS " + SDbConsts.FIELD_ID + "1, name AS " + SDbConsts.FIELD_ITEM + " "                        
+                                + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_shipper ";
+                        break;
+                }
                 break;
             case SModConsts.SU_DESTIN:
                 settings = new SGuiCatalogueSettings("Destino", 1);

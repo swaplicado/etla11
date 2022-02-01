@@ -158,7 +158,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jpHeader.setLayout(new java.awt.GridLayout(1, 2));
+        jpHeader.setLayout(new java.awt.BorderLayout());
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos del registro:"));
         jPanel5.setLayout(new java.awt.GridLayout(6, 1, 0, 5));
@@ -219,7 +219,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
         jPanel5.add(jPanel11);
 
-        jpHeader.add(jPanel5);
+        jpHeader.add(jPanel5, java.awt.BorderLayout.WEST);
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos del transportista:"));
         jPanel6.setLayout(new java.awt.GridLayout(6, 1, 0, 5));
@@ -243,7 +243,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jlShipper.setPreferredSize(new java.awt.Dimension(110, 23));
         jPanel16.add(jlShipper);
 
-        moKeyShipper.setPreferredSize(new java.awt.Dimension(250, 23));
+        moKeyShipper.setPreferredSize(new java.awt.Dimension(500, 23));
         jPanel16.add(moKeyShipper);
 
         jPanel6.add(jPanel16);
@@ -255,7 +255,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jlVehicleType.setRequestFocusEnabled(false);
         jPanel17.add(jlVehicleType);
 
-        moKeyVehicleType.setPreferredSize(new java.awt.Dimension(250, 23));
+        moKeyVehicleType.setPreferredSize(new java.awt.Dimension(350, 23));
         jPanel17.add(moKeyVehicleType);
 
         jPanel6.add(jPanel17);
@@ -293,7 +293,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
         jPanel6.add(jPanel18);
 
-        jpHeader.add(jPanel6);
+        jpHeader.add(jPanel6, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jpHeader, java.awt.BorderLayout.NORTH);
 
@@ -854,10 +854,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
     @Override
     public void reloadCatalogues() {
+        SDbConfigSms configSms = (SDbConfigSms) miClient.getSession().readRegistry(SModConsts.S_CFG, new int[] { SUtilConsts.BPR_CO_ID });
+        
         miClient.getSession().populateCatalogue(moKeyShipmentType, SModConsts.SU_SHIPT_TP, 0, null);
         miClient.getSession().populateCatalogue(moKeyCargoType, SModConsts.SU_CARGO_TP, 0, null);
         miClient.getSession().populateCatalogue(moKeyHandlingType, SModConsts.SU_HANDG_TP, 0, null);
-        miClient.getSession().populateCatalogue(moKeyShipper, SModConsts.SU_SHIPPER, 0, null);
+        miClient.getSession().populateCatalogue(moKeyShipper, SModConsts.SU_SHIPPER, configSms.getShipperConfig(), null);
         miClient.getSession().populateCatalogue(moKeyVehicleType, SModConsts.SU_VEHIC_TP, 0, null);
         miClient.getSession().populateCatalogue(moKeyComment, SModConsts.SU_COMMENT, 0, null);
     }

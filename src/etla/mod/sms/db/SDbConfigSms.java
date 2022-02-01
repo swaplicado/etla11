@@ -36,6 +36,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     protected String msRevueltaName;
     protected String msRevueltaUser;
     protected String msRevueltaPassword;
+    protected int mnShipperConfig;
     protected boolean mbShiptmentMail;
 
     /*
@@ -71,6 +72,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     public void setRevueltaName(String s) { msRevueltaName = s; }
     public void setRevueltaUser(String s) { msRevueltaUser = s; }
     public void setRevueltaPassword(String s) { msRevueltaPassword = s; }
+    public void setShipperConfig(int n) { mnShipperConfig = n; }
     public void setShiptmentMail(boolean b) { mbShiptmentMail = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
@@ -95,6 +97,7 @@ public class SDbConfigSms extends SDbRegistryUser{
     public String getRevueltaName() { return msRevueltaName; }
     public String getRevueltaUser() { return msRevueltaUser; }
     public String getRevueltaPassword() { return msRevueltaPassword; }
+    public int getShipperConfig() { return mnShipperConfig; }
     public boolean isShiptmentMail() { return mbShiptmentMail; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
@@ -138,6 +141,7 @@ public class SDbConfigSms extends SDbRegistryUser{
         msRevueltaName = "";
         msRevueltaUser = "";
         msRevueltaPassword = "";
+        mnShipperConfig = 0;
         mbShiptmentMail = false;
         mbDeleted = false;
         mbSystem = false;
@@ -205,6 +209,7 @@ public class SDbConfigSms extends SDbRegistryUser{
             msRevueltaName = resultSet.getString("rev_name");
             msRevueltaUser = resultSet.getString("rev_user");
             msRevueltaPassword = resultSet.getString("rev_pswd");
+            mnShipperConfig = resultSet.getInt("shipper_cfg");
             mbShiptmentMail = resultSet.getBoolean("b_shipt_mail");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
@@ -248,6 +253,7 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "'" + msRevueltaName + "', " + 
                 "'" + msRevueltaUser + "', " + 
                 "'" + msRevueltaPassword + "', " + 
+                mnShipperConfig + ", " + 
                 (mbShiptmentMail ? 1 : 0) + ", " + 
                 (mbDeleted ? 1 : 0) + ", " + 
                 (mbSystem ? 1 : 0) + ", " + 
@@ -277,6 +283,7 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "rev_name = '" + msRevueltaName + "', " +
                 "rev_user = '" + msRevueltaUser + "', " +
                 "rev_pswd = '" + msRevueltaPassword + "', " +
+                "shipper_cfg = " + mnShipperConfig + ", " +
                 "b_shipt_mail = " + (mbShiptmentMail ? 1 : 0) + ", " +
                 "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                 "b_sys = " + (mbSystem ? 1 : 0) + ", " +
@@ -313,6 +320,7 @@ public class SDbConfigSms extends SDbRegistryUser{
         registry.setRevueltaName(this.getRevueltaName());
         registry.setRevueltaUser(this.getRevueltaUser());
         registry.setRevueltaPassword(this.getRevueltaPassword());
+        registry.setShipperConfig(this.getShipperConfig());
         registry.setShiptmentMail(this.isShiptmentMail());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());

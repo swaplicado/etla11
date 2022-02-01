@@ -6,7 +6,7 @@ package etla.mod;
 
 /**
  *
- * @author Sergio Flores, Alfredo Pérez
+ * @author Sergio Flores, Alfredo Pérez, Isabel Servín
  */
 public abstract class SModSysConsts {
 
@@ -72,4 +72,6 @@ public abstract class SModSysConsts {
     public static final int SU_WM_USER_NA = 1;
 
     public static final int S_CFG_CFG = 1;
+    public static final int S_CFG_SHIPPER_CODE_NAME = 1; 
+    public static final int S_CFG_SHIPPER_NAME_CODE = 2; 
 }

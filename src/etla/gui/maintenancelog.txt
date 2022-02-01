@@ -1,4 +1,11 @@
 ================================================================================
+2022-02-01, 1.1 012.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Ampliacíon del campo transportista en la forma de embarques para mostrar el código junto al nombre.
+2) Adición del parámetro mnShipperConfig en la clase de configuración de embarques (SDbConfigSms).
+
+================================================================================
 2022-01-21, 1.1 011.1
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
