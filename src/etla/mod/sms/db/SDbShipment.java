@@ -727,7 +727,7 @@ public class SDbShipment extends SDbRegistryUser{
                             "AND i.des_inv_doc_id = " + child.getInvoiceIdDoc() + ";";
                     resultSet = statement.executeQuery(sql);
                     if (resultSet.next()) {
-                        mailBody += "- Monto factura: $" + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(resultSet.getDouble(1), 2)) + " " + resultSet.getString(2) + "\n"; 
+                        mailBody += "- Total factura: $" + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(resultSet.getDouble(1), 2)) + " " + resultSet.getString(2) + "\n"; 
                     }
                 }
                 mailBody += "\n";
