@@ -90,7 +90,7 @@ public abstract class SShippingUtils {
             row.setDbmsDestination(resultSet.getString("_site_loc"));
             row.setDbmsAddress1(resultSet.getString("Address1"));
             row.setDbmsAddress2(resultSet.getString("Address2"));
-            row.setDbmsZip(resultSet.getString("ZipCode"));
+            row.setDbmsDestinationZip(resultSet.getString("ZipCode"));
             row.setAuxSiteLocationId(resultSet.getInt("SiteLocation"));
 
             availableRows.add(new SRowShipmentRow(row));

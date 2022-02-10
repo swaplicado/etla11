@@ -13,7 +13,6 @@ import etla.gui.SGuiMain;
 import etla.mod.SModConsts;
 import etla.mod.SModSysConsts;
 import etla.mod.cfg.db.SDbConfig;
-import etla.mod.etl.db.SDbCustomer;
 import etla.mod.etl.db.SEtlConsts;
 import static etla.mod.etl.db.SEtlProcess.createConnection;
 import java.sql.Connection;
@@ -648,21 +647,21 @@ public class SDbShipment extends SDbRegistryUser{
                     "Boleto bascula: " + mnTicketId + "\n";
             
             if (!maChildRows.isEmpty()) {
+                int i = 0;
                 for (SDbShipmentRow child : maChildRows) {
                     // Datos de ubicaciones y destinatarios:
                     
+                    i++;
                     String stateCode = "";
                     String countyCode = "";
                     String localityCode = "";
                     String countyName;
                     String localityName;
                     
-                    mailBody += "\n\nUBICACION " + child.getPkRowId() + ":\n";
-                    SDbDestination destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { child.getFkDestinationId() });
-                    SDbCustomer customer = (SDbCustomer) session.readRegistry(SModConsts.AU_CUS, new int[] { child.getFkDestinationId() });
-                    String zipCode = destination.getZip();
+                    mailBody += "\n\nUBICACION " + i + ":\n";
+                    String zipCode = child.getDbmsDestinationZip();
                     if (zipCode.isEmpty()) {
-                        zipCode = customer.getZip();
+                        zipCode = child.getDbmsCustomerZip();
                     }
                     
                     String sql = "SELECT * FROM erp.locs_bol_zip_code WHERE id_zip_code = '" + zipCode + "' AND NOT b_del;";
@@ -694,8 +693,8 @@ public class SDbShipment extends SDbRegistryUser{
                         zipCode = "00000";
                     }
                     
-                    String locationId = "DE" + String.format("%06d", destination.getPkDestinationId());
-                    mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + customer.getName() + "; RFC: " + customer.getTaxId() + "\n" + 
+                    String locationId = "DE" + String.format("%06d", child.getFkDestinationId());
+                    mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + child.getDbmsCustomer() + "; RFC: " + child.getDbmsCustomerTaxId() + "\n" + 
                             "- Localidad. Clave SAT: " + localityCode + "; Nombre: " + localityName + "\n" +
                             "- Municipio. Clave SAT: " + countyCode + "; Nombre: " + countyName + "\n" +
                             "- Estado. Clave SAT: " + stateCode + "\n" +
@@ -749,7 +748,7 @@ public class SDbShipment extends SDbRegistryUser{
         return mailBody;
     }
     
-    private void sendMail(SGuiSession session) {
+    public void sendMail(SGuiSession session) {
         if (mbAuxSendMail) {
             try {
                 SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });

@@ -11,6 +11,7 @@ import etla.mod.cfg.db.SDbConfig;
 import etla.mod.sms.db.SDbConfigSms;
 import etla.mod.sms.db.SDbShipment;
 import etla.mod.sms.db.SDbShipmentPrinting;
+import etla.mod.sms.db.SDbShipper;
 import etla.mod.sms.db.SShippingUtils;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import sa.gui.util.SUtilConsts;
 import sa.lib.SLibConsts;
 import sa.lib.SLibUtils;
@@ -48,6 +50,7 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
     private JButton mjPrint;
     private JButton mjSendBack;
     private JButton mjSendNext;
+    private JButton mjSendMail;
     private SGridFilterDatePeriod moFilterDatePeriod;
     private final int subType;
     
@@ -64,6 +67,8 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
     private void initComponentsCustom() {
         mjSendBack = SGridUtils.createButton(new ImageIcon(getClass().getResource("/etla/gui/img/icon_std_move_left.gif")), "Regresar", this);
         mjSendNext = SGridUtils.createButton(new ImageIcon(getClass().getResource("/etla/gui/img/icon_std_move_right.gif")), "Adelantar", this);
+        mjSendMail = SGridUtils.createButton(new ImageIcon(getClass().getResource("/etla/gui/img/icon_std_mail.gif")), "Enviar la información del embarque al transportista", this);
+        mjSendMail.setEnabled(true);
         
         switch (subType) {
             case SLibConsts.UNDEFINED:  // for new shipments
@@ -88,6 +93,7 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
         }
         getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(mjSendBack);
         getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(mjSendNext);
+        getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(mjSendMail);
     }
     
     private int getNewStatus() {
@@ -195,6 +201,37 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
         if (mjSendBack.isEnabled()) {
             changeStatus();
         }
+    }
+    
+    private void actionPerformedSendMail() {
+        if (mjSendMail.isEnabled()) {
+            if (jtTable.getSelectedRowCount() != 1) {
+                miClient.showMsgBoxInformation(SGridConsts.MSG_SELECT_ROW);
+            }
+            else {
+                SGridRowView gridRow = (SGridRowView) getSelectedGridRow();
+
+                if (gridRow.getRowType() != SGridConsts.ROW_TYPE_DATA) {
+                    miClient.showMsgBoxWarning(SGridConsts.ERR_MSG_ROW_TYPE_DATA);
+                }
+                else {
+                    try {
+                        SDbShipment shipt = (SDbShipment) miClient.getSession().readRegistry(SModConsts.S_SHIPT, gridRow.getRowPrimaryKey());
+                        SDbShipper shipper = (SDbShipper) miClient.getSession().readRegistry(SModConsts.SU_SHIPPER, new int[] { shipt.getFkShipperId() });
+                        String mail = shipper.getMail().toLowerCase();
+                        if (miClient.showMsgBoxConfirm("Se enviará un correo con la información del embarque al transportista:\n"
+                                + "'" + shipper.getName() + "', al buzón '" + mail + "'.\n"
+                                + "Favor de confirmar el envío.") == JOptionPane.OK_OPTION) {
+                            shipt.setAuxSendMail(true);
+                            shipt.sendMail(miClient.getSession());
+                        }
+                    }
+                    catch (Exception e) {
+                        SLibUtils.showException(this, e);
+                    }
+                }
+            }
+        } 
     }
 
     @Override
@@ -343,6 +380,9 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
             }
             else if (button == mjSendBack) {
                 actionPerformedSendBack();
+            }
+            else if (button == mjSendMail) {
+                actionPerformedSendMail();
             }
         }
     }
