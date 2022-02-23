@@ -56,7 +56,7 @@ public abstract class SShippingUtils {
                 "GROUP BY " +
                 "ci.CustomerInvoiceKey, ci.InvoiceNumber, ci.BatchNumber, ci.Created, ci.Description, ci.SiteLocationKey, " +
                 "c.CustomerId, c.CustomerName, " +
-                "st.SiteLocation,st.Address1, st.Address2, st.City, st.State, st.ZipCode " +
+                "st.SiteLocation,st.Address1, st.Address2, st.City, st.State, st.ZipCode, st.Country " +
                 "ORDER BY " +
                 "ci.InvoiceNumber, ci.CustomerInvoiceKey ";
 
