@@ -27,6 +27,7 @@ public class SDbDestination extends SDbRegistryUser{
     protected String msAddress1;
     protected String msAddress2;
     protected String msZip;
+    protected String msCountry;
 
     /*
     protected boolean mbDeleted;
@@ -52,6 +53,7 @@ public class SDbDestination extends SDbRegistryUser{
     public void setAddress1(String s) { msAddress1 = s; }
     public void setAddress2(String s) { msAddress2 = s; }
     public void setZip(String s) { msZip = s; }
+    public void setCountry(String s) { msCountry = s; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
     public void setFkUserInsertId(int n) { mnFkUserInsertId = n; }
@@ -66,6 +68,7 @@ public class SDbDestination extends SDbRegistryUser{
     public String getAddress1() { return msAddress1; }
     public String getAddress2() { return msAddress2; }
     public String getZip() { return msZip; }
+    public String getCountry() { return msCountry; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
     public int getFkUserInsertId() { return mnFkUserInsertId; }
@@ -99,6 +102,7 @@ public class SDbDestination extends SDbRegistryUser{
         msAddress1 = "";
         msAddress2 = "";
         msZip = "";
+        msCountry = "";
         mbDeleted = false;
         mbSystem = false;
         mnFkUserInsertId = 0;
@@ -157,6 +161,7 @@ public class SDbDestination extends SDbRegistryUser{
             msAddress1 = resultSet.getString("address1");
             msAddress2 = resultSet.getString("address2");
             msZip = resultSet.getString("zip");
+            msCountry = resultSet.getString("cty");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
             mnFkUserInsertId = resultSet.getInt("fk_usr_ins");
@@ -190,6 +195,7 @@ public class SDbDestination extends SDbRegistryUser{
                 "'" + msAddress1 + "', " + 
                 "'" + msAddress2 + "', " + 
                 "'" + msZip + "', " + 
+                "'" + msCountry + "', " + 
                 (mbDeleted ? 1 : 0) + ", " + 
                 (mbSystem ? 1 : 0) + ", " + 
                 mnFkUserInsertId + ", " + 
@@ -209,6 +215,7 @@ public class SDbDestination extends SDbRegistryUser{
                     "address1 = '" + msAddress1 + "', " +
                     "address2 = '" + msAddress2 + "', " +
                     "zip = '" + msZip + "', " +
+                    "cty = '" + msCountry + "', " +
                     "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                     "b_sys = " + (mbSystem ? 1 : 0) + ", " +
                     //"fk_usr_ins = " + mnFkUserInsertId + ", " +
@@ -235,6 +242,7 @@ public class SDbDestination extends SDbRegistryUser{
         registry.setAddress1(this.getAddress1());
         registry.setAddress2(this.getAddress2());
         registry.setZip(this.getZip());
+        registry.setCountry(this.getCountry());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());
         registry.setFkUserInsertId(this.getFkUserInsertId());

@@ -21,7 +21,7 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Daniel López, Sergio Flores, Alfredo Pérez
+ * @author Daniel López, Sergio Flores, Alfredo Pérez, Isabel Servín
  */
 public abstract class SShippingUtils {
     
@@ -42,7 +42,7 @@ public abstract class SShippingUtils {
         ResultSet resultSet = null;
 
         String sql = "SELECT ci.CustomerInvoiceKey, ci.InvoiceNumber, ci.BatchNumber, ci.Created, ci.Description, RIGHT(ci.Description, LEN(ci.Description) - " + BOL.length() + ") AS _bol, " +
-                "c.CustomerId, c.CustomerName, st.SiteLocation, st.Address1, st.Address2, st.City + ', ' + st.State + ', ' + st.ZipCode AS _site_loc, st.ZipCode, " + 
+                "c.CustomerId, c.CustomerName, st.SiteLocation, st.Address1, st.Address2, st.City + ', ' + st.State + ', ' + st.ZipCode AS _site_loc, st.ZipCode, st.Country, " + 
                 "SUM(cii.Area)/1000000.0 AS _m2, SUM(cii.Weight)/1000000.0 AS _kg, COUNT(*) AS _orders, " +
                 "(SELECT SUM(NoLoads) FROM dbo.BOLUnitsView where BOLKey=RIGHT(ci.Description, LEN(ci.Description) - " + BOL.length() + ")) AS _bales " +
                 "FROM dbo.CustomerInvoices AS ci " +
@@ -91,6 +91,7 @@ public abstract class SShippingUtils {
             row.setDbmsAddress1(resultSet.getString("Address1"));
             row.setDbmsAddress2(resultSet.getString("Address2"));
             row.setDbmsDestinationZip(resultSet.getString("ZipCode"));
+            row.setDbmsCountry(resultSet.getString("Country") == null || resultSet.getString("Country").toLowerCase().equals("null") ? "" : resultSet.getString("Country"));
             row.setAuxSiteLocationId(resultSet.getInt("SiteLocation"));
 
             availableRows.add(new SRowShipmentRow(row));

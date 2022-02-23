@@ -22,6 +22,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import sa.gui.util.SUtilConsts;
 import sa.lib.SLibConsts;
@@ -655,6 +657,7 @@ public class SDbShipment extends SDbRegistryUser{
                     String stateCode = "";
                     String countyCode = "";
                     String localityCode = "";
+                    String countryCode;
                     String countyName;
                     String localityName;
                     
@@ -693,12 +696,43 @@ public class SDbShipment extends SDbRegistryUser{
                         zipCode = "00000";
                     }
                     
+                    switch (child.getDbmsCountry()) {
+                        case "MX" : countryCode = "MEX"; break;
+                        case "US" : countryCode = "USA"; break;
+                        case "CA" : countryCode = "CAN"; break;
+                        default : countryCode = "(SIN INFORMACION)"; break;
+                    }
+                    
+                    sql = "SELECT nei_code, description FROM erp.locs_bol_nei_zip_code WHERE zip_code = '" + zipCode + "';";
+                    resultSet = statement.executeQuery(sql);
+                    HashMap<String, String> neighborhoods = new HashMap<>();
+                    while (resultSet.next()) {
+                        neighborhoods.put(resultSet.getString(1), resultSet.getString(2)); 
+                    }
+                    
                     String locationId = "DE" + String.format("%06d", child.getFkDestinationId());
-                    mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + child.getDbmsCustomer() + "; RFC: " + child.getDbmsCustomerTaxId() + "\n" + 
+                    mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + child.getDbmsCustomer() + "; " +
+                            "RFC: " + (!child.getDbmsCustomerTaxId().isEmpty() ? child.getDbmsCustomerTaxId() : "(SIN RFC)" )+ "\n" + 
                             "- Localidad. Clave SAT: " + localityCode + "; Nombre: " + localityName + "\n" +
                             "- Municipio. Clave SAT: " + countyCode + "; Nombre: " + countyName + "\n" +
                             "- Estado. Clave SAT: " + stateCode + "\n" +
+                            "- Pais. Clave SAT: " + countryCode + "\n" + 
                             "- Código postal: " + zipCode + "\n";
+                    
+                    if (neighborhoods.size() == 1) {
+                        for(Map.Entry<String, String> neighborhood : neighborhoods.entrySet()) {
+                            mailBody += "- Colonia. Clave SAT: " + neighborhood.getKey() + "; Nombre: " + neighborhood.getValue() + "\n" ;
+                        }
+                    }
+                    else if (neighborhoods.size() > 1) {
+                        mailBody += "- Colonia. Se encontraron " + neighborhoods.size() + " colonias para el codigo postal " + zipCode + " (Clave SAT - Descripcion): \n";
+                        int j = 0;
+                        for(Map.Entry<String, String> neighborhood : neighborhoods.entrySet()) {
+                            j++;
+                            mailBody += j + ") " + neighborhood.getKey() + " - " + neighborhood.getValue() + (j != neighborhoods.size() ? "; " : " ");
+                        }
+                        mailBody += "\n";
+                    }
                     
                     // Datos de los ítems:
                     

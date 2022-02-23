@@ -48,6 +48,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
     protected String msDbmsAddress1;
     protected String msDbmsAddress2;
     protected String msDbmsDestinationZip;
+    protected String msDbmsCountry;
 
     protected int mnAuxSiteLocationId;
     protected boolean mbAuxDestinationCreated;
@@ -102,6 +103,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public void setDbmsAddress1(String s) { msDbmsAddress1 = s; }
     public void setDbmsAddress2(String s) { msDbmsAddress2 = s; }
     public void setDbmsDestinationZip(String s) { msDbmsDestinationZip = s; }
+    public void setDbmsCountry(String s) { msDbmsCountry = s; }
 
     public String getDbmsCustomer() { return msDbmsCustomer; }
     public String getDbmsCustomerTaxId() { return msDbmsCustomerTaxId; }
@@ -111,6 +113,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public String getDbmsAddress1() { return msDbmsAddress1; }
     public String getDbmsAddress2() { return msDbmsAddress2; }
     public String getDbmsDestinationZip() { return msDbmsDestinationZip; }
+    public String getDbmsCountry() { return msDbmsCountry; }
 
     public void setAuxSiteLocationId(int n) { mnAuxSiteLocationId = n; }
     public void setAuxDestinationCreated(boolean b) { mbAuxDestinationCreated = b; }
@@ -162,6 +165,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
         msDbmsAddress1 = "";
         msDbmsAddress2 = "";
         msDbmsDestinationZip = "";
+        msDbmsCountry = "";
 
         mnAuxSiteLocationId = 0;
         mbAuxDestinationCreated = false;
@@ -239,6 +243,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
             msDbmsAddress1 = destination.getAddress1();
             msDbmsAddress2 = destination.getAddress2();
             msDbmsDestinationZip = destination.getZip();
+            msDbmsCountry = destination.getCountry();
 
             mbRegistryNew = false;
         }
@@ -266,6 +271,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
                 destination.setAddress1(msDbmsAddress1);
                 destination.setAddress2(msDbmsAddress2);
                 destination.setZip(msDbmsDestinationZip);
+                destination.setCountry(msDbmsCountry);
                 destination.save(session);
             }
         }
@@ -280,6 +286,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
             destination.setAddress1(msDbmsAddress1);
             destination.setAddress2(msDbmsAddress2);
             destination.setZip(msDbmsDestinationZip);
+            destination.setCountry(msDbmsCountry);
             //destination.setDeleted(...);
             //destination.setSystem(...);
             //destination.setFkUserInsertId(...);
@@ -371,6 +378,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
         registry.setDbmsAddress1(this.getDbmsAddress1());
         registry.setDbmsAddress2(this.getDbmsAddress2());
         registry.setDbmsDestinationZip(this.getDbmsDestinationZip());
+        registry.setDbmsCountry(this.getDbmsCountry());
         
         registry.setAuxSiteLocationId(this.getAuxSiteLocationId());
         registry.setAuxDestinationCreated(this.isAuxDestinationCreated());
