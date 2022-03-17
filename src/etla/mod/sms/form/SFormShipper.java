@@ -220,7 +220,7 @@ public class SFormShipper extends SBeanForm implements ActionListener {
         moTextMail.setTextSettings(SGuiUtils.getLabelName(jlMail), 100);
         moTextMail.setTextCaseType(0);
         moTextCarrierId.setTextSettings(SGuiUtils.getLabelName(jlCarrierId), 10, 0);
-        moTextFiscalId.setTextSettings(SGuiUtils.getLabelName(jlFiscalId), 50, 0);
+        moTextFiscalId.setTextSettings(SGuiUtils.getLabelName(jlFiscalId), 25, 0);
         moBoolWeb.setBooleanSettings(SGuiUtils.getLabelName(moBoolWeb.getText()), false);
         
         moFields.addField(moTextCode);

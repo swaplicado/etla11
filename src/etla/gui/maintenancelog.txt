@@ -1,4 +1,11 @@
 ================================================================================
+2022-03-17, 1.1 014.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Adición de los parámetros necesarios para el envío de la información de los embarques a la plataforma CPT.
+2) Creación y envío del JSON con la información del embarque a la plataforma CPT.
+
+================================================================================
 2022-02-23, 1.1 013.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

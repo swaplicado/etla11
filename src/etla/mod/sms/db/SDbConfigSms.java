@@ -36,10 +36,10 @@ public class SDbConfigSms extends SDbRegistryUser{
     protected String msRevueltaName;
     protected String msRevueltaUser;
     protected String msRevueltaPassword;
-    protected String msWebURL;
+    protected String msWebUrl;
     protected String msWebUser;
     protected String msWebPassword;
-    protected String msIdLocation;
+    protected String msWebLocationId;
     protected int mnShipperConfig;
     protected boolean mbShiptmentMail;
 
@@ -76,10 +76,10 @@ public class SDbConfigSms extends SDbRegistryUser{
     public void setRevueltaName(String s) { msRevueltaName = s; }
     public void setRevueltaUser(String s) { msRevueltaUser = s; }
     public void setRevueltaPassword(String s) { msRevueltaPassword = s; }
-    public void setWebURL(String s) { msWebURL = s; }
+    public void setWebUrl(String s) { msWebUrl = s; }
     public void setWebUser(String s) { msWebUser = s; }
     public void setWebPassword(String s) { msWebPassword = s; }
-    public void setIdLocation(String s) { msIdLocation = s; }
+    public void setWebLocationId(String s) { msWebLocationId = s; }
     public void setShipperConfig(int n) { mnShipperConfig = n; }
     public void setShiptmentMail(boolean b) { mbShiptmentMail = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
@@ -105,10 +105,10 @@ public class SDbConfigSms extends SDbRegistryUser{
     public String getRevueltaName() { return msRevueltaName; }
     public String getRevueltaUser() { return msRevueltaUser; }
     public String getRevueltaPassword() { return msRevueltaPassword; }
-    public String getWebURL() { return msWebURL; }
+    public String getWebUrl() { return msWebUrl; }
     public String getWebUser() { return msWebUser; }
     public String getWebPassword() { return msWebPassword; }
-    public String getIdLocation() { return msIdLocation; }
+    public String getWebLocationId() { return msWebLocationId; }
     public int getShipperConfig() { return mnShipperConfig; }
     public boolean isShiptmentMail() { return mbShiptmentMail; }
     public boolean isDeleted() { return mbDeleted; }
@@ -153,10 +153,10 @@ public class SDbConfigSms extends SDbRegistryUser{
         msRevueltaName = "";
         msRevueltaUser = "";
         msRevueltaPassword = "";
-        msWebURL = "";
+        msWebUrl = "";
         msWebUser = "";
         msWebPassword = "";
-        msIdLocation = "";
+        msWebLocationId = "";
         mnShipperConfig = 0;
         mbShiptmentMail = false;
         mbDeleted = false;
@@ -225,10 +225,10 @@ public class SDbConfigSms extends SDbRegistryUser{
             msRevueltaName = resultSet.getString("rev_name");
             msRevueltaUser = resultSet.getString("rev_user");
             msRevueltaPassword = resultSet.getString("rev_pswd");
-            msWebURL = resultSet.getString("web_url");
+            msWebUrl = resultSet.getString("web_url");
             msWebUser = resultSet.getString("web_user");
             msWebPassword = resultSet.getString("web_pswd");
-            msIdLocation = resultSet.getString("id_loc");
+            msWebLocationId = resultSet.getString("web_loc_id");
             mnShipperConfig = resultSet.getInt("shipper_cfg");
             mbShiptmentMail = resultSet.getBoolean("b_shipt_mail");
             mbDeleted = resultSet.getBoolean("b_del");
@@ -273,10 +273,10 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "'" + msRevueltaName + "', " + 
                 "'" + msRevueltaUser + "', " + 
                 "'" + msRevueltaPassword + "', " + 
-                "'" + msWebURL + "', " + 
+                "'" + msWebUrl + "', " + 
                 "'" + msWebUser + "', " + 
                 "'" + msWebPassword + "', " + 
-                "'" + msIdLocation + "', " + 
+                "'" + msWebLocationId + "', " + 
                 mnShipperConfig + ", " + 
                 (mbShiptmentMail ? 1 : 0) + ", " + 
                 (mbDeleted ? 1 : 0) + ", " + 
@@ -307,10 +307,10 @@ public class SDbConfigSms extends SDbRegistryUser{
                 "rev_name = '" + msRevueltaName + "', " +
                 "rev_user = '" + msRevueltaUser + "', " +
                 "rev_pswd = '" + msRevueltaPassword + "', " +
-//                "web_url = '" + msWebURL + "', " +
-//                "web_user = '" + msWebUser + "', " +
-//                "web_pswd = '" + msWebPassword + "', " +
-//                "id_loc = '" + msIdLocation + "', " +
+                "web_url = '" + msWebUrl + "', " +
+                "web_user = '" + msWebUser + "', " +
+                "web_pswd = '" + msWebPassword + "', " +
+                "web_loc_id = '" + msWebLocationId + "', " +
                 "shipper_cfg = " + mnShipperConfig + ", " +
                 "b_shipt_mail = " + (mbShiptmentMail ? 1 : 0) + ", " +
                 "b_del = " + (mbDeleted ? 1 : 0) + ", " +
@@ -350,10 +350,10 @@ public class SDbConfigSms extends SDbRegistryUser{
         registry.setRevueltaPassword(this.getRevueltaPassword());
         registry.setShipperConfig(this.getShipperConfig());
         registry.setShiptmentMail(this.isShiptmentMail());
-        registry.setWebURL(this.getWebURL());
+        registry.setWebUrl(this.getWebUrl());
         registry.setWebUser(this.getWebUser());
         registry.setWebPassword(this.getWebPassword());
-        registry.setIdLocation(this.getIdLocation());
+        registry.setWebLocationId(this.getWebLocationId());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());
         registry.setFkUserInsertId(this.getFkUserInsertId());

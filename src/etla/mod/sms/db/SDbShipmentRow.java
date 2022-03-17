@@ -242,7 +242,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
             mnDbmsSiteLocationId = destination.getSiteLocationId();
             msDbmsAddress1 = destination.getAddress1();
             msDbmsAddress2 = destination.getAddress2();
-            msDbmsDestinationZip = destination.getZip();
+            msDbmsDestinationZip = destination.getZipCode();
             msDbmsCountry = destination.getCountry();
 
             mbRegistryNew = false;
@@ -270,7 +270,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
                 destination.setSiteLocationId(mnDbmsSiteLocationId);
                 destination.setAddress1(msDbmsAddress1);
                 destination.setAddress2(msDbmsAddress2);
-                destination.setZip(msDbmsDestinationZip);
+                destination.setZipCode(msDbmsDestinationZip);
                 destination.setCountry(msDbmsCountry);
                 destination.save(session);
             }
@@ -285,7 +285,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
             destination.setSiteLocationId(mnDbmsSiteLocationId);
             destination.setAddress1(msDbmsAddress1);
             destination.setAddress2(msDbmsAddress2);
-            destination.setZip(msDbmsDestinationZip);
+            destination.setZipCode(msDbmsDestinationZip);
             destination.setCountry(msDbmsCountry);
             //destination.setDeleted(...);
             //destination.setSystem(...);

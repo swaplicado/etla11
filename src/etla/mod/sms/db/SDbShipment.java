@@ -666,7 +666,7 @@ public class SDbShipment extends SDbRegistryUser{
             
             moShipJson.setShipmentId(mnNumber);
             moShipJson.setTicket(mnTicketId);
-            moShipJson.setOrigLocId(confSms.getIdLocation());
+            moShipJson.setOrigLocId(confSms.getWebLocationId());
             moShipJson.setShipperFiscalId(shipper.getFiscalId());
             moShipJson.setPlate(msVehiclePlate);
             moShipJson.setTotWei(mdKilograms);
@@ -901,7 +901,7 @@ public class SDbShipment extends SDbRegistryUser{
     public void sendJson(SDbConfigSms confSms) {
 
         try {
-            String url = confSms.getWebURL();
+            String url = confSms.getWebUrl();
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("POST");
