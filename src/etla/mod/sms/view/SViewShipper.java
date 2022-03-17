@@ -53,6 +53,8 @@ public class SViewShipper extends SGridPaneView {
                 + "sh.mail, " 
                 + "sh.carr_id, "
                 + "sh.des_sup_id, "
+                + "sh.fiscal_id, "
+                + "sh.b_web, "
                 + "sh.b_del AS " + SDbConsts.FIELD_IS_DEL + ", "
                 + "sh.b_sys AS " + SDbConsts.FIELD_IS_SYS + ", "
                 + "sh.fk_usr_ins AS " + SDbConsts.FIELD_USER_INS_ID + ", "
@@ -79,6 +81,8 @@ public class SViewShipper extends SGridPaneView {
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "sh.des_sup_id", "ID asoc. de negocios"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_L, "sh.mail", "Mail"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "sh.carr_id", "ID transportista (Revuelta)"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_M, "sh.fiscal_id", "RFC"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, "sh.b_web", "Enviar correo web"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, SDbConsts.FIELD_IS_DEL, SGridConsts.COL_TITLE_IS_DEL));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_S, SDbConsts.FIELD_IS_SYS, SGridConsts.COL_TITLE_IS_SYS));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_USR, SDbConsts.FIELD_USER_INS_NAME, SGridConsts.COL_TITLE_USER_INS_NAME));

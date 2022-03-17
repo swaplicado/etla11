@@ -15,6 +15,14 @@ import etla.mod.SModSysConsts;
 import etla.mod.cfg.db.SDbConfig;
 import etla.mod.etl.db.SEtlConsts;
 import static etla.mod.etl.db.SEtlProcess.createConnection;
+import etla.mod.sms.bol.SLocationsJson;
+import etla.mod.sms.bol.SMerchandisesJson;
+import etla.mod.sms.bol.SShipmentJson;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -92,6 +100,8 @@ public class SDbShipment extends SDbRegistryUser{
     protected int mnOriginalFkShipmentStatusId;
     
     protected boolean mbAuxSendMail;
+    
+    SShipmentJson moShipJson;
     
     public SDbShipment () {
         super(SModConsts.S_SHIPT);
@@ -278,6 +288,8 @@ public class SDbShipment extends SDbRegistryUser{
         mbOriginalAnnulled = false;
         mnOriginalFkShipmentStatusId = 0;
         mbAuxSendMail = false;
+        
+        moShipJson = null;
     }
 
     @Override
@@ -636,18 +648,29 @@ public class SDbShipment extends SDbRegistryUser{
         return connectionSiie.createStatement();
     }
     
-    private String composeMailBody(SGuiSession session, String shipperName, String ShipperCode) {
+    private String composeMailBody(SGuiSession session, SDbShipper shipper, SDbConfigSms confSms) {
         String mailBody = "";
         
         try {
+            moShipJson = new SShipmentJson();
+            ArrayList<SLocationsJson> locsJson = new ArrayList<>();
+            ArrayList<SMerchandisesJson> merchsJson;
+            
             SDbVehicleType vehicleType = (SDbVehicleType) session.readRegistry(SModConsts.SU_VEHIC_TP, new int[] { mnFkVehicleTypeId });
             
             mailBody = "Embarque: #" + mnNumber + " " + SLibUtils.DateFormatDate.format(mtShiptmentDate) + "\n" +
-                    "Transportista: " + shipperName + "; " + ShipperCode + "\n" + 
+                    "Transportista: " + shipper.getName() + "; " + shipper.getCode() + "\n" + 
                     "Camion: " + vehicleType.getName() + "; " + msVehiclePlate + "\n" + 
                     "Chofer: " + msDriverName + "; " + (msDriverPhone.isEmpty() || msDriverPhone.equals("0") ? "(SIN TELEFONO)" : msDriverPhone) +"\n" +
                     "Boleto bascula: " + mnTicketId + "\n";
             
+            moShipJson.setShipmentId(mnNumber);
+            moShipJson.setTicket(mnTicketId);
+            moShipJson.setOrigLocId(confSms.getIdLocation());
+            moShipJson.setShipperFiscalId(shipper.getFiscalId());
+            moShipJson.setPlate(msVehiclePlate);
+            moShipJson.setTotWei(mdKilograms);
+
             if (!maChildRows.isEmpty()) {
                 int i = 0;
                 for (SDbShipmentRow child : maChildRows) {
@@ -712,16 +735,29 @@ public class SDbShipment extends SDbRegistryUser{
                     
                     String locationId = "DE" + String.format("%06d", child.getFkDestinationId());
                     mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + child.getDbmsCustomer() + "; " +
-                            "RFC: " + (!child.getDbmsCustomerTaxId().isEmpty() ? child.getDbmsCustomerTaxId() : "(SIN RFC)" )+ "\n" + 
+                            "RFC: " + (!child.getDbmsCustomerTaxId().isEmpty() ? child.getDbmsCustomerTaxId() : "(SIN RFC)" ) + "\n" + 
                             "- Localidad. Clave SAT: " + localityCode + "; Nombre: " + localityName + "\n" +
                             "- Municipio. Clave SAT: " + countyCode + "; Nombre: " + countyName + "\n" +
                             "- Estado. Clave SAT: " + stateCode + "\n" +
                             "- Pais. Clave SAT: " + countryCode + "\n" + 
                             "- Código postal: " + zipCode + "\n";
                     
+                    SLocationsJson locJson = new SLocationsJson();
+                    locJson.setLocationType("Destino");
+                    locJson.setFiscalId((!child.getDbmsCustomerTaxId().isEmpty() ? child.getDbmsCustomerTaxId() : "(SIN RFC)" ));
+                    locJson.setNameFiscalId(child.getDbmsCustomer());
+                    locJson.setLocality(localityCode);
+                    locJson.setCounty(countyCode);
+                    locJson.setState(stateCode);
+                    locJson.setCountry(countryCode);
+                    locJson.setZipCode(zipCode);
+
+                    String neiborhoodsKeys = "";
+                    
                     if (neighborhoods.size() == 1) {
                         for(Map.Entry<String, String> neighborhood : neighborhoods.entrySet()) {
                             mailBody += "- Colonia. Clave SAT: " + neighborhood.getKey() + "; Nombre: " + neighborhood.getValue() + "\n" ;
+                            neiborhoodsKeys = neighborhood.getKey();
                         }
                     }
                     else if (neighborhoods.size() > 1) {
@@ -730,9 +766,12 @@ public class SDbShipment extends SDbRegistryUser{
                         for(Map.Entry<String, String> neighborhood : neighborhoods.entrySet()) {
                             j++;
                             mailBody += j + ") " + neighborhood.getKey() + " - " + neighborhood.getValue() + (j != neighborhoods.size() ? "; " : " ");
+                            neiborhoodsKeys += neighborhood.getKey() + (j != neighborhoods.size() ? ", " : " ");
                         }
                         mailBody += "\n";
                     }
+                    
+                    locJson.setNeighborhood(neiborhoodsKeys);
                     
                     // Datos de los ítems:
                     
@@ -740,6 +779,7 @@ public class SDbShipment extends SDbRegistryUser{
                     SDataDps dps = new SDataDps();
                     dps.read(new int[] { child.getInvoiceIdYear(), child.getInvoiceIdDoc()}, statementSiie);
                     Vector<SDataDpsEntry> entries = dps.getDbmsDpsEntries();
+                    merchsJson = new ArrayList<>();
                     for (SDataDpsEntry entry : entries) {
                         String item = "";
                         sql = "SELECT i.name, icfd.code AS item_code, igencfd.code AS igen_code, igencfd.name AS sat_name FROM erp.itmu_item AS i " +
@@ -751,9 +791,22 @@ public class SDbShipment extends SDbRegistryUser{
                         if (resultSet.next()) {
                             item = "- Producto. Clave SAT " + (resultSet.getString("item_code") == null ? resultSet.getString("igen_code") : resultSet.getString("item_code")) + 
                                     "; Descripcion SAT: " + resultSet.getString("sat_name") + "; Descripcion factura: " + resultSet.getString("name") + "\nPeso: " + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(entry.getMass(), 3)) + " kg \n";
+                            
+                            SMerchandisesJson merch = new SMerchandisesJson();
+                            merch.setBienesTransp((resultSet.getString("item_code") == null ? resultSet.getString("igen_code") : resultSet.getString("item_code")));
+                            merch.setQuantity(entry.getMass());
+                            merch.setUnitCode("KGM");
+                            merch.setWeight(entry.getMass());
+                            merch.setValue(entry.getSubtotalCy_r());
+                            merch.setCurrency("MXN");
+                            merchsJson.add(merch);
                         }
                         mailBody += item;
                     }
+                    locJson.setMerchandises(merchsJson);
+                    
+                    // valor de la mercancia
+                    
                     sql = "SELECT i.fin_amt, c.code FROM a_inv AS i " +
                             "INNER JOIN as_cur AS c ON i.fk_src_fin_cur = c.id_cur " +
                             "WHERE i.des_inv_yea_id = " + child.getInvoiceIdYear() + " " +
@@ -761,7 +814,10 @@ public class SDbShipment extends SDbRegistryUser{
                     resultSet = statement.executeQuery(sql);
                     if (resultSet.next()) {
                         mailBody += "- Total factura: $" + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(resultSet.getDouble(1), 2)) + " " + resultSet.getString(2) + "\n"; 
+                        moShipJson.setCurrency(resultSet.getString(2));
                     }
+                    locsJson.add(locJson);
+                    
                 }
                 mailBody += "\n";
             }
@@ -774,6 +830,10 @@ public class SDbShipment extends SDbRegistryUser{
                 SGuiMain.APP_PROVIDER + "\n" +
                 SGuiMain.APP_RELEASE;
             mailBody = mailBody.replace("©", "(c)");
+            
+            if (moShipJson != null) {
+                moShipJson.setLocations(locsJson);
+            }
         }
         catch (Exception e) {
             SLibUtils.printException(this, e);
@@ -785,6 +845,9 @@ public class SDbShipment extends SDbRegistryUser{
     public void sendMail(SGuiSession session) {
         if (mbAuxSendMail) {
             try {
+                SDbConfigSms confSms = new SDbConfigSms();
+                confSms.read(session, new int[] { 1 });
+                
                 SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
                 String mail = shipper.getMail().toLowerCase();
 
@@ -796,7 +859,7 @@ public class SDbShipment extends SDbRegistryUser{
 
                 // Generar cuerpo del correo-e en formato HTML:
 
-                String mailBody = composeMailBody(session, shipper.getName(), shipper.getCode());
+                String mailBody = composeMailBody(session, shipper, confSms);
 
                 // Preparar destinatarios del correo-e:
 
@@ -825,10 +888,56 @@ public class SDbShipment extends SDbRegistryUser{
                 mailSender.send();
 
                 System.out.println("Mail send!");
+                if (shipper.isWeb()) {
+                    sendJson(confSms);
+                }
             }
             catch (Exception e) {
                 SLibUtils.printException(this, e);
             }
+        }
+    }
+    
+    public void sendJson(SDbConfigSms confSms) {
+
+        try {
+            String url = confSms.getWebURL();
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestProperty("User-Agent", "Java client");
+            String parameters = moShipJson.encodeJson();
+            
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(parameters);
+            wr.flush();
+            wr.close();
+            
+            int responseCode = con.getResponseCode();
+            System.out.println("\nSending 'POST' request to URL : " + url);
+            System.out.println("Post parameters : " + parameters);
+            System.out.println("Response Code : " + responseCode);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+                     // Imprime el resultado
+            System.out.println(response.toString());
+ 
+        }
+        catch (Exception e) {
+            System.err.println(e.toString());
         }
     }
 }

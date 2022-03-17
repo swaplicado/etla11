@@ -29,6 +29,8 @@ public class SDbShipper extends SDbRegistryUser {
     protected String msCode;
     protected String msName;
     protected String msMail;
+    protected String msFiscalId;
+    protected boolean mbWeb;
     /*
     protected boolean mbDeleted;
     protected boolean mbSystem;
@@ -57,6 +59,8 @@ public class SDbShipper extends SDbRegistryUser {
     public void setCode(String s) { msCode = s; }
     public void setName(String s) { msName = s; }
     public void setMail(String s) { msMail = s; }
+    public void setFiscalId(String s) { msFiscalId = s; }
+    public void setWeb(boolean b) { mbWeb = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
     public void setFkUserId(int n) { mnFkUserId = n; }
@@ -71,6 +75,8 @@ public class SDbShipper extends SDbRegistryUser {
     public String getCode() { return msCode; }
     public String getName() { return msName; }
     public String getMail() { return msMail; }
+    public String getFiscalId() { return msFiscalId; }
+    public boolean isWeb() { return mbWeb; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
     public int getFkUserId() { return mnFkUserId; }
@@ -108,6 +114,8 @@ public class SDbShipper extends SDbRegistryUser {
         msCode = "";
         msName = "";
         msMail = "";
+        msFiscalId = "";
+        mbWeb = false;
         mbDeleted = false;
         mbSystem = false;
         mnFkUserId = 0;
@@ -167,6 +175,8 @@ public class SDbShipper extends SDbRegistryUser {
             msCode = resultSet.getString("code");
             msName = resultSet.getString("name");
             msMail = resultSet.getString("mail");
+//            msFiscalId = resultSet.getString("fiscal_id");
+//            mbWeb = resultSet.getBoolean("b_web");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
             mnFkUserId = resultSet.getInt("fk_usr");
@@ -228,6 +238,8 @@ public class SDbShipper extends SDbRegistryUser {
                 "'" + msCode + "', " + 
                 "'" + msName + "', " + 
                 "'" + msMail + "', " + 
+//                "'" + msFiscalId + "', " + 
+//                (mbWeb ? 1 : 0) + ", " + 
                 (mbDeleted ? 1 : 0) + ", " + 
                 (mbSystem ? 1 : 0) + ", " +
                 mnFkUserId + ", " + 
@@ -247,6 +259,8 @@ public class SDbShipper extends SDbRegistryUser {
                 "code = '" + msCode + "', " +
                 "name = '" + msName + "', " +
                 "mail = '" + msMail + "', " +
+//                "fiscal_id = '" + msFiscalId + "', " +
+//                "b_web = " + (mbWeb ? 1 : 0) + ", " +
                 "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                 "b_sys = " + (mbSystem ? 1 : 0) + ", " +
                 "fk_usr = " + mnFkUserId + ", " +
@@ -273,6 +287,8 @@ public class SDbShipper extends SDbRegistryUser {
         registry.setCode(this.getCode());
         registry.setName(this.getName());
         registry.setMail(this.getMail());
+        registry.setFiscalId(this.getFiscalId());
+        registry.setWeb(this.isWeb());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());
         registry.setFkUserId(this.getFkUserId());

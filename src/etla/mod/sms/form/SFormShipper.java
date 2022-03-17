@@ -57,23 +57,29 @@ public class SFormShipper extends SBeanForm implements ActionListener {
         jlName = new javax.swing.JLabel();
         moTextName = new sa.lib.gui.bean.SBeanFieldText();
         jPanel8 = new javax.swing.JPanel();
+        jlFiscalId = new javax.swing.JLabel();
+        moTextFiscalId = new sa.lib.gui.bean.SBeanFieldText();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
         jlDesSupplierId = new javax.swing.JLabel();
         moIntDesSupplierId = new sa.lib.gui.bean.SBeanFieldInteger();
         jbEditDesSupplierId = new javax.swing.JButton();
         jlSiie = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
         jlMail = new javax.swing.JLabel();
         moTextMail = new sa.lib.gui.bean.SBeanFieldText();
-        jPanel7 = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
         jlCarrierId = new javax.swing.JLabel();
         moTextCarrierId = new sa.lib.gui.bean.SBeanFieldText();
         jLabel1 = new javax.swing.JLabel();
+        jPanel10 = new javax.swing.JPanel();
+        moBoolWeb = new sa.lib.gui.bean.SBeanFieldBoolean();
         jPanel5 = new javax.swing.JPanel();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos del registro:"));
         jPanel1.setLayout(new java.awt.BorderLayout(0, 5));
 
-        jPanel2.setLayout(new java.awt.GridLayout(5, 1, 0, 5));
+        jPanel2.setLayout(new java.awt.GridLayout(7, 1, 0, 5));
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
@@ -97,48 +103,70 @@ public class SFormShipper extends SBeanForm implements ActionListener {
 
         jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlDesSupplierId.setText("ID asoc. negocios:");
-        jlDesSupplierId.setPreferredSize(new java.awt.Dimension(100, 23));
-        jPanel8.add(jlDesSupplierId);
-        jPanel8.add(moIntDesSupplierId);
+        jlFiscalId.setText("RFC:");
+        jlFiscalId.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel8.add(jlFiscalId);
+        jPanel8.add(moTextFiscalId);
 
-        jbEditDesSupplierId.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sa/lib/img/cmd_std_edit.gif"))); // NOI18N
-        jbEditDesSupplierId.setToolTipText("Modificar");
-        jbEditDesSupplierId.setPreferredSize(new java.awt.Dimension(23, 23));
-        jPanel8.add(jbEditDesSupplierId);
-
-        jlSiie.setForeground(java.awt.Color.gray);
-        jlSiie.setText("(Primary Key SIIE)");
-        jlSiie.setPreferredSize(new java.awt.Dimension(100, 23));
-        jPanel8.add(jlSiie);
+        jLabel2.setForeground(java.awt.SystemColor.textInactiveText);
+        jLabel2.setText("(Requerido para CPT)");
+        jLabel2.setPreferredSize(new java.awt.Dimension(200, 23));
+        jPanel8.add(jLabel2);
 
         jPanel2.add(jPanel8);
 
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlMail.setForeground(new java.awt.Color(0, 153, 153));
-        jlMail.setText("Mail:*");
-        jlMail.setPreferredSize(new java.awt.Dimension(100, 23));
-        jPanel6.add(jlMail);
+        jlDesSupplierId.setText("ID asoc. negocios:");
+        jlDesSupplierId.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel6.add(jlDesSupplierId);
+        jPanel6.add(moIntDesSupplierId);
 
-        moTextMail.setPreferredSize(new java.awt.Dimension(300, 23));
-        jPanel6.add(moTextMail);
+        jbEditDesSupplierId.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sa/lib/img/cmd_std_edit.gif"))); // NOI18N
+        jbEditDesSupplierId.setToolTipText("Modificar");
+        jbEditDesSupplierId.setPreferredSize(new java.awt.Dimension(23, 23));
+        jPanel6.add(jbEditDesSupplierId);
+
+        jlSiie.setForeground(java.awt.Color.gray);
+        jlSiie.setText("(Primary Key SIIE)");
+        jlSiie.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel6.add(jlSiie);
 
         jPanel2.add(jPanel6);
 
         jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
+        jlMail.setForeground(new java.awt.Color(0, 153, 153));
+        jlMail.setText("Mail:*");
+        jlMail.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel7.add(jlMail);
+
+        moTextMail.setPreferredSize(new java.awt.Dimension(300, 23));
+        jPanel7.add(moTextMail);
+
+        jPanel2.add(jPanel7);
+
+        jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
         jlCarrierId.setText("ID transportista:");
         jlCarrierId.setPreferredSize(new java.awt.Dimension(100, 23));
-        jPanel7.add(jlCarrierId);
-        jPanel7.add(moTextCarrierId);
+        jPanel9.add(jlCarrierId);
+        jPanel9.add(moTextCarrierId);
 
         jLabel1.setForeground(java.awt.SystemColor.textInactiveText);
         jLabel1.setText("(ID transportista en Revuelta)");
         jLabel1.setPreferredSize(new java.awt.Dimension(200, 23));
-        jPanel7.add(jLabel1);
+        jPanel9.add(jLabel1);
 
-        jPanel2.add(jPanel7);
+        jPanel2.add(jPanel9);
+
+        jPanel10.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        moBoolWeb.setText("Enviar embarques a la aplicación web CPT");
+        moBoolWeb.setPreferredSize(new java.awt.Dimension(350, 23));
+        jPanel10.add(moBoolWeb);
+
+        jPanel2.add(jPanel10);
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
 
@@ -150,7 +178,9 @@ public class SFormShipper extends SBeanForm implements ActionListener {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -158,16 +188,20 @@ public class SFormShipper extends SBeanForm implements ActionListener {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JButton jbEditDesSupplierId;
     private javax.swing.JLabel jlCarrierId;
     private javax.swing.JLabel jlCode;
     private javax.swing.JLabel jlDesSupplierId;
+    private javax.swing.JLabel jlFiscalId;
     private javax.swing.JLabel jlMail;
     private javax.swing.JLabel jlName;
     private javax.swing.JLabel jlSiie;
+    private sa.lib.gui.bean.SBeanFieldBoolean moBoolWeb;
     private sa.lib.gui.bean.SBeanFieldInteger moIntDesSupplierId;
     private sa.lib.gui.bean.SBeanFieldText moTextCarrierId;
     private sa.lib.gui.bean.SBeanFieldText moTextCode;
+    private sa.lib.gui.bean.SBeanFieldText moTextFiscalId;
     private sa.lib.gui.bean.SBeanFieldText moTextMail;
     private sa.lib.gui.bean.SBeanFieldText moTextName;
     // End of variables declaration//GEN-END:variables
@@ -186,12 +220,16 @@ public class SFormShipper extends SBeanForm implements ActionListener {
         moTextMail.setTextSettings(SGuiUtils.getLabelName(jlMail), 100);
         moTextMail.setTextCaseType(0);
         moTextCarrierId.setTextSettings(SGuiUtils.getLabelName(jlCarrierId), 10, 0);
+        moTextFiscalId.setTextSettings(SGuiUtils.getLabelName(jlFiscalId), 50, 0);
+        moBoolWeb.setBooleanSettings(SGuiUtils.getLabelName(moBoolWeb.getText()), false);
         
         moFields.addField(moTextCode);
         moFields.addField(moTextName);
         moFields.addField(moIntDesSupplierId);
         moFields.addField(moTextMail);
         moFields.addField(moTextCarrierId);
+        moFields.addField(moTextFiscalId);
+        moFields.addField(moBoolWeb);
         
         moFields.setFormButton(jbSave);
     }    
@@ -251,6 +289,8 @@ public class SFormShipper extends SBeanForm implements ActionListener {
         moIntDesSupplierId.setValue(moRegistry.getDesSupplierId());
         moTextMail.setText(moRegistry.getMail());
         moTextCarrierId.setText(moRegistry.getCarrierId());
+        moTextFiscalId.setText(moRegistry.getFiscalId());
+        moBoolWeb.setValue(moRegistry.isWeb());
        
         setFormEditable(true);
         
@@ -276,6 +316,8 @@ public class SFormShipper extends SBeanForm implements ActionListener {
         registry.setDesSupplierId(moIntDesSupplierId.getValue());
         registry.setName(moTextName.getValue());
         registry.setMail(moTextMail.getValue());
+        registry.setFiscalId(moTextFiscalId.getValue());
+        registry.setWeb(moBoolWeb.getValue());
         //registry.setDeleted(...);
         //registry.setSystem(...);
         //registry.setFkUserInsertId(...);
@@ -294,6 +336,12 @@ public class SFormShipper extends SBeanForm implements ActionListener {
             if (!validateMail.isEmpty()) {
                 validation.setMessage(validateMail);
                 validation.setComponent(moTextMail);
+            }
+        }
+        if (validation.isValid()) {
+            if (moBoolWeb.getValue() && moTextFiscalId.getValue().isEmpty()) {
+                validation.setMessage("Es necesario que indique el RFC.");
+                validation.setComponent(moTextFiscalId);
             }
         }
         return validation;

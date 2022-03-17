@@ -85,9 +85,10 @@ public abstract class SModConsts {
 
     public static final int LOCU_CTY = 1032001;
     public static final int LOCU_STA = 1032002;
-    public static final int LOCS_BOL_ZIP_CODE = 1032003;
-    public static final int LOCS_BOL_COUNTY = 1032004;
-    public static final int LOCS_BOL_LOCALITY = 1032005;
+    public static final int LOCS_BOL_COUNTY = 1031011;
+    public static final int LOCS_BOL_LOCALITY = 1031012;
+    public static final int LOCS_BOL_ZIP_CODE = 1031013;
+    public static final int LOCS_BOL_NEI_ZIP_CODE = 1031014;
 
 
     public static final HashMap<Integer, String> TablesMap = new HashMap<>();
