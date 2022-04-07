@@ -9,7 +9,7 @@ import sa.lib.grid.SGridRow;
 
 /**
  *
- * @author Daniel López, Sergio Flores
+ * @author Daniel López, Sergio Flores, Isabel Servín
  */
 public class SRowShipmentRow implements SGridRow {
     
@@ -61,25 +61,28 @@ public class SRowShipmentRow implements SGridRow {
         Object value = null;
         
         switch(row){
-            case 0:
-                value = moShipmentRow.getBolId();
+            case 0: 
+                value = moShipmentRow.getShipmentOrderFolio();
                 break;
             case 1:
-                value = moShipmentRow.getDeliveryNumber();
+                value = moShipmentRow.getBolId();
                 break;
             case 2:
-                value = moShipmentRow.getDeliveryDate();
+                value = moShipmentRow.getDeliveryNumber();
                 break;
             case 3:
-                value = moShipmentRow.getDbmsCustomer();
+                value = moShipmentRow.getDeliveryDate();
                 break;
             case 4:
-                value = moShipmentRow.getDbmsDestination();
+                value = moShipmentRow.getDbmsCustomer();
                 break;
             case 5:
-                value = moShipmentRow.getMeters2();
+                value = moShipmentRow.getDbmsDestination();
                 break;
             case 6:
+                value = moShipmentRow.getMeters2();
+                break;
+            case 7:
                 value = moShipmentRow.getKilograms();
                 break;
             default:
@@ -89,7 +92,11 @@ public class SRowShipmentRow implements SGridRow {
     }
 
     @Override
-    public void setRowValueAt(Object o, int row) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setRowValueAt(Object value, int row) {
+        switch(row) {
+            case 0:
+                moShipmentRow.setShipmentOrderFolio((int) value);
+                break;
+        }
     }
 }

@@ -66,6 +66,7 @@ public abstract class SShippingUtils {
 
             //row.setPkShipmentId(...);
             //row.setPkRowId(...);
+            //row.setShipmentOrderFolio(...);
             row.setDeliveryId(resultSet.getString("CustomerInvoiceKey"));
             row.setDeliveryNumber(SLibUtils.parseInt(resultSet.getString("InvoiceNumber")));
             row.setDeliveryDate(resultSet.getDate("Created"));

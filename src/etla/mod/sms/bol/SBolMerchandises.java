@@ -11,17 +11,21 @@ import org.json.simple.JSONObject;
  *
  * @author Isabel Servín
  */
-public class SMerchandisesJson {
+public class SBolMerchandises {
     
     protected String sBienesTransp;
+    protected String sSatDescription;
+    protected String sInvDescription;
     protected double dQuantity;
     protected String sUnitCode;
     protected double dWeight;
     protected double dValue;
     protected String sCurrency;
     
-    public SMerchandisesJson() {
+    public SBolMerchandises() {
         sBienesTransp = "";
+        sSatDescription = "";
+        sInvDescription = "";
         dQuantity = 0;
         sUnitCode = "";
         dWeight = 0;
@@ -30,11 +34,22 @@ public class SMerchandisesJson {
     }
     
     public void setBienesTransp(String s) { sBienesTransp = s; }
+    public void setSatDescription(String s) { sSatDescription = s; }
+    public void setInvDescription(String s) { sInvDescription = s; }
     public void setQuantity(double d) { dQuantity = d; }
     public void setUnitCode(String s) { sUnitCode = s; }
     public void setWeight(double d) { dWeight = d; }
     public void setValue(double d) { dValue = d; }
     public void setCurrency(String s) { sCurrency = s; }
+    
+    public String getBienesTransp() { return sBienesTransp; }
+    public String getSatDescription() { return sSatDescription; }
+    public String getInvDescription() { return sInvDescription; }
+    public double getQuantity() { return dQuantity; }
+    public String getUnitCode() { return sUnitCode; }
+    public double getWeight() { return dWeight; }
+    public double getValue() { return dValue; }
+    public String getCurrency() { return sCurrency; }
     
     public JSONObject getJson() {
         JSONObject merch = new JSONObject();

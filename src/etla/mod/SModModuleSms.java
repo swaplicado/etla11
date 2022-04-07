@@ -9,9 +9,11 @@ import etla.mod.etl.view.SViewAvistaCustomerInvoicesPending;
 import etla.mod.sms.db.SDbCargoType;
 import etla.mod.sms.db.SDbComment;
 import etla.mod.sms.db.SDbConfigSms;
+import etla.mod.sms.db.SDbCrew;
 import etla.mod.sms.db.SDbDestination;
 import etla.mod.sms.db.SDbErpDoc;
 import etla.mod.sms.db.SDbErpDocEtlLog;
+import etla.mod.sms.db.SDbForkliftDriver;
 import etla.mod.sms.db.SDbHandlingType;
 import etla.mod.sms.db.SDbShipment;
 import etla.mod.sms.db.SDbShipmentRow;
@@ -21,9 +23,14 @@ import etla.mod.sms.db.SDbVehicleType;
 import etla.mod.sms.db.SDbWmItem;
 import etla.mod.sms.db.SDbWmTicket;
 import etla.mod.sms.db.SDbWmUser;
+import etla.mod.sms.form.SFormCrew;
+import etla.mod.sms.form.SFormForkliftDriver;
 import etla.mod.sms.form.SFormShipment;
 import etla.mod.sms.form.SFormShipper;
+import etla.mod.sms.view.SViewCrew;
+import etla.mod.sms.view.SViewForkliftDriver;
 import etla.mod.sms.view.SViewShipment;
+import etla.mod.sms.view.SViewShipmentByPeriod;
 import etla.mod.sms.view.SViewShipper;
 import javax.swing.JMenu;
 import sa.lib.SLibConsts;
@@ -47,6 +54,8 @@ public class SModModuleSms extends SGuiModule {
 
     private SFormShipper moFormShipper;
     private SFormShipment moFormShipment;
+    private SFormForkliftDriver moFormForkliftDriver;
+    private SFormCrew moFormCrew;
 
     public SModModuleSms(SGuiClient client) {
         super(client, SModConsts.MOD_SMS, SLibConsts.UNDEFINED);
@@ -99,6 +108,12 @@ public class SModModuleSms extends SGuiModule {
                 break;
             case SModConsts.SU_SHIPPER:
                 registry = new SDbShipper();
+                break;
+            case SModConsts.SU_FORKLIFT_DRV:
+                registry = new SDbForkliftDriver();
+                break;
+            case SModConsts.SU_CREW:
+                registry = new SDbCrew();
                 break;
             case SModConsts.SU_DESTIN:
                 registry = new SDbDestination();
@@ -177,11 +192,11 @@ public class SModModuleSms extends SGuiModule {
             case SModConsts.SU_SHIPPER:
                 settings = new SGuiCatalogueSettings("Transportista", 1);
                 switch(subtype) {
-                    case SModSysConsts.S_CFG_SHIPPER_CODE_NAME:
+                    case SModSysConsts.S_CFG_ITEM_CODE_NAME:
                         sql = "SELECT id_shipper AS " + SDbConsts.FIELD_ID + "1, CONCAT(code, ' - ', name) AS " + SDbConsts.FIELD_ITEM + " "                        
                                 + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_shipper ";
                         break;
-                    case SModSysConsts.S_CFG_SHIPPER_NAME_CODE:
+                    case SModSysConsts.S_CFG_ITEM_NAME_CODE:
                         sql = "SELECT id_shipper AS " + SDbConsts.FIELD_ID + "1, CONCAT(name, ' - ', code) AS " + SDbConsts.FIELD_ITEM + " "                        
                                 + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_shipper ";
                         break;
@@ -205,6 +220,28 @@ public class SModModuleSms extends SGuiModule {
                 settings = new SGuiCatalogueSettings("E/S", 1);
                 sql = "SELECT id_wm_ticket_tp AS " + SDbConsts.FIELD_ID + "1, name AS " + SDbConsts.FIELD_ITEM + " "
                         + "FROM " + SModConsts.TablesMap.get(type) + " WHERE b_del = 0 ORDER BY name, id_wm_ticket_tp ";
+                break;
+            case SModConsts.SU_FORKLIFT_DRV:
+                settings = new SGuiCatalogueSettings("Montacarguista", 1);
+                switch (subtype) {
+                    case SModSysConsts.S_CFG_ITEM_CODE_NAME:
+                        sql = "SELECT id_forklift_drv AS " + SDbConsts.FIELD_ID + "1, CONCAT(code, ' - ', name) AS " + SDbConsts.FIELD_ITEM + " "
+                                + "FROM " + SModConsts.TablesMap.get(type) + " WHERE NOT b_del ORDER BY lastname, name, id_forklift_drv ";
+                        break;
+                    case SModSysConsts.S_CFG_ITEM_NAME_CODE:
+                        sql = "SELECT id_forklift_drv AS " + SDbConsts.FIELD_ID + "1, CONCAT(name, ' - ', code) AS " + SDbConsts.FIELD_ITEM + " "
+                                + "FROM " + SModConsts.TablesMap.get(type) + " WHERE NOT b_del ORDER BY lastname, name, id_forklift_drv ";
+                        break;
+                    default:
+                        sql = "SELECT id_forklift_drv AS " + SDbConsts.FIELD_ID + "1, name AS " + SDbConsts.FIELD_ITEM + " "
+                                + "FROM " + SModConsts.TablesMap.get(type) + " WHERE NOT b_del ORDER BY lastname, name, id_forklift_drv ";
+                        break;
+                }
+                break;
+            case SModConsts.SU_CREW:
+                settings = new SGuiCatalogueSettings("Cuadrilla", 1);
+                sql = "SELECT id_crew AS " + SDbConsts.FIELD_ID + "1, name AS " + SDbConsts.FIELD_ITEM + " " 
+                        + "FROM " + SModConsts.TablesMap.get(type) + " WHERE NOT b_del ORDER BY name, id_crew ";
                 break;
             case SModConsts.S_SHIPT:
             case SModConsts.S_SHIPT_ROW:
@@ -240,12 +277,21 @@ public class SModModuleSms extends SGuiModule {
                     case SModSysConsts.SS_SHIPT_ST_REL:
                         view = new SViewShipment(miClient, subtype, "Embarques liberados");
                         break;
+                    case SModSysConsts.SS_SHIPT_BY_PERIOD:
+                        view = new SViewShipmentByPeriod(miClient, "Consulta de embarques por periodo");
+                        break;
                     default:
                         miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
                 }
                 break;
             case SModConsts.SU_SHIPPER:
                 view = new SViewShipper(miClient, "Transportistas");
+                break;
+            case SModConsts.SU_FORKLIFT_DRV:
+                view = new SViewForkliftDriver(miClient, "Montacarguistas");
+                break;
+            case SModConsts.SU_CREW:
+                view = new SViewCrew(miClient, "Cuadrillas");
                 break;
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
@@ -271,6 +317,14 @@ public class SModModuleSms extends SGuiModule {
             case SModConsts.SU_SHIPPER:
                 if (moFormShipper == null) moFormShipper = new SFormShipper(miClient, "Transportista");
                 form = moFormShipper;
+                break;
+            case SModConsts.SU_FORKLIFT_DRV:
+                if (moFormForkliftDriver == null) moFormForkliftDriver = new SFormForkliftDriver(miClient, "Montacarguista");
+                form = moFormForkliftDriver;
+                break;
+            case SModConsts.SU_CREW:
+                if (moFormCrew == null) moFormCrew = new SFormCrew(miClient, "Cuadrilla");
+                form = moFormCrew;
                 break;
             default:
                 miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);

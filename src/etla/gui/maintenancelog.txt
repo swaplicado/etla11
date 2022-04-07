@@ -1,4 +1,13 @@
 ================================================================================
+2022-04-07, 1.1 015.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Restructuración del envío de la información del embarque por mail y a la plataforma CPT.
+2) Creación de los catálogos de montacarguistas y cuadrillas.
+3) Se agregó el campo "Orden embarque" en la forma de captura de embarques.
+4) Se agregó el indicativo si un tipo de vehículo requiere un remolque.
+
+================================================================================
 2022-03-17, 1.1 014.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

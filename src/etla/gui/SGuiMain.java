@@ -76,7 +76,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 014.0"; // release: 2022-03-17
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 015.0"; // release: 2022-04-07
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -162,10 +162,14 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipmentsRel = new javax.swing.JMenuItem();
         jsFile4 = new javax.swing.JPopupMenu.Separator();
         jmiSmsShipper = new javax.swing.JMenuItem();
+        jmiSmsForkliftDriver = new javax.swing.JMenuItem();
+        jmiSmsCrew = new javax.swing.JMenuItem();
         jsFile5 = new javax.swing.JPopupMenu.Separator();
         jmiSmsWeightComparisonReport = new javax.swing.JMenuItem();
         jmiCapacityUsedPerShipmentReport = new javax.swing.JMenuItem();
         jmiNumberOfTripsPerCustomer = new javax.swing.JMenuItem();
+        jsFile6 = new javax.swing.JPopupMenu.Separator();
+        jmiSmsShipmentsByPeriod = new javax.swing.JMenuItem();
         jmWm = new javax.swing.JMenu();
         jmiWmAuditReport = new javax.swing.JMenuItem();
         jmHelp = new javax.swing.JMenu();
@@ -336,6 +340,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
         jmiSmsShipper.setText("Transportistas");
         jmShip.add(jmiSmsShipper);
+
+        jmiSmsForkliftDriver.setText("Montacarguistas");
+        jmShip.add(jmiSmsForkliftDriver);
+
+        jmiSmsCrew.setText("Cuadrillas");
+        jmShip.add(jmiSmsCrew);
         jmShip.add(jsFile5);
 
         jmiSmsWeightComparisonReport.setText("Reporte comparativo peso embarques vs. báscula");
@@ -346,6 +356,10 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
         jmiNumberOfTripsPerCustomer.setText("Reporte de número de viajes por cliente");
         jmShip.add(jmiNumberOfTripsPerCustomer);
+        jmShip.add(jsFile6);
+
+        jmiSmsShipmentsByPeriod.setText("Consulta de embarques por periodo");
+        jmShip.add(jmiSmsShipmentsByPeriod);
 
         jMenuBar.add(jmShip);
 
@@ -476,7 +490,10 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenuItem jmiHelpAbout;
     private javax.swing.JMenuItem jmiHelpHelp;
     private javax.swing.JMenuItem jmiNumberOfTripsPerCustomer;
+    private javax.swing.JMenuItem jmiSmsCrew;
+    private javax.swing.JMenuItem jmiSmsForkliftDriver;
     private javax.swing.JMenuItem jmiSmsShipments;
+    private javax.swing.JMenuItem jmiSmsShipmentsByPeriod;
     private javax.swing.JMenuItem jmiSmsShipmentsRel;
     private javax.swing.JMenuItem jmiSmsShipmentsToRel;
     private javax.swing.JMenuItem jmiSmsShipper;
@@ -489,6 +506,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JPopupMenu.Separator jsFile3;
     private javax.swing.JPopupMenu.Separator jsFile4;
     private javax.swing.JPopupMenu.Separator jsFile5;
+    private javax.swing.JPopupMenu.Separator jsFile6;
     private javax.swing.JPopupMenu.Separator jsHelp1;
     private javax.swing.JTextField jtfSystemDate;
     private javax.swing.JTextField jtfUser;
@@ -589,9 +607,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipmentsToRel.addActionListener(this);
         jmiSmsShipmentsRel.addActionListener(this);
         jmiSmsShipper.addActionListener(this);
+        jmiSmsForkliftDriver.addActionListener(this);
+        jmiSmsCrew.addActionListener(this);
         jmiSmsWeightComparisonReport.addActionListener(this);
         jmiCapacityUsedPerShipmentReport.addActionListener(this);
         jmiNumberOfTripsPerCustomer.addActionListener(this);
+        jmiSmsShipmentsByPeriod.addActionListener(this);
 
         jmiWmAuditReport.addActionListener(this);
 
@@ -1114,6 +1135,12 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             else if (menuItem == jmiSmsShipper) {
                 moSession.showView(SModConsts.SU_SHIPPER, SLibConsts.UNDEFINED, null);
             }
+            else if (menuItem == jmiSmsForkliftDriver) {
+                moSession.showView(SModConsts.SU_FORKLIFT_DRV, SLibConsts.UNDEFINED, null);
+            }
+            else if (menuItem == jmiSmsCrew) {
+                moSession.showView(SModConsts.SU_CREW, SLibConsts.UNDEFINED, null);
+            }
             else if (menuItem == jmiSmsWeightComparisonReport) {
                 new SDialogWeightComparisonReport(moSession.getClient(),"Comparativo peso embarques vs. báscula").setVisible(true);
             }
@@ -1122,6 +1149,9 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             }
             else if (menuItem == jmiNumberOfTripsPerCustomer) {
                 new SDialogNumberOfTripsPerCustomer(moSession.getClient(), "Número de viajes por cliente").setVisible(true);
+            }
+            else if (menuItem == jmiSmsShipmentsByPeriod) {
+                moSession.showView(SModConsts.S_SHIPT, SModSysConsts.SS_SHIPT_BY_PERIOD, null);
             }
             else if (menuItem == jmiWmAuditReport) {
                 if (showMsgBoxConfirm("¿Desea importar boletos Revuelta y documentos SIIE para procesar el reporte?\n"

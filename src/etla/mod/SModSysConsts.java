@@ -48,6 +48,7 @@ public abstract class SModSysConsts {
     public static final int SS_SHIPT_ST_REL = 2;
     public static final int SS_SHIPT_ST_ACC_TO = 11;
     public static final int SS_SHIPT_ST_ACC = 12;
+    public static final int SS_SHIPT_BY_PERIOD = 13;
 
     public static final int SS_WEB_ROLE_NA = 1;
     public static final int SS_WEB_ROLE_ADMIN = 11;
@@ -72,6 +73,6 @@ public abstract class SModSysConsts {
     public static final int SU_WM_USER_NA = 1;
 
     public static final int S_CFG_CFG = 1;
-    public static final int S_CFG_SHIPPER_CODE_NAME = 1; 
-    public static final int S_CFG_SHIPPER_NAME_CODE = 2; 
+    public static final int S_CFG_ITEM_CODE_NAME = 1; 
+    public static final int S_CFG_ITEM_NAME_CODE = 2; 
 }

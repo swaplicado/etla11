@@ -15,14 +15,18 @@ import etla.mod.SModSysConsts;
 import etla.mod.cfg.db.SDbConfig;
 import etla.mod.etl.db.SEtlConsts;
 import static etla.mod.etl.db.SEtlProcess.createConnection;
-import etla.mod.sms.bol.SLocationsJson;
-import etla.mod.sms.bol.SMerchandisesJson;
-import etla.mod.sms.bol.SShipmentJson;
+import etla.mod.sms.bol.CPTLoginResponse;
+import etla.mod.sms.bol.SBolLocations;
+import etla.mod.sms.bol.SBolMerchandises;
+import etla.mod.sms.bol.SBolShipment;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +36,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Vector;
+import org.codehaus.jackson.map.ObjectMapper;
 import sa.gui.util.SUtilConsts;
 import sa.lib.SLibConsts;
 import sa.lib.SLibUtils;
@@ -60,6 +66,7 @@ public class SDbShipment extends SDbRegistryUser{
     protected String msDriverName;
     protected String msDriverPhone;
     protected String msVehiclePlate;
+    protected String msTrailerPlate;
     protected String msWebKey;
     protected double mdMeters2;
     protected double mdKilograms;
@@ -76,6 +83,8 @@ public class SDbShipment extends SDbRegistryUser{
     protected int mnFkHandlingTypeId;
     protected int mnFkVehicleTypeId;
     protected int mnFkShipperId;
+    protected int mnFkForkliftDriverId;
+    protected int mnFkCrewId;
     protected int mnFkUserTareId;
     protected int mnFkUserReleaseId;
     protected int mnFkUserAcceptId;
@@ -101,7 +110,9 @@ public class SDbShipment extends SDbRegistryUser{
     
     protected boolean mbAuxSendMail;
     
-    SShipmentJson moShipJson;
+    protected String _TOKEN;
+    
+    SBolShipment moBolShip;
     
     public SDbShipment () {
         super(SModConsts.S_SHIPT);
@@ -166,6 +177,7 @@ public class SDbShipment extends SDbRegistryUser{
     public void setDriverName(String s) { msDriverName = s; }
     public void setDriverPhone(String s) { msDriverPhone = s; }
     public void setVehiclePlate(String s) { msVehiclePlate = s; }
+    public void setTrailerPlate(String s) { msTrailerPlate = s; }
     public void setWebKey(String s) { msWebKey = s; }
     public void setMeters2(double d) { mdMeters2 = d; }
     public void setKilograms(double d) { mdKilograms = d; }
@@ -180,6 +192,8 @@ public class SDbShipment extends SDbRegistryUser{
     public void setFkHandlingTypeId(int n) { mnFkHandlingTypeId = n; }
     public void setFkVehicleTypeId(int n) { mnFkVehicleTypeId = n; }
     public void setFkShipperId(int n) { mnFkShipperId = n; }
+    public void setFkForkliftDriverId(int n) { mnFkForkliftDriverId = n; }
+    public void setFkCrewId(int n) { mnFkCrewId = n; }
     public void setFkUserTareId(int n) { mnFkUserTareId = n; }
     public void setFkUserReleaseId(int n) { mnFkUserReleaseId = n; }
     public void setFkUserAcceptId(int n) { mnFkUserAcceptId = n; }
@@ -200,6 +214,7 @@ public class SDbShipment extends SDbRegistryUser{
     public String getDriverName() { return msDriverName; }
     public String getDriverPhone() { return msDriverPhone; }
     public String getVehiclePlate() { return msVehiclePlate; }
+    public String getTrailerPlate() { return msTrailerPlate; }
     public String getWebKey() { return msWebKey; }
     public double getMeters2() { return mdMeters2; }
     public double getKilograms() { return mdKilograms; }
@@ -214,6 +229,8 @@ public class SDbShipment extends SDbRegistryUser{
     public int getFkHandlingTypeId() { return mnFkHandlingTypeId; }
     public int getFkVehicleTypeId() { return mnFkVehicleTypeId; }
     public int getFkShipperId() { return mnFkShipperId; }
+    public int getFkForkliftDriverId() { return mnFkForkliftDriverId; }
+    public int getFkCrewId() { return mnFkCrewId; }
     public int getFkUserTareId() { return mnFkUserTareId; }
     public int getFkUserReleaseId() { return mnFkUserReleaseId; }
     public int getFkUserAcceptId() { return mnFkUserAcceptId; }
@@ -255,6 +272,7 @@ public class SDbShipment extends SDbRegistryUser{
         msDriverName = "";
         msDriverPhone = "";
         msVehiclePlate = "";
+        msTrailerPlate = "";
         msWebKey = "";
         mdMeters2 = 0;
         mdKilograms = 0;
@@ -269,6 +287,8 @@ public class SDbShipment extends SDbRegistryUser{
         mnFkHandlingTypeId = 0;
         mnFkVehicleTypeId = 0;
         mnFkShipperId = 0;
+        mnFkForkliftDriverId = 0;
+        mnFkCrewId = 0;
         mnFkUserTareId = 0;
         mnFkUserReleaseId = 0;
         mnFkUserAcceptId = 0;
@@ -289,7 +309,7 @@ public class SDbShipment extends SDbRegistryUser{
         mnOriginalFkShipmentStatusId = 0;
         mbAuxSendMail = false;
         
-        moShipJson = null;
+        moBolShip = null;
     }
 
     @Override
@@ -341,6 +361,7 @@ public class SDbShipment extends SDbRegistryUser{
             msDriverName = resultSet.getString("driver_name");
             msDriverPhone = resultSet.getString("driver_phone");
             msVehiclePlate = resultSet.getString("vehic_plate");
+            msTrailerPlate = resultSet.getString("trailer_plate");
             msWebKey = resultSet.getString("web_key");
             mdMeters2 = resultSet.getDouble("m2");
             mdKilograms = resultSet.getDouble("kg");
@@ -355,6 +376,8 @@ public class SDbShipment extends SDbRegistryUser{
             mnFkHandlingTypeId = resultSet.getInt("fk_handg_tp");
             mnFkVehicleTypeId = resultSet.getInt("fk_vehic_tp");
             mnFkShipperId = resultSet.getInt("fk_shipper");
+            mnFkForkliftDriverId = resultSet.getInt("fk_forklift_drv");
+            mnFkCrewId = resultSet.getInt("fk_crew");
             mnFkUserTareId = resultSet.getInt("fk_usr_tare");
             mnFkUserReleaseId = resultSet.getInt("fk_usr_release");
             mnFkUserAcceptId = resultSet.getInt("fk_usr_accept");
@@ -441,6 +464,7 @@ public class SDbShipment extends SDbRegistryUser{
                 "'" + msDriverName + "', " + 
                 "'" + msDriverPhone + "', " + 
                 "'" + msVehiclePlate + "', " + 
+                "'" + msTrailerPlate + "', " + 
                 "'" + msWebKey + "', " + 
                 SLibUtils.round(mdMeters2, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " + 
                 SLibUtils.round(mdKilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " + 
@@ -455,6 +479,8 @@ public class SDbShipment extends SDbRegistryUser{
                 mnFkHandlingTypeId + ", " + 
                 mnFkVehicleTypeId + ", " + 
                 mnFkShipperId + ", " +
+                (mnFkForkliftDriverId == 0 ? "NULL, " : mnFkForkliftDriverId + ", ") + 
+                (mnFkCrewId == 0 ? "NULL, " : mnFkCrewId + ", ") + 
                 mnFkUserTareId + ", " + 
                 mnFkUserReleaseId + ", " + 
                 mnFkUserAcceptId + ", " + 
@@ -480,6 +506,7 @@ public class SDbShipment extends SDbRegistryUser{
                 "driver_name = '" + msDriverName + "', " +
                 "driver_phone = '" + msDriverPhone + "', " +
                 "vehic_plate = '" + msVehiclePlate + "', " +
+                "trailer_plate = '" + msTrailerPlate + "', " +
                 "web_key = '" + msWebKey + "', " +
                 "m2 = " + SLibUtils.round(mdMeters2, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " +
                 "kg = " + SLibUtils.round(mdKilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " +   
@@ -494,6 +521,8 @@ public class SDbShipment extends SDbRegistryUser{
                 "fk_handg_tp = " + mnFkHandlingTypeId + ", " +
                 "fk_vehic_tp = " + mnFkVehicleTypeId + ", " +
                 "fk_shipper = " + mnFkShipperId + ", " +
+                "fk_forklift_drv = " + mnFkForkliftDriverId + ", " +
+                "fk_crew = " + mnFkCrewId + ", " +
                 "fk_usr_tare = " + mnFkUserTareId + ", " +
                 "fk_usr_release = " + mnFkUserReleaseId + ", " +
                 "fk_usr_accept = " + mnFkUserAcceptId + ", " +
@@ -531,7 +560,9 @@ public class SDbShipment extends SDbRegistryUser{
         mbRegistryNew = false;
         mnQueryResultId = SDbConsts.SAVE_OK;
         
+        collectShipmentInfo(session);
         sendMail(session);
+        sendJson(session);
     }
 
     @Override
@@ -544,6 +575,7 @@ public class SDbShipment extends SDbRegistryUser{
         registry.setDriverName(this.getDriverName());
         registry.setDriverPhone(this.getDriverPhone());
         registry.setVehiclePlate(this.getVehiclePlate());
+        registry.setTrailerPlate(this.getTrailerPlate());
         registry.setWebKey(this.getWebKey());
         registry.setMeters2(this.getMeters2());
         registry.setKilograms(this.getKilograms());
@@ -558,6 +590,8 @@ public class SDbShipment extends SDbRegistryUser{
         registry.setFkHandlingTypeId(this.getFkHandlingTypeId());
         registry.setFkVehicleTypeId(this.getFkVehicleTypeId());
         registry.setFkShipperId(this.getFkShipperId());
+        registry.setFkForkliftDriverId(this.getFkForkliftDriverId());
+        registry.setFkCrewId(this.getFkCrewId());
         registry.setFkUserTareId(this.getFkUserTareId());
         registry.setFkUserReleaseId(this.getFkUserReleaseId());
         registry.setFkUserAcceptId(this.getFkUserAcceptId());
@@ -645,183 +679,163 @@ public class SDbShipment extends SDbRegistryUser{
                 config.getSiieUser(), 
                 config.getSiiePassword());
         
+        /* Isabel Servín 30/03/2022: Conexion para pruebas desde localhost a siie de cartró */
+//        Connection connectionSiie = createConnection(
+//                SEtlConsts.DB_MYSQL, 
+//                "10.83.32.129", 
+//                3306, 
+//                "erp_cartro", 
+//                "root", 
+//                "msroot");
+        
         return connectionSiie.createStatement();
     }
     
-    private String composeMailBody(SGuiSession session, SDbShipper shipper, SDbConfigSms confSms) {
+    private int loginCPT(SDbConfigSms confSms) {
+        try {
+            URLConnection connection = new URL(confSms.getWebUrl() + "login").openConnection();
+            
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+
+            String jsonInputString = "{ \"email\": \"" + confSms.getWebUser() + "\",\"password\": \"" + confSms.getWebPassword() + "\" }";
+
+            try(OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes("utf-8");
+                os.write(input, 0, input.length);			
+            }
+            
+            InputStream response = connection.getInputStream();
+            
+            try (Scanner scanner = new Scanner(response)) {
+                String responseBody = scanner.useDelimiter("\\A").next();
+                
+                ObjectMapper mapper = new ObjectMapper();
+                
+                CPTLoginResponse capResponse = mapper.readValue(responseBody, CPTLoginResponse.class);
+                
+                this._TOKEN = capResponse.getAccess_token();
+                
+                return 200;
+            }
+        }
+        catch (Exception e) {
+            System.err.println(e.toString());
+            return - 1;
+        }
+        
+    }
+    
+    public void sendJson(SGuiSession session) {
+        try {
+            SDbConfigSms confSms = new SDbConfigSms();
+            confSms.read(session, new int[] { 1 });
+            if (loginCPT(confSms) == 200) {
+            
+                SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
+                if (shipper.isWeb()) {
+                    String url = confSms.getWebUrl() + "requestdocument";
+                    URL obj = new URL(url);
+                    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                    con.setRequestMethod("POST");
+                    con.setRequestProperty("Content-Type", "application/json");
+                    con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+                    con.setRequestProperty("Accept", "application/json");
+                    con.setRequestProperty("Authorization", "Bearer " + this._TOKEN);
+                    con.setRequestProperty("User-Agent", "Java client");
+                    String parameters = moBolShip.encodeJson();
+
+                    con.setDoOutput(true);
+                    DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+                    wr.writeBytes(parameters);
+                    wr.flush();
+                    wr.close();
+
+                    int responseCode = con.getResponseCode();
+                    System.out.println("\nSending 'POST' request to URL : " + url);
+                    System.out.println("Post parameters : " + parameters);
+                    System.out.println("Response Code : " + responseCode);
+
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(con.getInputStream()));
+                    String inputLine;
+                    StringBuffer response = new StringBuffer();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+
+                             // Imprime el resultado
+                    System.out.println(response.toString());
+
+                    SDbShipmentLog log = new SDbShipmentLog();
+                    log.setFileType(2); // JSON
+                    log.setResponse(response.toString());
+                    log.setFkShipmentId(mnPkShipmentId);
+                    log.save(session);
+                }
+            } 
+        }
+        catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+    
+    private String composeMailBody(SGuiSession session, SDbShipper shipper) {
         String mailBody = "";
         
         try {
-            moShipJson = new SShipmentJson();
-            ArrayList<SLocationsJson> locsJson = new ArrayList<>();
-            ArrayList<SMerchandisesJson> merchsJson;
-            
             SDbVehicleType vehicleType = (SDbVehicleType) session.readRegistry(SModConsts.SU_VEHIC_TP, new int[] { mnFkVehicleTypeId });
             
-            mailBody = "Embarque: #" + mnNumber + " " + SLibUtils.DateFormatDate.format(mtShiptmentDate) + "\n" +
+            mailBody = "Embarque: #" + mnNumber + "; " + SLibUtils.DateFormatDate.format(mtShiptmentDate) + "\n" +
                     "Transportista: " + shipper.getName() + "; " + shipper.getCode() + "\n" + 
-                    "Camion: " + vehicleType.getName() + "; " + msVehiclePlate + "\n" + 
+                    "No. proveedor: " + moBolShip.getProviderCode() + "\n" + 
+                    "Vehiculo: " + vehicleType.getName() + "; " + msVehiclePlate + "\n" + 
+                    (msTrailerPlate.isEmpty() ? "" :"Remolque: " + msTrailerPlate + "\n") +
                     "Chofer: " + msDriverName + "; " + (msDriverPhone.isEmpty() || msDriverPhone.equals("0") ? "(SIN TELEFONO)" : msDriverPhone) +"\n" +
-                    "Boleto bascula: " + mnTicketId + "\n";
-            
-            moShipJson.setShipmentId(mnNumber);
-            moShipJson.setTicket(mnTicketId);
-            moShipJson.setOrigLocId(confSms.getWebLocationId());
-            moShipJson.setShipperFiscalId(shipper.getFiscalId());
-            moShipJson.setPlate(msVehiclePlate);
-            moShipJson.setTotWei(mdKilograms);
-
-            if (!maChildRows.isEmpty()) {
-                int i = 0;
-                for (SDbShipmentRow child : maChildRows) {
-                    // Datos de ubicaciones y destinatarios:
-                    
-                    i++;
-                    String stateCode = "";
-                    String countyCode = "";
-                    String localityCode = "";
-                    String countryCode;
-                    String countyName;
-                    String localityName;
-                    
-                    mailBody += "\n\nUBICACION " + i + ":\n";
-                    String zipCode = child.getDbmsDestinationZip();
-                    if (zipCode.isEmpty()) {
-                        zipCode = child.getDbmsCustomerZip();
+                    "Boleto bascula: #" + mnTicketId + "\n";
+             
+            int i = 0;
+            for (SBolLocations location : moBolShip.getLocations()) {
+                i++;
+                mailBody += "\n\nUBICACION " + i + ":\n";
+                
+                mailBody += "ID Destino (sugerido): " + location.getLocationId() + "\n- Destinatario. Nombre: " + location.getNameFiscalId() + "; " +
+                        "RFC: " + location.getFiscalId() + "\n" + 
+                        "- Localidad. Clave SAT: " + location.getLocalityCode() + "; Nombre: " + location.getLocality() + "\n" +
+                        "- Municipio. Clave SAT: " + location.getCountyCode() + "; Nombre: " + location.getCounty() + "\n" +
+                        "- Estado. Clave SAT: " + location.getStateCode() + "\n" +
+                        "- Pais. Clave SAT: " + location.getCountryCode() + "\n" + 
+                        "- Código postal: " + location.getZipCode() + "\n";
+                
+                if (location.getNeighborhoodsMap().size() == 1) {
+                    for(Map.Entry<String, String> neighborhood : location.getNeighborhoodsMap().entrySet()) {
+                        mailBody += "- Colonia. Clave SAT: " + neighborhood.getKey() + "; Nombre: " + neighborhood.getValue() + "\n" ;
                     }
-                    
-                    String sql = "SELECT * FROM erp.locs_bol_zip_code WHERE id_zip_code = '" + zipCode + "' AND NOT b_del;";
-                    Statement statement = session.getDatabase().getConnection().createStatement();
-                    ResultSet resultSet = statement.executeQuery(sql);
-                    if (resultSet.next()) {
-                        stateCode = resultSet.getString("id_sta_code");
-                        countyCode = resultSet.getString("county_code");
-                        localityCode = resultSet.getString("locality_code");
-                    }
-                    
-                    if (!countyCode.isEmpty()) {
-                        countyName = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_COUNTY, countyCode, stateCode);
-                    }
-                    else {
-                        countyCode = "(NO APLICA)";
-                        countyName = "(NO APLICA)";
-                    }
-                    
-                    if (!localityCode.isEmpty()) {
-                        localityName = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_LOCALITY, localityCode, stateCode);
-                    }
-                    else {
-                        localityCode = "(NO APLICA)";
-                        localityName = "(NO APLICA)";
-                    }
-                    
-                    if (zipCode.isEmpty()) {
-                        zipCode = "00000";
-                    }
-                    
-                    switch (child.getDbmsCountry()) {
-                        case "MX" : countryCode = "MEX"; break;
-                        case "US" : countryCode = "USA"; break;
-                        case "CA" : countryCode = "CAN"; break;
-                        default : countryCode = "(SIN INFORMACION)"; break;
-                    }
-                    
-                    sql = "SELECT nei_code, description FROM erp.locs_bol_nei_zip_code WHERE zip_code = '" + zipCode + "';";
-                    resultSet = statement.executeQuery(sql);
-                    HashMap<String, String> neighborhoods = new HashMap<>();
-                    while (resultSet.next()) {
-                        neighborhoods.put(resultSet.getString(1), resultSet.getString(2)); 
-                    }
-                    
-                    String locationId = "DE" + String.format("%06d", child.getFkDestinationId());
-                    mailBody += "ID Destino (sugerido): " + locationId + "\n- Destinatario. Nombre: " + child.getDbmsCustomer() + "; " +
-                            "RFC: " + (!child.getDbmsCustomerTaxId().isEmpty() ? child.getDbmsCustomerTaxId() : "(SIN RFC)" ) + "\n" + 
-                            "- Localidad. Clave SAT: " + localityCode + "; Nombre: " + localityName + "\n" +
-                            "- Municipio. Clave SAT: " + countyCode + "; Nombre: " + countyName + "\n" +
-                            "- Estado. Clave SAT: " + stateCode + "\n" +
-                            "- Pais. Clave SAT: " + countryCode + "\n" + 
-                            "- Código postal: " + zipCode + "\n";
-                    
-                    SLocationsJson locJson = new SLocationsJson();
-                    locJson.setLocationType("Destino");
-                    locJson.setFiscalId((!child.getDbmsCustomerTaxId().isEmpty() ? child.getDbmsCustomerTaxId() : "(SIN RFC)" ));
-                    locJson.setNameFiscalId(child.getDbmsCustomer());
-                    locJson.setLocality(localityCode);
-                    locJson.setCounty(countyCode);
-                    locJson.setState(stateCode);
-                    locJson.setCountry(countryCode);
-                    locJson.setZipCode(zipCode);
-
-                    String neiborhoodsKeys = "";
-                    
-                    if (neighborhoods.size() == 1) {
-                        for(Map.Entry<String, String> neighborhood : neighborhoods.entrySet()) {
-                            mailBody += "- Colonia. Clave SAT: " + neighborhood.getKey() + "; Nombre: " + neighborhood.getValue() + "\n" ;
-                            neiborhoodsKeys = neighborhood.getKey();
-                        }
-                    }
-                    else if (neighborhoods.size() > 1) {
-                        mailBody += "- Colonia. Se encontraron " + neighborhoods.size() + " colonias para el codigo postal " + zipCode + " (Clave SAT - Descripcion): \n";
-                        int j = 0;
-                        for(Map.Entry<String, String> neighborhood : neighborhoods.entrySet()) {
-                            j++;
-                            mailBody += j + ") " + neighborhood.getKey() + " - " + neighborhood.getValue() + (j != neighborhoods.size() ? "; " : " ");
-                            neiborhoodsKeys += neighborhood.getKey() + (j != neighborhoods.size() ? ", " : " ");
-                        }
-                        mailBody += "\n";
-                    }
-                    
-                    locJson.setNeighborhood(neiborhoodsKeys);
-                    
-                    // Datos de los ítems:
-                    
-                    Statement statementSiie = getStatementSiie(session);
-                    SDataDps dps = new SDataDps();
-                    dps.read(new int[] { child.getInvoiceIdYear(), child.getInvoiceIdDoc()}, statementSiie);
-                    Vector<SDataDpsEntry> entries = dps.getDbmsDpsEntries();
-                    merchsJson = new ArrayList<>();
-                    for (SDataDpsEntry entry : entries) {
-                        String item = "";
-                        sql = "SELECT i.name, icfd.code AS item_code, igencfd.code AS igen_code, igencfd.name AS sat_name FROM erp.itmu_item AS i " +
-                                "INNER JOIN erp.itmu_igen AS igen ON i.fid_igen = igen.id_igen " +
-                                "INNER JOIN erp.itms_cfd_prod_serv AS igencfd ON igencfd.id_cfd_prod_serv = igen.fid_cfd_prod_serv " +
-                                "LEFT OUTER JOIN erp.itms_cfd_prod_serv AS icfd ON icfd.id_cfd_prod_serv = i.fid_cfd_prod_serv_n " +
-                                "WHERE id_item = " + entry.getFkItemId();
-                        resultSet = statement.executeQuery(sql);
-                        if (resultSet.next()) {
-                            item = "- Producto. Clave SAT " + (resultSet.getString("item_code") == null ? resultSet.getString("igen_code") : resultSet.getString("item_code")) + 
-                                    "; Descripcion SAT: " + resultSet.getString("sat_name") + "; Descripcion factura: " + resultSet.getString("name") + "\nPeso: " + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(entry.getMass(), 3)) + " kg \n";
-                            
-                            SMerchandisesJson merch = new SMerchandisesJson();
-                            merch.setBienesTransp((resultSet.getString("item_code") == null ? resultSet.getString("igen_code") : resultSet.getString("item_code")));
-                            merch.setQuantity(entry.getMass());
-                            merch.setUnitCode("KGM");
-                            merch.setWeight(entry.getMass());
-                            merch.setValue(entry.getSubtotalCy_r());
-                            merch.setCurrency("MXN");
-                            merchsJson.add(merch);
-                        }
-                        mailBody += item;
-                    }
-                    locJson.setMerchandises(merchsJson);
-                    
-                    // valor de la mercancia
-                    
-                    sql = "SELECT i.fin_amt, c.code FROM a_inv AS i " +
-                            "INNER JOIN as_cur AS c ON i.fk_src_fin_cur = c.id_cur " +
-                            "WHERE i.des_inv_yea_id = " + child.getInvoiceIdYear() + " " +
-                            "AND i.des_inv_doc_id = " + child.getInvoiceIdDoc() + ";";
-                    resultSet = statement.executeQuery(sql);
-                    if (resultSet.next()) {
-                        mailBody += "- Total factura: $" + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(resultSet.getDouble(1), 2)) + " " + resultSet.getString(2) + "\n"; 
-                        moShipJson.setCurrency(resultSet.getString(2));
-                    }
-                    locsJson.add(locJson);
-                    
                 }
+                else if (location.getNeighborhoodsMap().size() > 1) {
+                    mailBody += "- Colonia. Se encontraron " + location.getNeighborhoodsMap().size() + " colonias para el codigo postal " + location.getZipCode() + " (Clave SAT - Descripcion): \n";
+                    int j = 0;
+                    for(Map.Entry<String, String> neighborhood : location.getNeighborhoodsMap().entrySet()) {
+                        j++;
+                        mailBody += j + ") " + neighborhood.getKey() + " - " + neighborhood.getValue() + (j != location.getNeighborhoodsMap().size() ? "; " : "");
+                    }
+                    mailBody += "\n";
+                }
+                mailBody += "- Orden(es) embarque: " + location.getShiptFolios() + "\n"; 
                 mailBody += "\n";
+                int j = 0;
+                for (SBolMerchandises merchandise : location.getMerchandises()) {
+                    j++;
+                    mailBody += "- Producto " + j + ". Clave SAT " + merchandise.getBienesTransp() + 
+                            "; Descripcion SAT: " + merchandise.getSatDescription() + "; Descripcion factura: " + merchandise.getInvDescription() + "\nPeso: " + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(merchandise.getWeight(), 3)) + " kg \n";
+                    mailBody += "- Total valor mercancia: $" + SLibUtils.getDecimalFormatAmount().format(SLibUtils.round(merchandise.getValue(), 2)) + " " + merchandise.getCurrency() + "\n"; 
+                }
             }
-            
+
             mailBody += "Embalaje (sugerido aunque no requerido). Clave SAT: Z01; Descripcion SAT: No requerido\n\n";
             
             mailBody += "-------------------------------------------------------------------------------------\n" +
@@ -831,9 +845,6 @@ public class SDbShipment extends SDbRegistryUser{
                 SGuiMain.APP_RELEASE;
             mailBody = mailBody.replace("©", "(c)");
             
-            if (moShipJson != null) {
-                moShipJson.setLocations(locsJson);
-            }
         }
         catch (Exception e) {
             SLibUtils.printException(this, e);
@@ -845,9 +856,6 @@ public class SDbShipment extends SDbRegistryUser{
     public void sendMail(SGuiSession session) {
         if (mbAuxSendMail) {
             try {
-                SDbConfigSms confSms = new SDbConfigSms();
-                confSms.read(session, new int[] { 1 });
-                
                 SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
                 String mail = shipper.getMail().toLowerCase();
 
@@ -859,7 +867,7 @@ public class SDbShipment extends SDbRegistryUser{
 
                 // Generar cuerpo del correo-e en formato HTML:
 
-                String mailBody = composeMailBody(session, shipper, confSms);
+                String mailBody = composeMailBody(session, shipper);
 
                 // Preparar destinatarios del correo-e:
 
@@ -888,9 +896,13 @@ public class SDbShipment extends SDbRegistryUser{
                 mailSender.send();
 
                 System.out.println("Mail send!");
-                if (shipper.isWeb()) {
-                    sendJson(confSms);
-                }
+                
+                SDbShipmentLog log = new SDbShipmentLog();
+                log.setFileType(1); // mail
+                log.setMail(mail);
+                log.setFkShipmentId(mnPkShipmentId);
+                log.save(session);
+                
             }
             catch (Exception e) {
                 SLibUtils.printException(this, e);
@@ -898,46 +910,195 @@ public class SDbShipment extends SDbRegistryUser{
         }
     }
     
-    public void sendJson(SDbConfigSms confSms) {
-
-        try {
-            String url = confSms.getWebUrl();
-            URL obj = new URL(url);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-            con.setRequestProperty("Accept", "application/json");
-            con.setRequestProperty("User-Agent", "Java client");
-            String parameters = moShipJson.encodeJson();
-            
-            con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.writeBytes(parameters);
-            wr.flush();
-            wr.close();
-            
-            int responseCode = con.getResponseCode();
-            System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Post parameters : " + parameters);
-            System.out.println("Response Code : " + responseCode);
-
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+    private ArrayList<SBolMerchandises> getChildMerchandises (SGuiSession session, SDbShipmentRow child) throws Exception {
+        // Datos de los ítems:
+        Statement statement = session.getDatabase().getConnection().createStatement();
+        ArrayList<SBolMerchandises> bolMerchs;
+        Statement statementSiie = getStatementSiie(session);
+        SDataDps dps = new SDataDps();
+        dps.read(new int[] { child.getInvoiceIdYear(), child.getInvoiceIdDoc()}, statementSiie);
+        Vector<SDataDpsEntry> entries = dps.getDbmsDpsEntries();
+        bolMerchs = new ArrayList<>();
+        for (SDataDpsEntry entry : entries) {
+            String sql = "SELECT i.name, icfd.code AS item_code, igencfd.code AS igen_code, igencfd.name AS sat_name FROM erp.itmu_item AS i " +
+                    "INNER JOIN erp.itmu_igen AS igen ON i.fid_igen = igen.id_igen " +
+                    "INNER JOIN erp.itms_cfd_prod_serv AS igencfd ON igencfd.id_cfd_prod_serv = igen.fid_cfd_prod_serv " +
+                    "LEFT OUTER JOIN erp.itms_cfd_prod_serv AS icfd ON icfd.id_cfd_prod_serv = i.fid_cfd_prod_serv_n " +
+                    "WHERE id_item = " + entry.getFkItemId();
+            ResultSet resultSet = statement.executeQuery(sql);
+            if (resultSet.next()) {
+                SBolMerchandises merch = new SBolMerchandises();
+                merch.setBienesTransp((resultSet.getString("item_code") == null ? resultSet.getString("igen_code") : resultSet.getString("item_code")));
+                merch.setSatDescription(resultSet.getString("sat_name"));
+                merch.setInvDescription(resultSet.getString("name"));
+                merch.setQuantity(entry.getMass());
+                merch.setUnitCode("KGM");
+                merch.setWeight(entry.getMass());
+                merch.setValue(entry.getSubtotalCy_r());
+                merch.setCurrency("MXN");
+                bolMerchs.add(merch);
             }
-            in.close();
-
-                     // Imprime el resultado
-            System.out.println(response.toString());
- 
         }
-        catch (Exception e) {
-            System.err.println(e.toString());
+        return bolMerchs;
+    } 
+    
+    private void processChildRows(SGuiSession session) throws Exception {
+        ArrayList<SBolLocations> locs = new ArrayList<>();
+        
+        if (!maChildRows.isEmpty()) {
+            for (SDbShipmentRow child : maChildRows) {
+                // Datos de ubicaciones y destinatarios:
+
+                boolean newLocation = true;
+                String stateCode = "";
+                String countyCode = "";
+                String localityCode = "";
+                String countryCode;
+                String countyName;
+                String localityName;
+
+                String locationId = "DE" + String.format("%06d", child.getFkDestinationId());
+                for (SBolLocations bolLoc : locs) {
+                    if (bolLoc.getLocationId().equals(locationId)) {
+                        ArrayList<SBolMerchandises> bolMerchs = getChildMerchandises(session, child);
+                        for (SBolMerchandises bolMerch : bolMerchs) {
+                            bolLoc.getMerchandises().add(bolMerch);
+                        }
+                        
+                        boolean newFolio = true;
+                        String folios[] = bolLoc.getShiptFolios().split(", ");
+                        for (String folio : folios) {
+                            if (folio.equals(child.getShipmentOrderFolio() + "")) {
+                                newFolio = false;
+                                break;
+                            }
+                        }
+                        
+                        if (newFolio) {
+                            bolLoc.setShiptFolios(bolLoc.getShiptFolios() + ", " + child.getShipmentOrderFolio());
+                        }
+                        
+                        newLocation = false;
+                        break;
+                    }
+                }
+
+                if (newLocation) {
+                    String zipCode = child.getDbmsDestinationZip();
+                    if (zipCode.isEmpty()) {
+                        zipCode = child.getDbmsCustomerZip();
+                    }
+
+                    String sql = "SELECT * FROM erp.locs_bol_zip_code WHERE id_zip_code = '" + zipCode + "' AND NOT b_del;";
+                    Statement statement = session.getDatabase().getConnection().createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql);
+                    if (resultSet.next()) {
+                        stateCode = resultSet.getString("id_sta_code");
+                        countyCode = resultSet.getString("county_code");
+                        localityCode = resultSet.getString("locality_code");
+                    }
+
+                    if (!countyCode.isEmpty()) {
+                        countyName = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_COUNTY, countyCode, stateCode);
+                    }
+                    else {
+                        countyCode = "(NO APLICA)";
+                        countyName = "(NO APLICA)";
+                    }
+
+                    if (!localityCode.isEmpty()) {
+                        localityName = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_LOCALITY, localityCode, stateCode);
+                    }
+                    else {
+                        localityCode = "(NO APLICA)";
+                        localityName = "(NO APLICA)";
+                    }
+
+                    if (zipCode.isEmpty()) {
+                        zipCode = "00000";
+                    }
+
+                    switch (child.getDbmsCountry()) {
+                        case "MX" : countryCode = "MEX"; break;
+                        case "US" : countryCode = "USA"; break;
+                        case "CA" : countryCode = "CAN"; break;
+                        default : countryCode = "(SIN INFORMACION)"; break;
+                    }
+
+                    sql = "SELECT nei_code, description FROM erp.locs_bol_nei_zip_code WHERE zip_code = '" + zipCode + "';";
+                    resultSet = statement.executeQuery(sql);
+                    HashMap<String, String> neighborhoods = new HashMap<>();
+                    while (resultSet.next()) {
+                        neighborhoods.put(resultSet.getString(1), resultSet.getString(2)); 
+                    }
+
+                    SBolLocations loc = new SBolLocations();
+                    loc.setLocationType("Destino");
+                    loc.setLocationId(locationId);
+                    loc.setShiptFolios(child.getShipmentOrderFolio() + "");
+                    loc.setFiscalId((!child.getDbmsCustomerTaxId().isEmpty() ? child.getDbmsCustomerTaxId() : "(SIN RFC)" ));
+                    loc.setNameFiscalId(child.getDbmsCustomer());
+                    loc.setLocalityCode(localityCode);
+                    loc.setLocality(localityName);
+                    loc.setCountyCode(countyCode);
+                    loc.setCounty(countyName);
+                    loc.setStateCode(stateCode);
+                    loc.setCountryCode(countryCode);
+                    loc.setZipCode(zipCode);
+                    loc.setNeighborhoodsMap(neighborhoods);
+
+                    String neiborhoodsKeys = "";
+
+                    int j = 0;
+                    for(Map.Entry<String, String> neighborhood : neighborhoods.entrySet()) {
+                        j++;
+                        neiborhoodsKeys += neighborhood.getKey() + (j != neighborhoods.size() ? ", " : " ");
+                    }
+
+                    loc.setNeighborhood(neiborhoodsKeys);
+
+                    loc.setMerchandises(getChildMerchandises(session, child));
+                    locs.add(loc);
+                }
+            }
+            if (moBolShip != null) {
+                moBolShip.setLocations(locs);
+            }
+        }
+    }
+    
+    public void collectShipmentInfo(SGuiSession session) {
+        moBolShip = new SBolShipment();
+        try {
+            Statement statementSiie = getStatementSiie(session);
+            
+            SDbConfigSms confSms = new SDbConfigSms();
+            confSms.read(session, new int[] { 1 });
+            
+            SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
+            
+            moBolShip.setShipmentId(mnNumber);
+            moBolShip.setTicket(mnTicketId);
+            moBolShip.setOrigLocId(confSms.getWebLocationId());
+            moBolShip.setShipperFiscalId(shipper.getFiscalId());
+            moBolShip.setPlate(msVehiclePlate);
+            moBolShip.setTrailerPlate(msTrailerPlate.isEmpty() ? "(SIN REMOLQUE)" : msTrailerPlate);
+            moBolShip.setTotWei(mdKilograms);
+            moBolShip.setCurrency("MXN");
+            
+            String sql = "SELECT bp_key FROM erp.bpsu_bp_ct WHERE id_bp = " + shipper.getDesSupplierId() + " AND id_ct_bp = 2";
+            ResultSet resultSet = statementSiie.executeQuery(sql);
+            if (resultSet.next()) {
+                moBolShip.setProviderCode(resultSet.getString(1));
+            }
+            else {
+                moBolShip.setProviderCode("(SIN INFORMACIÓN)");
+            }
+            
+            processChildRows(session);
+        }
+        catch(Exception e) {
+            SLibUtils.printException(this, e);
         }
     }
 }

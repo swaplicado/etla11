@@ -25,6 +25,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
     protected int mnPkShipmentId;
     protected int mnPkRowId;
+    protected int mnShipmentOrderFolio;
     protected String msDeliveryId;
     protected int mnDeliveryNumber;
     protected Date mtDeliveryDate;
@@ -63,6 +64,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
     public void setPkShipmentId(int n) { mnPkShipmentId = n; }
     public void setPkRowId(int n) { mnPkRowId = n; }
+    public void setShipmentOrderFolio(int n) { mnShipmentOrderFolio = n; }
     public void setDeliveryId(String s) { msDeliveryId = s; }
     public void setDeliveryNumber(int n) { mnDeliveryNumber = n; }
     public void setDeliveryDate(Date t) { mtDeliveryDate = t; }
@@ -80,6 +82,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
     public int getPkShipmentId() { return mnPkShipmentId; }
     public int getPkRowId() { return mnPkRowId; }
+    public int getShipmentOrderFolio() { return mnShipmentOrderFolio; }
     public String getDeliveryId() { return msDeliveryId; }
     public int getDeliveryNumber() { return mnDeliveryNumber; }
     public Date getDeliveryDate() { return mtDeliveryDate; }
@@ -142,6 +145,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
         mnPkShipmentId = 0;
         mnPkRowId = 0;
+        mnShipmentOrderFolio = 0;
         msDeliveryId = "";
         mnDeliveryNumber = 0;
         mtDeliveryDate = null;
@@ -190,7 +194,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
     @Override
     public void computePrimaryKey(SGuiSession session) throws SQLException, Exception {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
 
         mnPkRowId = 0;
 
@@ -203,7 +207,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
     @Override
     public void read(SGuiSession session, int[] pk) throws SQLException, Exception {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
 
         initRegistry();
         initQueryMembers();
@@ -217,6 +221,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
         else {
             mnPkShipmentId = resultSet.getInt("id_shipt");
             mnPkRowId = resultSet.getInt("id_row");
+            mnShipmentOrderFolio = resultSet.getInt("shipt_folio");
             msDeliveryId = resultSet.getString("delivery_id");
             mnDeliveryNumber = resultSet.getInt("delivery_number");
             mtDeliveryDate = resultSet.getDate("delivery_date");
@@ -307,6 +312,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
             msSql = "INSERT INTO " + getSqlTable() + " VALUES (" +
                 mnPkShipmentId + ", " + 
                 mnPkRowId + ", " + 
+                mnShipmentOrderFolio + ", " + 
                 "'" + msDeliveryId + "', " + 
                 mnDeliveryNumber + ", " +
                 "'" + SLibUtils.DbmsDateFormatDate.format(mtDeliveryDate) + "', " + 
@@ -327,6 +333,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
             msSql = "UPDATE " + getSqlTable() + " SET " +
                 //"id_shipt = " + mnPkShipmentId + ", " +
                 //"id_row = " + mnPkRowId + ", " +
+                "shipt_folio = " + mnShipmentOrderFolio + ", " +
                 "delivery_id = '" + msDeliveryId + "', " +
                 "delivery_number = " + mnDeliveryNumber + ", " +
                 "delivery_date = '" + SLibUtils.DbmsDateFormatDate.format(mtDeliveryDate) + "', " +
@@ -356,6 +363,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
         registry.setPkShipmentId(this.getPkShipmentId());
         registry.setPkRowId(this.getPkRowId());
+        registry.setShipmentOrderFolio(this.getShipmentOrderFolio());
         registry.setDeliveryId(this.getDeliveryId());
         registry.setDeliveryNumber(this.getDeliveryNumber());
         registry.setDeliveryDate(this.getDeliveryDate());

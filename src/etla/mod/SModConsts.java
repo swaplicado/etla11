@@ -59,6 +59,8 @@ public abstract class SModConsts {
     public static final int SU_COMMENT = 222041;
     public static final int SU_SHIPPER = 222051;
     public static final int SU_DESTIN = 222061;
+    public static final int SU_FORKLIFT_DRV = 222071;
+    public static final int SU_CREW = 222081;
     public static final int SU_WM_ITEM = 222201;
     public static final int SU_WM_USER = 222202;
 
@@ -66,6 +68,7 @@ public abstract class SModConsts {
     public static final int S_SHIPT = 223011;
     public static final int S_SHIPT_ROW = 223016;
     public static final int S_SHIPT_PRT = 223019;
+    public static final int S_SHIPT_LOG = 223018;
     public static final int S_EVIDENCE = 223021;
     public static final int S_ERP_DOC = 223201;
     public static final int S_ERP_DOC_ETL_LOG = 223206;
@@ -134,6 +137,8 @@ public abstract class SModConsts {
         TablesMap.put(SU_COMMENT, "su_comment");
         TablesMap.put(SU_SHIPPER, "su_shipper");
         TablesMap.put(SU_DESTIN, "su_destin");
+        TablesMap.put(SU_FORKLIFT_DRV, "su_forklift_drv");
+        TablesMap.put(SU_CREW, "su_crew");
         TablesMap.put(SU_WM_ITEM, "su_wm_item");
         TablesMap.put(SU_WM_USER, "su_wm_user");
 
@@ -141,6 +146,7 @@ public abstract class SModConsts {
         TablesMap.put(S_SHIPT, "s_shipt");
         TablesMap.put(S_SHIPT_ROW, "s_shipt_row");
         TablesMap.put(S_SHIPT_PRT, "s_shipt_prt");
+        TablesMap.put(S_SHIPT_LOG, "s_shipt_log");
         TablesMap.put(S_EVIDENCE, "s_evidence");
         TablesMap.put(S_ERP_DOC, "s_erp_doc");
         TablesMap.put(S_ERP_DOC_ETL_LOG, "s_erp_doc_etl_log");

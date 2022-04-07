@@ -47,11 +47,12 @@ import sa.lib.img.SImgUtils;
  */
 public class SViewShipment extends SGridPaneView implements ActionListener{
     
-    private JButton mjPrint;
+    private final JButton mjPrint;
     private JButton mjSendBack;
     private JButton mjSendNext;
     private JButton mjSendMail;
-    private SGridFilterDatePeriod moFilterDatePeriod;
+    private JButton mjSendCpt;
+    private final SGridFilterDatePeriod moFilterDatePeriod;
     private final int subType;
     
     public SViewShipment (SGuiClient client, int subtype, String title) {
@@ -69,8 +70,10 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
         mjSendNext = SGridUtils.createButton(new ImageIcon(getClass().getResource("/etla/gui/img/icon_std_move_right.gif")), "Adelantar", this);
         mjSendMail = SGridUtils.createButton(new ImageIcon(getClass().getResource("/etla/gui/img/icon_std_mail.gif")), "Enviar la información del embarque al transportista", this);
         mjSendMail.setEnabled(true);
+        mjSendCpt = SGridUtils.createButton(new ImageIcon(getClass().getResource("/etla/gui/img/icon_std_mail.gif")), "Enviar la información del embarque al CPT", this);
+        mjSendCpt.setEnabled(true);
         
-        switch (subType) {
+        switch (subType) { 
             case SLibConsts.UNDEFINED:  // for new shipments
                 setRowButtonsEnabled(true, false, true, true, true);
                 getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(moFilterDatePeriod);
@@ -94,6 +97,7 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
         getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(mjSendBack);
         getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(mjSendNext);
         getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(mjSendMail);
+        getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(mjSendCpt);
     }
     
     private int getNewStatus() {
@@ -223,6 +227,7 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
                                 + "'" + shipper.getName() + "', al buzón '" + mail + "'.\n"
                                 + "Favor de confirmar el envío.") == JOptionPane.OK_OPTION) {
                             shipt.setAuxSendMail(true);
+                            shipt.collectShipmentInfo(miClient.getSession());
                             shipt.sendMail(miClient.getSession());
                         }
                     }
@@ -233,11 +238,38 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
             }
         } 
     }
+    
+    private void actionPerformedSendCpt() {
+        if (mjSendMail.isEnabled()) {
+            if (jtTable.getSelectedRowCount() != 1) {
+                miClient.showMsgBoxInformation(SGridConsts.MSG_SELECT_ROW);
+            }
+            else {
+                SGridRowView gridRow = (SGridRowView) getSelectedGridRow();
+
+                if (gridRow.getRowType() != SGridConsts.ROW_TYPE_DATA) {
+                    miClient.showMsgBoxWarning(SGridConsts.ERR_MSG_ROW_TYPE_DATA);
+                }
+                else {
+                    try {
+                        SDbShipment shipt = (SDbShipment) miClient.getSession().readRegistry(SModConsts.S_SHIPT, gridRow.getRowPrimaryKey());
+                        if (miClient.showMsgBoxConfirm("Se enviará la información del embarque a la aplicación CPT ¿Desea continuar?") == JOptionPane.OK_OPTION) {
+                            shipt.collectShipmentInfo(miClient.getSession());
+                            shipt.sendJson(miClient.getSession());
+                        }
+                    }
+                    catch (Exception e) {
+                        SLibUtils.showException(this, e);
+                    }
+                }
+            }
+        }
+    }
 
     @Override
     public void prepareSqlQuery() {
         String sql = "";
-        Object filter = null;
+        Object filter;
         
         moPaneSettings = new SGridPaneSettings(1);
         moPaneSettings.setDeletedApplying(true);
@@ -383,6 +415,9 @@ public class SViewShipment extends SGridPaneView implements ActionListener{
             }
             else if (button == mjSendMail) {
                 actionPerformedSendMail();
+            }
+            else if (button == mjSendCpt) {
+                actionPerformedSendCpt();
             }
         }
     }
