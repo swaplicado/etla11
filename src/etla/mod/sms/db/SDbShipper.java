@@ -175,8 +175,8 @@ public class SDbShipper extends SDbRegistryUser {
             msCode = resultSet.getString("code");
             msName = resultSet.getString("name");
             msMail = resultSet.getString("mail");
-//            msFiscalId = resultSet.getString("fiscal_id");
-//            mbWeb = resultSet.getBoolean("b_web");
+            msFiscalId = resultSet.getString("fiscal_id");
+            mbWeb = resultSet.getBoolean("b_web");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
             mnFkUserId = resultSet.getInt("fk_usr");
@@ -238,8 +238,8 @@ public class SDbShipper extends SDbRegistryUser {
                 "'" + msCode + "', " + 
                 "'" + msName + "', " + 
                 "'" + msMail + "', " + 
-//                "'" + msFiscalId + "', " + 
-//                (mbWeb ? 1 : 0) + ", " + 
+                "'" + msFiscalId + "', " + 
+                (mbWeb ? 1 : 0) + ", " + 
                 (mbDeleted ? 1 : 0) + ", " + 
                 (mbSystem ? 1 : 0) + ", " +
                 mnFkUserId + ", " + 
@@ -259,8 +259,8 @@ public class SDbShipper extends SDbRegistryUser {
                 "code = '" + msCode + "', " +
                 "name = '" + msName + "', " +
                 "mail = '" + msMail + "', " +
-//                "fiscal_id = '" + msFiscalId + "', " +
-//                "b_web = " + (mbWeb ? 1 : 0) + ", " +
+                "fiscal_id = '" + msFiscalId + "', " +
+                "b_web = " + (mbWeb ? 1 : 0) + ", " +
                 "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                 "b_sys = " + (mbSystem ? 1 : 0) + ", " +
                 "fk_usr = " + mnFkUserId + ", " +
