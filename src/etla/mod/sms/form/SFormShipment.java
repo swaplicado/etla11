@@ -800,8 +800,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             public ArrayList<SGridColumnForm> createGridColumns() {
                 int col = 0;
                 ArrayList<SGridColumnForm> gridColumnsForm = new ArrayList<>();
-                SGridColumnForm[] columns = new SGridColumnForm[8];
+                SGridColumnForm[] columns = new SGridColumnForm[9];
 
+                columns[col++] = new SGridColumnForm(SGridConsts.COL_TYPE_INT_2B, "Renglón");
                 columns[col++] = new SGridColumnForm(SGridConsts.COL_TYPE_INT_RAW, "Orden embarque");
                 columns[col++] = new SGridColumnForm(SGridConsts.COL_TYPE_INT_RAW, "Remisión", 60);
                 columns[col++] = new SGridColumnForm(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "Invoice");
@@ -874,6 +875,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             jtfState.setText(stateCode);
             jtfZipcode.setText(zipCode);
             jtfAddress.setText(sr.getDbmsAddress1());
+            jtfAddress.setCaretPosition(0);
         }
         catch (Exception e) {
             jtfLocalityCode.setText("");
@@ -1009,10 +1011,13 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     int index = moGridAvailableRows.getTable().getSelectedRow();
 
                     // add current row into selected rows:
-                    moGridAvailableRows.getSelectedGridRow().setRowValueAt(moIntShiptFolio.getValue(), 0);
-                    moGridAvailableRows.getSelectedGridRow().setRowValueAt(true, 1);
+                    int num = moGridSelectedRows.getTable().getRowCount();
+                    moGridAvailableRows.getSelectedGridRow().setRowValueAt(num + 1, 0);
+                    moGridAvailableRows.getSelectedGridRow().setRowValueAt(moIntShiptFolio.getValue(), 1);
+                    moGridAvailableRows.getSelectedGridRow().setRowValueAt(true, 2);
                     moGridSelectedRows.addGridRow(moGridAvailableRows.getSelectedGridRow());
                     moGridSelectedRows.renderGridRows(); 
+                   
                     //moGridSelectedRows.setSelectedGridRow(moGridSelectedRows.getModel().getRowCount() - 1);
                     computeTotals();
 
@@ -1045,8 +1050,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                 
                 // check if row to be removed should be returned to available rows:
                 if (mbRowsShown && SLibTimeUtils.isSameDate(((SRowShipmentRow) moGridSelectedRows.getSelectedGridRow()).getShipmentRow().getDeliveryDate(), moDateRows.getValue())) {
-                    moGridSelectedRows.getSelectedGridRow().setRowValueAt(0, 0);
-                    moGridSelectedRows.getSelectedGridRow().setRowValueAt(false, 1);
+                    moGridSelectedRows.getSelectedGridRow().setRowValueAt(0, 1);
+                    moGridSelectedRows.getSelectedGridRow().setRowValueAt(false, 2);
                     moGridAvailableRows.addGridRow(moGridSelectedRows.getSelectedGridRow());
                     moGridAvailableRows.renderGridRows();
                     //moGridAvailableRows.setSelectedGridRow(moGridAvailableRows.getModel().getRowCount() - 1);
@@ -1054,6 +1059,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                 
                 moGridSelectedRows.removeGridRow(index);
                 moGridSelectedRows.renderGridRows();
+                for (int i = 0 ; i < moGridSelectedRows.getTable().getRowCount(); i++) {
+                    moGridSelectedRows.getGridRow(i).setRowValueAt(i + 1, 0);
+                }
                 moGridSelectedRows.setSelectedGridRow(index < moGridSelectedRows.getModel().getRowCount() ? index : moGridSelectedRows.getModel().getRowCount() - 1);
                 computeTotals();
                 

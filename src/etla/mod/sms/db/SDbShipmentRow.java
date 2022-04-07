@@ -54,6 +54,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
     protected int mnAuxSiteLocationId;
     protected boolean mbAuxDestinationCreated;
     protected boolean mbAuxIsRowSelected;
+    protected int mnAuxRow;
 
     public SDbShipmentRow () {
         super(SModConsts.S_SHIPT_ROW);
@@ -122,10 +123,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public void setAuxSiteLocationId(int n) { mnAuxSiteLocationId = n; }
     public void setAuxDestinationCreated(boolean b) { mbAuxDestinationCreated = b; }
     public void setAuxIsRowSelected(boolean b) { mbAuxIsRowSelected = b; }
+    public void setAuxRow(int n) { mnAuxRow = n; }
 
     public int getAuxSiteLocationId() { return mnAuxSiteLocationId; }
     public boolean isAuxDestinationCreated() { return mbAuxDestinationCreated; }
     public boolean isAuxIsRowSelected() { return mbAuxIsRowSelected; }
+    public int getAuxRow() { return mnAuxRow; }
 
     /*
      * Overriden methods
@@ -177,6 +180,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
         mnAuxSiteLocationId = 0;
         mbAuxDestinationCreated = false;
         mbAuxIsRowSelected = false;
+        mnAuxRow = 0;
     }
 
     @Override
@@ -255,6 +259,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
             msDbmsCountry = destination.getCountry();
             
             mbAuxIsRowSelected = true;
+            mnAuxRow = mnPkRowId;
 
             mbRegistryNew = false;
         }
@@ -397,6 +402,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
         registry.setAuxSiteLocationId(this.getAuxSiteLocationId());
         registry.setAuxDestinationCreated(this.isAuxDestinationCreated());
         registry.setAuxIsRowSelected(this.isAuxIsRowSelected());
+        registry.setAuxRow(this.getAuxRow());
 
         registry.setRegistryNew(this.isRegistryNew());
         return registry;

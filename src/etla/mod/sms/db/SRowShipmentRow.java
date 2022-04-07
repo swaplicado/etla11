@@ -61,28 +61,31 @@ public class SRowShipmentRow implements SGridRow {
         Object value = null;
         if (moShipmentRow.isAuxIsRowSelected()) {
             switch(row){
-                case 0: 
+                case 0:
+                    value = moShipmentRow.getAuxRow();
+                    break;
+                case 1: 
                     value = moShipmentRow.getShipmentOrderFolio();
                     break;
-                case 1:
+                case 2:
                     value = moShipmentRow.getBolId();
                     break;
-                case 2:
+                case 3:
                     value = moShipmentRow.getDeliveryNumber();
                     break;
-                case 3:
+                case 4:
                     value = moShipmentRow.getDeliveryDate();
                     break;
-                case 4:
+                case 5:
                     value = moShipmentRow.getDbmsCustomer();
                     break;
-                case 5:
+                case 6:
                     value = moShipmentRow.getDbmsDestination();
                     break;
-                case 6:
+                case 7:
                     value = moShipmentRow.getMeters2();
                     break;
-                case 7:
+                case 8:
                     value = moShipmentRow.getKilograms();
                     break;
                 default:
@@ -121,10 +124,13 @@ public class SRowShipmentRow implements SGridRow {
     @Override
     public void setRowValueAt(Object value, int opc) { 
         switch(opc) {
-            case 0:
+            case 0: 
+                moShipmentRow.setAuxRow((int) value);
+                break;
+            case 1:
                 moShipmentRow.setShipmentOrderFolio((int) value);
                 break;
-            case 1: 
+            case 2: 
                 moShipmentRow.setAuxIsRowSelected((boolean) value);
                 break;
             default:
