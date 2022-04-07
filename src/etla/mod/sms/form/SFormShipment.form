@@ -340,7 +340,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jlTrailerPlate">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Placas remolque:"/>
+                    <Property name="text" type="java.lang.String" value=" Placas remolque:"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[110, 23]"/>
                     </Property>
@@ -443,61 +443,101 @@
             <Property name="verticalGap" type="int" value="5"/>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="jpFilterControls">
+            <Container class="javax.swing.JPanel" name="jPanel29">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
                   <BorderConstraints direction="North"/>
                 </Constraint>
               </Constraints>
 
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
-                <Property name="alignment" type="int" value="0"/>
-                <Property name="verticalGap" type="int" value="0"/>
-              </Layout>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="jlDateRows">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Fecha remisiones:"/>
-                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[100, 23]"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="sa.lib.gui.bean.SBeanFieldDate" name="moDateRows">
-                </Component>
-                <Component class="javax.swing.JButton" name="jbShowRows">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Mostrar"/>
-                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[75, 23]"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="jbClearRows">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Limpiar"/>
-                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[75, 23]"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel1">
+                <Container class="javax.swing.JPanel" name="jpFilterControls">
                   <Properties>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[250, 23]"/>
+                      <Dimension value="[500, 23]"/>
                     </Property>
                   </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jlShiptFolio">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="West"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                    <Property name="alignment" type="int" value="0"/>
+                    <Property name="verticalGap" type="int" value="0"/>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jlDateRows">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Fecha remisiones:"/>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[100, 23]"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="sa.lib.gui.bean.SBeanFieldDate" name="moDateRows">
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jbShowRows">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Mostrar"/>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[75, 23]"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jbClearRows">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Limpiar"/>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[75, 23]"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="jPanel30">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="Center"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                    <Property name="alignment" type="int" value="0"/>
+                    <Property name="verticalGap" type="int" value="0"/>
+                  </Layout>
+                </Container>
+                <Container class="javax.swing.JPanel" name="jPanel31">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Orden embarque:"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[100, 23]"/>
+                      <Dimension value="[525, 23]"/>
                     </Property>
                   </Properties>
-                </Component>
-                <Component class="sa.lib.gui.bean.SBeanFieldInteger" name="moIntShiptFolio">
-                </Component>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                      <BorderConstraints direction="East"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                    <Property name="alignment" type="int" value="0"/>
+                    <Property name="verticalGap" type="int" value="0"/>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jlShiptFolio">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Orden embarque:*"/>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[100, 23]"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="sa.lib.gui.bean.SBeanFieldInteger" name="moIntShiptFolio">
+                    </Component>
+                  </SubComponents>
+                </Container>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="jpRowControls">
@@ -554,7 +594,7 @@
                   </Border>
                 </Property>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[475, 23]"/>
+                  <Dimension value="[500, 23]"/>
                 </Property>
               </Properties>
               <Constraints>
@@ -573,7 +613,7 @@
                   </Border>
                 </Property>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[475, 23]"/>
+                  <Dimension value="[525, 23]"/>
                 </Property>
               </Properties>
               <Constraints>
@@ -594,7 +634,7 @@
               </Border>
             </Property>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[50, 69]"/>
+              <Dimension value="[50, 75]"/>
             </Property>
           </Properties>
           <Constraints>
@@ -606,6 +646,7 @@
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
             <Property name="columns" type="int" value="2"/>
             <Property name="rows" type="int" value="2"/>
+            <Property name="verticalGap" type="int" value="5"/>
           </Layout>
           <SubComponents>
             <Container class="javax.swing.JPanel" name="jPanel8">
@@ -634,7 +675,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jlCountyCode">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Clave municipio:"/>
+                    <Property name="text" type="java.lang.String" value=" Clave municipio:"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[100, 23]"/>
                     </Property>
@@ -651,7 +692,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jlState">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Estado:"/>
+                    <Property name="text" type="java.lang.String" value=" Clave estado:"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[100, 23]"/>
                     </Property>
@@ -662,7 +703,24 @@
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[200, 23]"/>
+                      <Dimension value="[100, 23]"/>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jlZipcode">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value=" C&#xf3;digo postal:"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 23]"/>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="jtZipcode">
+                  <Properties>
+                    <Property name="editable" type="boolean" value="false"/>
+                    <Property name="focusable" type="boolean" value="false"/>
+                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                      <Dimension value="[100, 23]"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -694,7 +752,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jlCounty">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Municipio:"/>
+                    <Property name="text" type="java.lang.String" value=" Municipio:"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[100, 23]"/>
                     </Property>
@@ -711,7 +769,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jlAddress">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Direcci&#xf3;n:"/>
+                    <Property name="text" type="java.lang.String" value=" Direcci&#xf3;n:"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[100, 23]"/>
                     </Property>
@@ -722,7 +780,7 @@
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[250, 23]"/>
+                      <Dimension value="[350, 23]"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -771,7 +829,7 @@
                       <Properties>
                         <Property name="toolTipText" type="java.lang.String" value="Observaci&#xf3;n"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[370, 23]"/>
+                          <Dimension value="[472, 23]"/>
                         </Property>
                       </Properties>
                     </Component>
@@ -806,7 +864,7 @@
                         <Property name="horizontalScrollBarPolicy" type="int" value="32"/>
                         <Property name="verticalScrollBarPolicy" type="int" value="22"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[400, 75]"/>
+                          <Dimension value="[500, 75]"/>
                         </Property>
                         <Property name="requestFocusEnabled" type="boolean" value="false"/>
                       </Properties>

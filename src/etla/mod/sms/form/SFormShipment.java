@@ -139,12 +139,14 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jPanel27 = new javax.swing.JPanel();
         jpBody = new javax.swing.JPanel();
         jpRows = new javax.swing.JPanel();
+        jPanel29 = new javax.swing.JPanel();
         jpFilterControls = new javax.swing.JPanel();
         jlDateRows = new javax.swing.JLabel();
         moDateRows = new sa.lib.gui.bean.SBeanFieldDate();
         jbShowRows = new javax.swing.JButton();
         jbClearRows = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jPanel30 = new javax.swing.JPanel();
+        jPanel31 = new javax.swing.JPanel();
         jlShiptFolio = new javax.swing.JLabel();
         moIntShiptFolio = new sa.lib.gui.bean.SBeanFieldInteger();
         jpRowControls = new javax.swing.JPanel();
@@ -162,6 +164,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jtfCountyCode = new javax.swing.JTextField();
         jlState = new javax.swing.JLabel();
         jtfState = new javax.swing.JTextField();
+        jlZipcode = new javax.swing.JLabel();
+        jtZipcode = new javax.swing.JTextField();
         jPanel28 = new javax.swing.JPanel();
         jlLocality = new javax.swing.JLabel();
         jtfLocality = new javax.swing.JTextField();
@@ -323,7 +327,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moTextVehiclePlate.setPreferredSize(new java.awt.Dimension(150, 23));
         jPanel14.add(moTextVehiclePlate);
 
-        jlTrailerPlate.setText("Placas remolque:");
+        jlTrailerPlate.setText(" Placas remolque:");
         jlTrailerPlate.setPreferredSize(new java.awt.Dimension(110, 23));
         jPanel14.add(jlTrailerPlate);
 
@@ -367,6 +371,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jpRows.setBorder(javax.swing.BorderFactory.createTitledBorder("Remisiones:"));
         jpRows.setLayout(new java.awt.BorderLayout(5, 5));
 
+        jPanel29.setLayout(new java.awt.BorderLayout());
+
+        jpFilterControls.setPreferredSize(new java.awt.Dimension(500, 23));
         jpFilterControls.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
         jlDateRows.setText("Fecha remisiones:");
@@ -382,15 +389,22 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jbClearRows.setPreferredSize(new java.awt.Dimension(75, 23));
         jpFilterControls.add(jbClearRows);
 
-        jLabel1.setPreferredSize(new java.awt.Dimension(250, 23));
-        jpFilterControls.add(jLabel1);
+        jPanel29.add(jpFilterControls, java.awt.BorderLayout.WEST);
 
-        jlShiptFolio.setText("Orden embarque:");
+        jPanel30.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+        jPanel29.add(jPanel30, java.awt.BorderLayout.CENTER);
+
+        jPanel31.setPreferredSize(new java.awt.Dimension(525, 23));
+        jPanel31.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        jlShiptFolio.setText("Orden embarque:*");
         jlShiptFolio.setPreferredSize(new java.awt.Dimension(100, 23));
-        jpFilterControls.add(jlShiptFolio);
-        jpFilterControls.add(moIntShiptFolio);
+        jPanel31.add(jlShiptFolio);
+        jPanel31.add(moIntShiptFolio);
 
-        jpRows.add(jpFilterControls, java.awt.BorderLayout.NORTH);
+        jPanel29.add(jPanel31, java.awt.BorderLayout.EAST);
+
+        jpRows.add(jPanel29, java.awt.BorderLayout.NORTH);
 
         jpRowControls.setLayout(new java.awt.BorderLayout());
 
@@ -412,20 +426,20 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jpRows.add(jpRowControls, java.awt.BorderLayout.CENTER);
 
         jpAvailableRows.setBorder(javax.swing.BorderFactory.createTitledBorder("Remisiones disponibles:"));
-        jpAvailableRows.setPreferredSize(new java.awt.Dimension(475, 23));
+        jpAvailableRows.setPreferredSize(new java.awt.Dimension(500, 23));
         jpAvailableRows.setLayout(new java.awt.BorderLayout());
         jpRows.add(jpAvailableRows, java.awt.BorderLayout.WEST);
 
         jpSelectedRows.setBorder(javax.swing.BorderFactory.createTitledBorder("Remisiones seleccionadas:"));
-        jpSelectedRows.setPreferredSize(new java.awt.Dimension(475, 23));
+        jpSelectedRows.setPreferredSize(new java.awt.Dimension(525, 23));
         jpSelectedRows.setLayout(new java.awt.BorderLayout());
         jpRows.add(jpSelectedRows, java.awt.BorderLayout.EAST);
 
         jpBody.add(jpRows, java.awt.BorderLayout.CENTER);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Flete:"));
-        jPanel4.setPreferredSize(new java.awt.Dimension(50, 69));
-        jPanel4.setLayout(new java.awt.GridLayout(2, 2));
+        jPanel4.setPreferredSize(new java.awt.Dimension(50, 75));
+        jPanel4.setLayout(new java.awt.GridLayout(2, 2, 0, 5));
 
         jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
@@ -438,7 +452,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jtfLocalityCode.setPreferredSize(new java.awt.Dimension(200, 23));
         jPanel8.add(jtfLocalityCode);
 
-        jlCountyCode.setText("Clave municipio:");
+        jlCountyCode.setText(" Clave municipio:");
         jlCountyCode.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel8.add(jlCountyCode);
 
@@ -447,14 +461,23 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jtfCountyCode.setPreferredSize(new java.awt.Dimension(200, 23));
         jPanel8.add(jtfCountyCode);
 
-        jlState.setText("Estado:");
+        jlState.setText(" Clave estado:");
         jlState.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel8.add(jlState);
 
         jtfState.setEditable(false);
         jtfState.setFocusable(false);
-        jtfState.setPreferredSize(new java.awt.Dimension(200, 23));
+        jtfState.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel8.add(jtfState);
+
+        jlZipcode.setText(" Código postal:");
+        jlZipcode.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel8.add(jlZipcode);
+
+        jtZipcode.setEditable(false);
+        jtZipcode.setFocusable(false);
+        jtZipcode.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel8.add(jtZipcode);
 
         jPanel4.add(jPanel8);
 
@@ -469,7 +492,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jtfLocality.setPreferredSize(new java.awt.Dimension(200, 23));
         jPanel28.add(jtfLocality);
 
-        jlCounty.setText("Municipio:");
+        jlCounty.setText(" Municipio:");
         jlCounty.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel28.add(jlCounty);
 
@@ -478,13 +501,13 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jtfCounty.setPreferredSize(new java.awt.Dimension(200, 23));
         jPanel28.add(jtfCounty);
 
-        jlAddress.setText("Dirección:");
+        jlAddress.setText(" Dirección:");
         jlAddress.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel28.add(jlAddress);
 
         jtfAddress.setEditable(false);
         jtfAddress.setFocusable(false);
-        jtfAddress.setPreferredSize(new java.awt.Dimension(250, 23));
+        jtfAddress.setPreferredSize(new java.awt.Dimension(350, 23));
         jPanel28.add(jtfAddress);
 
         jPanel4.add(jPanel28);
@@ -499,7 +522,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
         moKeyComment.setToolTipText("Observación");
-        moKeyComment.setPreferredSize(new java.awt.Dimension(370, 23));
+        moKeyComment.setPreferredSize(new java.awt.Dimension(472, 23));
         jPanel1.add(moKeyComment);
 
         jbAddComment.setText("+");
@@ -514,7 +537,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
         jspComments.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspComments.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        jspComments.setPreferredSize(new java.awt.Dimension(400, 75));
+        jspComments.setPreferredSize(new java.awt.Dimension(500, 75));
         jspComments.setRequestFocusEnabled(false);
 
         jtaComments.setColumns(20);
@@ -584,7 +607,6 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -606,7 +628,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JPanel jPanel26;
     private javax.swing.JPanel jPanel27;
     private javax.swing.JPanel jPanel28;
+    private javax.swing.JPanel jPanel29;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel30;
+    private javax.swing.JPanel jPanel31;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
@@ -645,6 +670,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JLabel jlTrailerPlate;
     private javax.swing.JLabel jlVehiclePlate;
     private javax.swing.JLabel jlVehicleType;
+    private javax.swing.JLabel jlZipcode;
     private javax.swing.JPanel jpAvailableRows;
     private javax.swing.JPanel jpBody;
     private javax.swing.JPanel jpFilterControls;
@@ -654,6 +680,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JPanel jpRows;
     private javax.swing.JPanel jpSelectedRows;
     private javax.swing.JScrollPane jspComments;
+    private javax.swing.JTextField jtZipcode;
     private javax.swing.JTextArea jtaComments;
     private javax.swing.JTextField jtfAddress;
     private javax.swing.JTextField jtfCounty;
