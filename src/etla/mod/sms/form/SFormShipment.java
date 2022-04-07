@@ -165,7 +165,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jlState = new javax.swing.JLabel();
         jtfState = new javax.swing.JTextField();
         jlZipcode = new javax.swing.JLabel();
-        jtZipcode = new javax.swing.JTextField();
+        jtfZipcode = new javax.swing.JTextField();
         jPanel28 = new javax.swing.JPanel();
         jlLocality = new javax.swing.JLabel();
         jtfLocality = new javax.swing.JTextField();
@@ -474,10 +474,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jlZipcode.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel8.add(jlZipcode);
 
-        jtZipcode.setEditable(false);
-        jtZipcode.setFocusable(false);
-        jtZipcode.setPreferredSize(new java.awt.Dimension(100, 23));
-        jPanel8.add(jtZipcode);
+        jtfZipcode.setEditable(false);
+        jtfZipcode.setFocusable(false);
+        jtfZipcode.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel8.add(jtfZipcode);
 
         jPanel4.add(jPanel8);
 
@@ -680,7 +680,6 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JPanel jpRows;
     private javax.swing.JPanel jpSelectedRows;
     private javax.swing.JScrollPane jspComments;
-    private javax.swing.JTextField jtZipcode;
     private javax.swing.JTextArea jtaComments;
     private javax.swing.JTextField jtfAddress;
     private javax.swing.JTextField jtfCounty;
@@ -691,6 +690,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JTextField jtfNumber;
     private javax.swing.JTextField jtfState;
     private javax.swing.JTextField jtfTotalM2;
+    private javax.swing.JTextField jtfZipcode;
     private sa.lib.gui.bean.SBeanFieldDate moDateDate;
     private sa.lib.gui.bean.SBeanFieldDate moDateRows;
     private sa.lib.gui.bean.SBeanFieldInteger moIntShiptFolio;
@@ -765,9 +765,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             public ArrayList<SGridColumnForm> createGridColumns() {
                 int col = 0;
                 ArrayList<SGridColumnForm> gridColumnsForm = new ArrayList<>();
-                SGridColumnForm[] columns = new SGridColumnForm[8];
+                SGridColumnForm[] columns = new SGridColumnForm[7];
 
-                columns[col++] = new SGridColumnForm(SGridConsts.COL_TYPE_INT_RAW, "Orden embarque");
                 columns[col++] = new SGridColumnForm(SGridConsts.COL_TYPE_INT_RAW, "Remisión", 60);
                 columns[col++] = new SGridColumnForm(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "Invoice");
                 columns[col++] = new SGridColumnForm(SGridConsts.COL_TYPE_DATE, "Fecha invoice");
@@ -873,6 +872,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             jtfCountyCode.setText(countyCode);
             jtfCounty.setText(countyName);
             jtfState.setText(stateCode);
+            jtfZipcode.setText(zipCode);
             jtfAddress.setText(sr.getDbmsAddress1());
         }
         catch (Exception e) {
@@ -881,6 +881,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             jtfCountyCode.setText("");
             jtfCounty.setText("");
             jtfState.setText("");
+            jtfZipcode.setText("");
             jtfAddress.setText("");
         }
     }
@@ -1002,24 +1003,30 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         }
         else {            
             try {
-                checkRowToAdd(((SRowShipmentRow) moGridAvailableRows.getSelectedGridRow()).getShipmentRow());
-                
-                // identify row to be added:
-                int index = moGridAvailableRows.getTable().getSelectedRow();
-                
-                // add current row into selected rows:
-                moGridAvailableRows.getSelectedGridRow().setRowValueAt(moIntShiptFolio.getValue(), 0);
-                moGridSelectedRows.addGridRow(moGridAvailableRows.getSelectedGridRow());
-                moGridSelectedRows.renderGridRows(); 
-                //moGridSelectedRows.setSelectedGridRow(moGridSelectedRows.getModel().getRowCount() - 1);
-                computeTotals();
-                
-                // remove current row from available rows:
-                moGridAvailableRows.removeGridRow(index);
-                moGridAvailableRows.renderGridRows();
-                moGridAvailableRows.setSelectedGridRow(index < moGridAvailableRows.getModel().getRowCount() ? index : moGridAvailableRows.getModel().getRowCount() - 1);
-                
-                showShipmentInfo();
+                if (moIntShiptFolio.getValue() != 0) {
+                    checkRowToAdd(((SRowShipmentRow) moGridAvailableRows.getSelectedGridRow()).getShipmentRow());
+                    // identify row to be added:
+                    int index = moGridAvailableRows.getTable().getSelectedRow();
+
+                    // add current row into selected rows:
+                    moGridAvailableRows.getSelectedGridRow().setRowValueAt(moIntShiptFolio.getValue(), 0);
+                    moGridAvailableRows.getSelectedGridRow().setRowValueAt(true, 1);
+                    moGridSelectedRows.addGridRow(moGridAvailableRows.getSelectedGridRow());
+                    moGridSelectedRows.renderGridRows(); 
+                    //moGridSelectedRows.setSelectedGridRow(moGridSelectedRows.getModel().getRowCount() - 1);
+                    computeTotals();
+
+                    // remove current row from available rows:
+                    moGridAvailableRows.removeGridRow(index);
+                    moGridAvailableRows.renderGridRows();
+                    moGridAvailableRows.setSelectedGridRow(index < moGridAvailableRows.getModel().getRowCount() ? index : moGridAvailableRows.getModel().getRowCount() - 1);
+
+                    showShipmentInfo();
+                }
+                else {
+                    miClient.showMsgBoxWarning("Se debe de capturar una orden de embarque.");
+                    moIntShiptFolio.requestFocus();
+                }
             }
             catch(Exception e) {
                 SLibUtils.showException(this, e);
@@ -1039,6 +1046,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                 // check if row to be removed should be returned to available rows:
                 if (mbRowsShown && SLibTimeUtils.isSameDate(((SRowShipmentRow) moGridSelectedRows.getSelectedGridRow()).getShipmentRow().getDeliveryDate(), moDateRows.getValue())) {
                     moGridSelectedRows.getSelectedGridRow().setRowValueAt(0, 0);
+                    moGridSelectedRows.getSelectedGridRow().setRowValueAt(false, 1);
                     moGridAvailableRows.addGridRow(moGridSelectedRows.getSelectedGridRow());
                     moGridAvailableRows.renderGridRows();
                     //moGridAvailableRows.setSelectedGridRow(moGridAvailableRows.getModel().getRowCount() - 1);
