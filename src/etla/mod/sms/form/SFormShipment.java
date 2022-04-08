@@ -1280,8 +1280,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         registry.setFkShipmentTypeId(moKeyShipmentType.getValue()[0]);
         registry.setFkCargoTypeId(moKeyCargoType.getValue()[0]);
         registry.setFkHandlingTypeId(moKeyHandlingType.getValue()[0]);
-        registry.setFkForkliftDriverId(moKeyForkliftDriver.getValue().length != 0 ? moKeyForkliftDriver.getValue()[0] : 0);
-        registry.setFkCrewId(moKeyCrew.getValue().length != 0 ? moKeyForkliftDriver.getValue()[0] : 0);
+        registry.setFkForkliftDriverId(moKeyForkliftDriver.getValue()[0]);
+        registry.setFkCrewId(moKeyCrew.getValue()[0]);
         registry.setFkVehicleTypeId(moKeyVehicleType.getValue()[0]);
         registry.setFkShipperId(moKeyShipper.getValue()[0]);
         
