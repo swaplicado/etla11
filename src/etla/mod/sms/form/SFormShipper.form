@@ -115,7 +115,7 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="6d" green="6d" id="Text Inactive Text" palette="2" red="6d" type="palette"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="(Requerido para CPT)"/>
+                    <Property name="text" type="java.lang.String" value="(Requerido para app web CPT)"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[200, 23]"/>
                     </Property>
@@ -154,7 +154,7 @@
                 <Component class="javax.swing.JLabel" name="jlSiie">
                   <Properties>
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="80" green="80" id="gray" palette="1" red="80" type="palette"/>
+                      <Color blue="6d" green="6d" id="Text Inactive Text" palette="2" red="6d" type="palette"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="(Primary Key SIIE)"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -230,7 +230,7 @@
               <SubComponents>
                 <Component class="sa.lib.gui.bean.SBeanFieldBoolean" name="moBoolWeb">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Enviar embarques a la aplicaci&#xf3;n web CPT"/>
+                    <Property name="text" type="java.lang.String" value="Enviar embarques a la app web CPT"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[350, 23]"/>
                     </Property>

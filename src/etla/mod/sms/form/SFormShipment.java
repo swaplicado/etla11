@@ -149,6 +149,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jPanel31 = new javax.swing.JPanel();
         jlShiptFolio = new javax.swing.JLabel();
         moIntShiptFolio = new sa.lib.gui.bean.SBeanFieldInteger();
+        jlShiptFolioHint = new javax.swing.JLabel();
         jpRowControls = new javax.swing.JPanel();
         jPanel12 = new javax.swing.JPanel();
         jlDummy01 = new javax.swing.JLabel();
@@ -402,6 +403,11 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jPanel31.add(jlShiptFolio);
         jPanel31.add(moIntShiptFolio);
 
+        jlShiptFolioHint.setForeground(java.awt.SystemColor.textInactiveText);
+        jlShiptFolioHint.setText("(folio del formato preimpreso \"talón\" o \"talón de embarque\")");
+        jlShiptFolioHint.setPreferredSize(new java.awt.Dimension(300, 23));
+        jPanel31.add(jlShiptFolioHint);
+
         jPanel29.add(jPanel31, java.awt.BorderLayout.EAST);
 
         jpRows.add(jPanel29, java.awt.BorderLayout.NORTH);
@@ -437,7 +443,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
         jpBody.add(jpRows, java.awt.BorderLayout.CENTER);
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Flete:"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Destino final del embarque (flete):"));
         jPanel4.setPreferredSize(new java.awt.Dimension(50, 75));
         jPanel4.setLayout(new java.awt.GridLayout(2, 2, 0, 5));
 
@@ -507,7 +513,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
         jtfAddress.setEditable(false);
         jtfAddress.setFocusable(false);
-        jtfAddress.setPreferredSize(new java.awt.Dimension(350, 23));
+        jtfAddress.setPreferredSize(new java.awt.Dimension(370, 23));
         jPanel28.add(jtfAddress);
 
         jPanel4.add(jPanel28);
@@ -664,6 +670,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JLabel jlShipmentType;
     private javax.swing.JLabel jlShipper;
     private javax.swing.JLabel jlShiptFolio;
+    private javax.swing.JLabel jlShiptFolioHint;
     private javax.swing.JLabel jlState;
     private javax.swing.JLabel jlTicketId;
     private javax.swing.JLabel jlTotalM2;

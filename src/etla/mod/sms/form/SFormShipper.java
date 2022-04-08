@@ -109,7 +109,7 @@ public class SFormShipper extends SBeanForm implements ActionListener {
         jPanel8.add(moTextFiscalId);
 
         jLabel2.setForeground(java.awt.SystemColor.textInactiveText);
-        jLabel2.setText("(Requerido para CPT)");
+        jLabel2.setText("(Requerido para app web CPT)");
         jLabel2.setPreferredSize(new java.awt.Dimension(200, 23));
         jPanel8.add(jLabel2);
 
@@ -127,7 +127,7 @@ public class SFormShipper extends SBeanForm implements ActionListener {
         jbEditDesSupplierId.setPreferredSize(new java.awt.Dimension(23, 23));
         jPanel6.add(jbEditDesSupplierId);
 
-        jlSiie.setForeground(java.awt.Color.gray);
+        jlSiie.setForeground(java.awt.SystemColor.textInactiveText);
         jlSiie.setText("(Primary Key SIIE)");
         jlSiie.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel6.add(jlSiie);
@@ -162,7 +162,7 @@ public class SFormShipper extends SBeanForm implements ActionListener {
 
         jPanel10.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        moBoolWeb.setText("Enviar embarques a la aplicación web CPT");
+        moBoolWeb.setText("Enviar embarques a la app web CPT");
         moBoolWeb.setPreferredSize(new java.awt.Dimension(350, 23));
         jPanel10.add(moBoolWeb);
 

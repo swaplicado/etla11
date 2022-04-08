@@ -87,7 +87,7 @@ public class SFormCrew extends SBeanForm {
      */
     
     private void initComponentsCustom() {              
-        SGuiUtils.setWindowBounds(this, 240, 150);
+        SGuiUtils.setWindowBounds(this, 320, 200);
         
         moTextName.setTextSettings(SGuiUtils.getLabelName(jlName), 100);
         

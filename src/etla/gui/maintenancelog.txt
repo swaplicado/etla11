@@ -3,6 +3,11 @@
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
 1) Corrección a obtención del valor de cuadrilla en la forma de captura de embarques.
+2) Adición de textos aclaratorios en forma de captura de embarques.
+
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Adición de campo RFC en forma de captura de transportistas.
 
 ================================================================================
 2022-04-07, 1.1 015.0
