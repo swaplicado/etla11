@@ -99,22 +99,22 @@ public class SViewShipmentByPeriod extends SGridPaneView {
     public ArrayList<SGridColumnView> createGridColumns() {
         ArrayList<SGridColumnView> columns = new ArrayList<SGridColumnView>();
 
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "s.number", "Folio"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "f_code", "Talón"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE, "sr.delivery_date", "Fecha rem"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "sr.bol_id", "Guía"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "s.number", "Embarque"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE, "s.shipt_date", "Fecha embarque"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "f_code", "Orden embarque"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "sr.bol_id", "Remisión"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE, "sr.delivery_date", "Fecha remisión"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_L, "f_name", "Cliente"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_M, "transportista", "Transportista"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "s.driver_name", "Operador"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_M, "transportista", "Línea transportista"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "tipo_vehiculo", "Tipo de unidad"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "s.vehic_plate", "Placas"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "s.driver_phone", "Teléfono"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "s.driver_name", "Nombre chofer"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "s.driver_phone", "Teléfono chofer"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "sr.m2", "m²"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "montacarguista", "Montacarguista"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE, "s.shipt_date", "Fecha embarque"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "tipo_vehiculo", "Tipo de unidad"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_UNT, "cuadrilla", "Cuadrilla"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_L, "estado", "Estado"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_L, "municipio", "Municipio"));
-        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_UNT, "cuadrilla", "Cuadrilla"));
 
         return columns;
     }

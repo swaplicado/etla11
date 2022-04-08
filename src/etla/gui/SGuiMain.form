@@ -181,7 +181,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiSmsShipmentsByPeriod">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Consulta de embarques por periodo"/>
+                <Property name="text" type="java.lang.String" value="Consulta de embarques por per&#xed;odo"/>
               </Properties>
             </MenuItem>
           </SubComponents>

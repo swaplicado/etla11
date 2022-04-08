@@ -358,7 +358,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmShip.add(jmiNumberOfTripsPerCustomer);
         jmShip.add(jsFile6);
 
-        jmiSmsShipmentsByPeriod.setText("Consulta de embarques por periodo");
+        jmiSmsShipmentsByPeriod.setText("Consulta de embarques por período");
         jmShip.add(jmiSmsShipmentsByPeriod);
 
         jMenuBar.add(jmShip);

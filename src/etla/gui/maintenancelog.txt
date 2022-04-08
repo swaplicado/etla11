@@ -8,6 +8,7 @@ Sergio Abraham FLORES GUTIÉRREZ
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
 1) Adición de campo RFC en forma de captura de transportistas.
+2) Cambio en el orden y en el nombre de las columnas de la consulta de embarques por periodo.
 
 ================================================================================
 2022-04-07, 1.1 015.0

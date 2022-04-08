@@ -278,7 +278,7 @@ public class SModModuleSms extends SGuiModule {
                         view = new SViewShipment(miClient, subtype, "Embarques liberados");
                         break;
                     case SModSysConsts.SS_SHIPT_BY_PERIOD:
-                        view = new SViewShipmentByPeriod(miClient, "Consulta de embarques por periodo");
+                        view = new SViewShipmentByPeriod(miClient, "Consulta embarques por período");
                         break;
                     default:
                         miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
