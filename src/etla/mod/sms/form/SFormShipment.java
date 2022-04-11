@@ -70,6 +70,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private Connection miConnectionAvista;
     private boolean mbRowsShown;
     private boolean mbMailConfirmationRequested;
+    private JButton jbRowDown;
+    private JButton jbRowUp;
     
     /**
      * Creates new form SFormShipmentOrder
@@ -742,6 +744,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moDateRows.setNextButton(jbShowRows);
         moIntShiptFolio.setIntegerSettings(SGuiUtils.getLabelName(jlShiptFolio), SGuiConsts.GUI_TYPE_INT_RAW, false);
         moKeyComment.setKeySettings(miClient, SGuiUtils.getLabelName(moKeyComment.getToolTipText()), false);
+        jbRowDown = new JButton(new javax.swing.ImageIcon(getClass().getResource("/etla/gui/img/icon_std_move_down.gif")));
+        jbRowDown.setToolTipText("Bajar renglón");
+        jbRowDown.setPreferredSize(new java.awt.Dimension(23, 23));
+        jbRowUp = new JButton(new javax.swing.ImageIcon(getClass().getResource("/etla/gui/img/icon_std_move_up.gif")));
+        jbRowUp.setToolTipText("Subir renglón");
+        jbRowUp.setPreferredSize(new java.awt.Dimension(23, 23));
         
         moFields.addField(moDateDate);
         moFields.addField(moKeyShipmentType);
@@ -801,6 +809,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             @Override
             public void initGrid() {
                 setRowButtonsEnabled(false, false, false);
+                
+                getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(jbRowDown);
+                getPanelCommandsSys(SGuiConsts.PANEL_CENTER).add(jbRowUp);
             }
             
             @Override
@@ -1088,7 +1099,66 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         else {
             jtaComments.append((jtaComments.getText().isEmpty() ? "" : "\n") + moKeyComment.getSelectedItem().getItem());
         }
+    }    
+        
+    private void actionPerformedRowDown() {
+        if (moGridSelectedRows.getSelectedGridRow() == null) {
+            miClient.showMsgBoxWarning(SGridConsts.MSG_SELECT_ROW);
+        } 
+        else {
+            try {
+                int index = moGridSelectedRows.getTable().getSelectedRow();
+                if (index != -1 && index + 1 < moGridSelectedRows.getTable().getRowCount()) {
+                    SGridRow rowA = moGridSelectedRows.getGridRow(index);
+                    SGridRow rowB = moGridSelectedRows.getGridRow(index + 1);
+                    
+                    moGridSelectedRows.setGridRow(rowB, index);
+                    moGridSelectedRows.setGridRow(rowA, index + 1);
+                    for (int i = 0 ; i < moGridSelectedRows.getTable().getRowCount(); i++) {
+                        moGridSelectedRows.getGridRow(i).setRowValueAt(i + 1, 0);
+                    }
+                    moGridSelectedRows.renderGridRows();
+                    moGridSelectedRows.setSelectedGridRow(index + 1);
+                    computeTotals();
+
+                    showShipmentInfo();
+                }
+            }
+            catch (Exception e) {
+                SLibUtils.showException(this, e);
+            }
+        }
     }
+    
+    private void actionPerformedRowUp() {
+        if (moGridSelectedRows.getSelectedGridRow() == null) {
+            miClient.showMsgBoxWarning(SGridConsts.MSG_SELECT_ROW);
+        } 
+        else {
+            try {
+                int index = moGridSelectedRows.getTable().getSelectedRow();
+                if (index > 0) {
+                    SGridRow rowA = moGridSelectedRows.getGridRow(index - 1);
+                    SGridRow rowB = moGridSelectedRows.getGridRow(index);
+                    
+                    moGridSelectedRows.setGridRow(rowB, index - 1);
+                    moGridSelectedRows.setGridRow(rowA, index);
+                    for (int i = 0 ; i < moGridSelectedRows.getTable().getRowCount(); i++) {
+                        moGridSelectedRows.getGridRow(i).setRowValueAt(i + 1, 0);
+                    }
+                    moGridSelectedRows.renderGridRows();
+                    moGridSelectedRows.setSelectedGridRow(index - 1);
+                    computeTotals();
+
+                    showShipmentInfo();
+                }
+            }
+            catch (Exception e) {
+                SLibUtils.showException(this, e);
+            }
+        }
+    }
+
     
     private void itemStateChangedShipper() {
         if (moKeyShipper.getSelectedIndex() == SModSysConsts.SU_SHIPPER_NA) { //if 'N/A' is the selected item
@@ -1135,6 +1205,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jbRowAdd.addActionListener(this);
         jbRowRemove.addActionListener(this);
         jbAddComment.addActionListener(this);
+        jbRowDown.addActionListener(this); 
+        jbRowUp.addActionListener(this);
         moKeyShipper.addItemListener(this);
         moKeyVehicleType.addItemListener(this);
     }
@@ -1147,6 +1219,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jbRowAdd.removeActionListener(this);
         jbRowRemove.removeActionListener(this);
         jbAddComment.removeActionListener(this);
+        jbRowDown.removeActionListener(this); 
+        jbRowUp.removeActionListener(this);
         moKeyShipper.removeItemListener(this);
         moKeyVehicleType.removeItemListener(this);
     }
@@ -1373,6 +1447,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             }
             else if (button == jbAddComment) {
                 actionPerformedAddComment();
+            }
+            else if (button == jbRowDown) {
+                actionPerformedRowDown();
+            }
+            else if (button == jbRowUp) {
+                actionPerformedRowUp();
             }
         }
     }
