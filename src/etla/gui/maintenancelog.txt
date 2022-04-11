@@ -2,7 +2,7 @@
 2022-04-11, 1.1 015.2
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
-1) Se agregó la funcion de subir o bajar los renglones en las remisiones seleccionadas en la forma de embarques.
+1) Se agregó la función de subir o bajar los renglones en las remisiones seleccionadas en la forma de embarques.
 
 ================================================================================
 2022-04-08, 1.1 015.1
