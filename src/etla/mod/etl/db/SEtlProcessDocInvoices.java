@@ -1033,7 +1033,7 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setFkItemId(dataItem.getPkItemId());
                         dataDpsEntry.setFkUnitId(dataItem.getFkUnitId());
                         dataDpsEntry.setFkOriginalUnitId(row.getDesFinalUnitOfMeasureFk());
-                        dataDpsEntry.setFkTaxRegionId(dataBizPartnerCustomer.getDbmsHqBranch().getFkTaxRegionId_n() == SLibConsts.UNDEFINED ? SEtlConsts.SIIE_DEFAULT : dataBizPartnerCustomer.getDbmsHqBranch().getFkTaxRegionId_n());
+                        dataDpsEntry.setFkTaxRegionId(dataBizPartnerCustomer.getDbmsBizPartnerBranchHq().getFkTaxRegionId_n() == SLibConsts.UNDEFINED ? SEtlConsts.SIIE_DEFAULT : dataBizPartnerCustomer.getDbmsBizPartnerBranchHq().getFkTaxRegionId_n());
                         dataDpsEntry.setFkThirdTaxCausingId_n(0);
                         dataDpsEntry.setFkDpsAdjustmentTypeId(SDataConstantsSys.TRNS_STP_DPS_ADJ_NA_NA[0]);
                         dataDpsEntry.setFkDpsAdjustmentSubtypeId(SDataConstantsSys.TRNS_STP_DPS_ADJ_NA_NA[1]);
@@ -1210,7 +1210,7 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setFkItemId(period.getDbmsExtraCharge().getDesItemId());
                         dataDpsEntry.setFkUnitId(period.getDbmsExtraCharge().getDesUnitOfMeasureId());
                         dataDpsEntry.setFkOriginalUnitId(period.getDbmsExtraCharge().getDesUnitOfMeasureId());
-                        dataDpsEntry.setFkTaxRegionId(dataBizPartnerCustomer.getDbmsHqBranch().getFkTaxRegionId_n() == SLibConsts.UNDEFINED ? SEtlConsts.SIIE_DEFAULT : dataBizPartnerCustomer.getDbmsHqBranch().getFkTaxRegionId_n());
+                        dataDpsEntry.setFkTaxRegionId(dataBizPartnerCustomer.getDbmsBizPartnerBranchHq().getFkTaxRegionId_n() == SLibConsts.UNDEFINED ? SEtlConsts.SIIE_DEFAULT : dataBizPartnerCustomer.getDbmsBizPartnerBranchHq().getFkTaxRegionId_n());
                         dataDpsEntry.setFkThirdTaxCausingId_n(0);
                         dataDpsEntry.setFkDpsAdjustmentTypeId(SDataConstantsSys.TRNS_STP_DPS_ADJ_NA_NA[0]);
                         dataDpsEntry.setFkDpsAdjustmentSubtypeId(SDataConstantsSys.TRNS_STP_DPS_ADJ_NA_NA[1]);

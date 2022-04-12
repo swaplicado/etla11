@@ -645,7 +645,7 @@ public abstract class SEtlProcessCatCustomers {
                             
                             dataBizPartnerCustomerBranchConfig = createCustomerBranchConfig(session);
 
-                            dataBizPartner.getDbmsHqBranch().getDbmsDataCustomerBranchConfig().add(dataBizPartnerCustomerBranchConfig);
+                            dataBizPartner.getDbmsBizPartnerBranchHq().getDbmsDataCustomerBranchConfig().add(dataBizPartnerCustomerBranchConfig);
                         }
                         
                         if (dataBizPartner.getDbmsCategorySettingsCus().getIsDeleted()) {
@@ -664,7 +664,7 @@ public abstract class SEtlProcessCatCustomers {
                     }
                 }
                 
-                nBizPartnerBranchId = dataBizPartner.getDbmsHqBranch().getPkBizPartnerBranchId();
+                nBizPartnerBranchId = dataBizPartner.getDbmsBizPartnerBranchHq().getPkBizPartnerBranchId();
             }
             catch (Exception e) {
                 statementSiie.execute("ROLLBACK");
