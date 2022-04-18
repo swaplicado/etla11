@@ -53,6 +53,7 @@ public class SEtlProcessDocInvoices {
         boolean isInvoiceExported = false;
         HashSet<Integer> setLineCurrencySrcIds = new HashSet<>();
         String sInvoiceErrMsg = "";
+        String sInvoiceItemErrMsg = "";
         
         double dInvoiceAmountSrc = 0;
         double dInvoiceAmountReq = 0;
@@ -396,7 +397,7 @@ public class SEtlProcessDocInvoices {
                     rsAvistaInvoiceData = stAvistaInvoiceData.executeQuery(sql);
                     if (rsAvistaInvoiceData.next()) {
                         stEtl.execute("START TRANSACTION");
-
+                        
                         dbInvoice = new SDbInvoice();
                         
                         //invoice.setPkInvoiceId(...);  // set when saved
@@ -448,6 +449,8 @@ public class SEtlProcessDocInvoices {
                         //invoice.setTsUserUpdate(...);
                         
                         do {
+                            sInvoiceItemErrMsg = sInvoiceErrMsg + "; ItemNumber=" + rsAvistaInvoiceData.getInt("ItemNumber");
+                            
                             // Define item:
                             
                             dbLineItem = etlCatalogs.getEtlItem(etlCatalogs.getEtlIdForItem(rsAvistaInvoiceData.getInt("PlantBoardTypeKey"), rsAvistaInvoiceData.getString("Flute"), rsAvistaInvoiceData.getString("CustomerId")));
@@ -455,7 +458,7 @@ public class SEtlProcessDocInvoices {
                                 throw new Exception(SEtlConsts.MSG_ERR_UNK_ITM + "\n"
                                         + SEtlConsts.TXT_BRD + "='" + rsAvistaInvoiceData.getInt("PlantBoardTypeKey") + "', "
                                         + SEtlConsts.TXT_FLT + "='" + rsAvistaInvoiceData.getString("Flute") + "'."
-                                        + sInvoiceErrMsg);
+                                        + sInvoiceItemErrMsg);
                             }
                             
                             dLineUnits = rsAvistaInvoiceData.getDouble("Units"); // units
@@ -472,7 +475,7 @@ public class SEtlProcessDocInvoices {
                             if (dbLineUnitOfMeasureSrc == null) {
                                 throw new Exception(SEtlConsts.MSG_ERR_UNK_UOM + "\n"
                                         + SEtlConsts.TXT_MISC_ID + "='" + rsAvistaInvoiceData.getString("LinePricePerCode") + "' (" + SEtlConsts.TXT_UOM + " " + SEtlConsts.TXT_MISC_SRC + ")."
-                                        + sInvoiceErrMsg);
+                                        + sInvoiceItemErrMsg);
                             }
                             
                             // Define required unit of measure:
@@ -494,7 +497,7 @@ public class SEtlProcessDocInvoices {
                             if (dbLineUnitOfMeasureReq == null) {
                                 throw new Exception(SEtlConsts.MSG_ERR_UNK_UOM + "\n"
                                         + SEtlConsts.TXT_MISC_ID + "='" + dbLineItem.getSrcRequiredUnitOfMeasureFk_n() + "' (" + SEtlConsts.TXT_UOM + " " + SEtlConsts.TXT_MISC_REQ + ")."
-                                        + sInvoiceErrMsg);
+                                        + sInvoiceItemErrMsg);
                             }
                             
                             // Compute final price and amount:
@@ -503,22 +506,24 @@ public class SEtlProcessDocInvoices {
                             dLineUnitsReq = 0;
                             
                             switch (dbLineUnitOfMeasureSrc.getSrcUnitOfMeasureId()) {
-                                case SEtlConsts.AVISTA_UOM_MSM:
-                                case SEtlConsts.AVISTA_UOM_MSF:
+                                case SEtlConsts.AVISTA_UOM_MSM: // millar square meter
+                                case SEtlConsts.AVISTA_UOM_MSF: // millar square feet
                                     dLineUnitsSrc = dLineArea;
                                     break;
-                                case SEtlConsts.AVISTA_UOM_PC:
+                                case SEtlConsts.AVISTA_UOM_PC: // piece
                                     dLineUnitsSrc = dLinePieces;
                                     break;
-                                case SEtlConsts.AVISTA_UOM_TON:
+                                case SEtlConsts.AVISTA_UOM_TON: // ton
                                     dLineUnitsSrc = dLineWeight;
                                     break;
-                                case SEtlConsts.AVISTA_UOM_FF:
+                                case SEtlConsts.AVISTA_UOM_FF: // some kind of 'fee'
                                     dLineUnitsSrc = dLineUnits;
+                                    System.out.println("Unidad de medida atípica: '" + dbLineUnitOfMeasureSrc.getSrcUnitOfMeasureId() + "'." + sInvoiceItemErrMsg);
                                     break;
                                 default:
-                                    throw new Exception(SLibConsts.ERR_MSG_OPTION_UNKNOWN + SEtlConsts.TXT_MISC_QTY + " " + SEtlConsts.TXT_MISC_SRC + "."
-                                            + sInvoiceErrMsg);
+                                    throw new Exception(SLibConsts.ERR_MSG_OPTION_UNKNOWN + "\n"
+                                            + SEtlConsts.TXT_MISC_QTY + " " + SEtlConsts.TXT_MISC_SRC.toLowerCase() + ": '" + dbLineUnitOfMeasureSrc.getSrcUnitOfMeasureId() + "'."
+                                            + sInvoiceItemErrMsg);
                             }
                             
                             if (dbLineUnitOfMeasureSrc.getPkUnitOfMeasureId() == dbLineUnitOfMeasureReq.getPkUnitOfMeasureId()) {
@@ -527,6 +532,20 @@ public class SEtlProcessDocInvoices {
                             }
                             else {
                                 isLineUnitEqual = false;
+                                
+                                switch (dbLineUnitOfMeasureReq.getSrcUnitOfMeasureId()) {
+                                    case SEtlConsts.AVISTA_UOM_MSM: // millar square meter
+                                    case SEtlConsts.AVISTA_UOM_MSF: // millar square feet
+                                    case SEtlConsts.AVISTA_UOM_PC: // piece
+                                    case SEtlConsts.AVISTA_UOM_TON: // ton
+                                    case SEtlConsts.AVISTA_UOM_FF: // some kind of 'fee'
+                                        break;
+                                    default:
+                                        throw new Exception(SLibConsts.ERR_MSG_OPTION_UNKNOWN + "\n"
+                                                + SEtlConsts.TXT_MISC_QTY + " " + SEtlConsts.TXT_MISC_REQ.toLowerCase() + ": '" + dbLineUnitOfMeasureReq.getSrcUnitOfMeasureId() + "'."
+                                                + sInvoiceItemErrMsg);
+                                }
+                                
                                 switch (dbLineUnitOfMeasureSrc.getSrcUnitOfMeasureId()) {
                                     case SEtlConsts.AVISTA_UOM_MSM:
                                         switch (dbLineUnitOfMeasureReq.getSrcUnitOfMeasureId()) {
@@ -542,6 +561,7 @@ public class SEtlProcessDocInvoices {
                                             default:
                                         }
                                         break;
+                                        
                                     case SEtlConsts.AVISTA_UOM_MSF:
                                         switch (dbLineUnitOfMeasureReq.getSrcUnitOfMeasureId()) {
                                             case SEtlConsts.AVISTA_UOM_MSF:
@@ -556,6 +576,7 @@ public class SEtlProcessDocInvoices {
                                             default:
                                         }
                                         break;
+                                        
                                     case SEtlConsts.AVISTA_UOM_PC:
                                         switch (dbLineUnitOfMeasureReq.getSrcUnitOfMeasureId()) {
                                             case SEtlConsts.AVISTA_UOM_MSM:
@@ -584,15 +605,35 @@ public class SEtlProcessDocInvoices {
                                             default:
                                         }
                                         break;
+                                        
+                                    case SEtlConsts.AVISTA_UOM_FF:
+                                        switch (dbLineUnitOfMeasureReq.getSrcUnitOfMeasureId()) {
+                                            case SEtlConsts.AVISTA_UOM_MSM:
+                                            case SEtlConsts.AVISTA_UOM_MSF:
+                                            case SEtlConsts.AVISTA_UOM_PC:
+                                            case SEtlConsts.AVISTA_UOM_TON:
+                                                dLineUnitsReq = dLineUnitsSrc;
+                                                break;
+                                            default:
+                                        }
+                                        break;
+                                        
                                     default:
-                                        throw new Exception(SLibConsts.ERR_MSG_OPTION_UNKNOWN + SEtlConsts.TXT_MISC_QTY + " " + SEtlConsts.TXT_MISC_REQ + "."
-                                                + sInvoiceErrMsg);
+                                        throw new Exception(SLibConsts.ERR_MSG_OPTION_UNKNOWN + "\n"
+                                                + SEtlConsts.TXT_MISC_QTY + " " + SEtlConsts.TXT_MISC_REQ.toLowerCase() + "."
+                                                + sInvoiceItemErrMsg);
                                 }
                             }
                             
                             if (dLineUnitsReq == 0) {
-                                throw new Exception(SLibConsts.ERR_MSG_OPTION_UNKNOWN + SEtlConsts.TXT_MISC_QTY + " " + SEtlConsts.TXT_MISC_REQ + "."
-                                        + sInvoiceErrMsg);
+                                if (dLineUnits == 0 && dLinePieces == 0 && dLineArea == 0 && dLineWeight == 0) {
+                                    // skip current row!, this is an atypical row without units!
+                                    System.out.println(sInvoiceItemErrMsg);
+                                    continue;
+                                }
+                                else {
+                                    throw new Exception(sInvoiceItemErrMsg);
+                                }
                             }
                             
                             if (isLineUnitEqual) {

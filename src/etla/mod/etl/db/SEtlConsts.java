@@ -34,15 +34,15 @@ public abstract class SEtlConsts {
     
     public static final int BILLING_DELAY_DAYS = 3; // days allowed to bill invoices after issue
     
-    public static final String AVISTA_UOM_MSM = "MSM";
-    public static final String AVISTA_UOM_MSF = "MSF";
-    public static final String AVISTA_UOM_SQM = "SQM";  // not supported yet
-    public static final String AVISTA_UOM_SQF = "SQF";  // not supported yet
-    public static final String AVISTA_UOM_PC = "PC";
-    public static final String AVISTA_UOM_M = "M";      // not supported yet
-    public static final String AVISTA_UOM_KG = "KG";    // not supported yet
-    public static final String AVISTA_UOM_TON = "TON";
-    public static final String AVISTA_UOM_FF = "FF";    // due to issue of extra charge in CustomerInvoices with CustomerInvoiceKey=85155, InvoiceNumber=82164, BOL=85613, Created=2018-02-15
+    public static final String AVISTA_UOM_MSM = "MSM";  // millar square meter
+    public static final String AVISTA_UOM_MSF = "MSF";  // millar square feet
+    public static final String AVISTA_UOM_SQM = "SQM";  // square meter - not supported yet!
+    public static final String AVISTA_UOM_SQF = "SQF";  // square feet - not supported yet!
+    public static final String AVISTA_UOM_PC = "PC";    // piece
+    public static final String AVISTA_UOM_M = "M";      // meter - not supported yet!
+    public static final String AVISTA_UOM_KG = "KG";    // kg - not supported yet!
+    public static final String AVISTA_UOM_TON = "TON";  // ton
+    public static final String AVISTA_UOM_FF = "FF";    // some kind of 'fee' - due to issue of extra charge in CustomerInvoices with CustomerInvoiceKey=85155, InvoiceNumber=82164, BOL=85613, Created=2018-02-15
     
     public static final String AVISTA_PAY_TERM_CNT = "CNT"; // contado
     public static final String AVISTA_BOOL_N = "N"; // no
