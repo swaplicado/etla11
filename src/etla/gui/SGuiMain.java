@@ -76,7 +76,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 015.3"; // release: 2022-04-17
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 016.0"; // release: 2022-04-25
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -170,6 +170,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiNumberOfTripsPerCustomer = new javax.swing.JMenuItem();
         jsFile6 = new javax.swing.JPopupMenu.Separator();
         jmiSmsShipmentsByPeriod = new javax.swing.JMenuItem();
+        jmiSmsShipmentLog = new javax.swing.JMenuItem();
         jmWm = new javax.swing.JMenu();
         jmiWmAuditReport = new javax.swing.JMenuItem();
         jmHelp = new javax.swing.JMenu();
@@ -361,6 +362,9 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiSmsShipmentsByPeriod.setText("Consulta de embarques por período");
         jmShip.add(jmiSmsShipmentsByPeriod);
 
+        jmiSmsShipmentLog.setText("Bitácora de envío de información de embarque");
+        jmShip.add(jmiSmsShipmentLog);
+
         jMenuBar.add(jmShip);
 
         jmWm.setText("Báscula");
@@ -492,6 +496,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     private javax.swing.JMenuItem jmiNumberOfTripsPerCustomer;
     private javax.swing.JMenuItem jmiSmsCrew;
     private javax.swing.JMenuItem jmiSmsForkliftDriver;
+    private javax.swing.JMenuItem jmiSmsShipmentLog;
     private javax.swing.JMenuItem jmiSmsShipments;
     private javax.swing.JMenuItem jmiSmsShipmentsByPeriod;
     private javax.swing.JMenuItem jmiSmsShipmentsRel;
@@ -613,6 +618,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiCapacityUsedPerShipmentReport.addActionListener(this);
         jmiNumberOfTripsPerCustomer.addActionListener(this);
         jmiSmsShipmentsByPeriod.addActionListener(this);
+        jmiSmsShipmentLog.addActionListener(this);
 
         jmiWmAuditReport.addActionListener(this);
 
@@ -1152,6 +1158,9 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             }
             else if (menuItem == jmiSmsShipmentsByPeriod) {
                 moSession.showView(SModConsts.S_SHIPT, SModSysConsts.SS_SHIPT_BY_PERIOD, null);
+            }
+            else if (menuItem == jmiSmsShipmentLog) {
+                moSession.showView(SModConsts.S_SHIPT_LOG, SLibConsts.UNDEFINED, null);
             }
             else if (menuItem == jmiWmAuditReport) {
                 if (showMsgBoxConfirm("¿Desea importar boletos Revuelta y documentos SIIE para procesar el reporte?\n"

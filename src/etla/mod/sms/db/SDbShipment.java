@@ -39,6 +39,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import sa.gui.util.SUtilConsts;
 import sa.lib.SLibConsts;
 import sa.lib.SLibUtils;
@@ -768,11 +770,29 @@ public class SDbShipment extends SDbRegistryUser{
                     }
                     in.close();
 
-                             // Imprime el resultado
+                    // Imprime el resultado
                     System.out.println(response.toString());
+                    JSONParser parser = new JSONParser();
+                    long code = 0;
+                    String message = "";
+                    
+                    try {
+                        Object responseObj = parser.parse(response.toString());
+
+                        JSONObject jsonObject = (JSONObject) responseObj;
+//                        System.out.println(jsonObject);
+
+                        code = (long) jsonObject.get("code");
+                        message = (String) jsonObject.get("message");
+                    } 
+                    catch (Exception e) {
+                        System.err.println(e.toString());
+                    }
 
                     SDbShipmentLog log = new SDbShipmentLog();
                     log.setFileType(2); // JSON
+                    log.setCode(code == 0 ? responseCode + "" : code + "");
+                    log.setMessage(message);
                     log.setResponse(response.toString());
                     log.setFkShipmentId(mnPkShipmentId);
                     log.save(session);
@@ -804,11 +824,11 @@ public class SDbShipment extends SDbRegistryUser{
                 mailBody += "\n\nUBICACION " + i + ":\n";
                 
                 mailBody += "ID Destino (sugerido): " + location.getLocationId() + "\n- Destinatario. Nombre: " + location.getNameFiscalId() + "; " +
-                        "RFC: " + location.getFiscalId() + "\n" + 
-                        "- Localidad. Clave SAT: " + location.getLocalityCode() + "; Nombre: " + location.getLocality() + "\n" +
-                        "- Municipio. Clave SAT: " + location.getCountyCode() + "; Nombre: " + location.getCounty() + "\n" +
-                        "- Estado. Clave SAT: " + location.getStateCode() + "\n" +
-                        "- Pais. Clave SAT: " + location.getCountryCode() + "\n" + 
+                        "RFC: " + (location.getFiscalId().isEmpty() ? "(SIN RFC)" : location.getFiscalId()) + "\n" + 
+                        "- Localidad. Clave SAT: " + (location.getLocalityCode().isEmpty() ? "(NO APLICA)" : location.getLocalityCode() + "; Nombre: " + location.getLocality()) + "\n" +
+                        "- Municipio. Clave SAT: " + (location.getCountyCode().isEmpty() ? "(NO APLICA)" : location.getCountyCode() + "; Nombre: " + location.getCounty()) + "\n" +
+                        "- Estado. Clave SAT: " + (location.getStateCode().isEmpty() ? "(NO APLICA)" : location.getStateCode()) + "\n" +
+                        "- Pais. Clave SAT: " + (location.getCountryCode().isEmpty() ? "(SIN INFORMACION)" : location.getCountryCode()) + "\n" + 
                         "- Código postal: " + location.getZipCode() + "\n";
                 
                 if (location.getNeighborhoodsMap().size() == 1) {
@@ -954,8 +974,8 @@ public class SDbShipment extends SDbRegistryUser{
                 String countyCode = "";
                 String localityCode = "";
                 String countryCode;
-                String countyName;
-                String localityName;
+                String countyName = "";
+                String localityName= "";
 
                 String locationId = "DE" + String.format("%06d", child.getFkDestinationId());
                 for (SBolLocations bolLoc : locs) {
@@ -963,7 +983,7 @@ public class SDbShipment extends SDbRegistryUser{
                         ArrayList<SBolMerchandises> bolMerchs = getChildMerchandises(session, child);
                         for (SBolMerchandises bolMerch : bolMerchs) {
                             bolLoc.getMerchandises().add(bolMerch);
-                        }
+                    }
                         
                         boolean newFolio = true;
                         String folios[] = bolLoc.getShiptFolios().split(", ");
@@ -971,9 +991,9 @@ public class SDbShipment extends SDbRegistryUser{
                             if (folio.equals(child.getShipmentOrderFolio() + "")) {
                                 newFolio = false;
                                 break;
-                            }
+                }
                         }
-                        
+
                         if (newFolio) {
                             bolLoc.setShiptFolios(bolLoc.getShiptFolios() + ", " + child.getShipmentOrderFolio());
                         }
@@ -1001,19 +1021,9 @@ public class SDbShipment extends SDbRegistryUser{
                     if (!countyCode.isEmpty()) {
                         countyName = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_COUNTY, countyCode, stateCode);
                     }
-                    else {
-                        countyCode = "(NO APLICA)";
-                        countyName = "(NO APLICA)";
-                    }
-
                     if (!localityCode.isEmpty()) {
                         localityName = SModDataUtils.getLocCatalogNameByCode(session, SModConsts.LOCS_BOL_LOCALITY, localityCode, stateCode);
                     }
-                    else {
-                        localityCode = "(NO APLICA)";
-                        localityName = "(NO APLICA)";
-                    }
-
                     if (zipCode.isEmpty()) {
                         zipCode = "00000";
                     }
@@ -1022,7 +1032,7 @@ public class SDbShipment extends SDbRegistryUser{
                         case "MX" : countryCode = "MEX"; break;
                         case "US" : countryCode = "USA"; break;
                         case "CA" : countryCode = "CAN"; break;
-                        default : countryCode = "(SIN INFORMACION)"; break;
+                        default : countryCode = ""; break;
                     }
 
                     sql = "SELECT nei_code, description FROM erp.locs_bol_nei_zip_code WHERE zip_code = '" + zipCode + "';";
@@ -1033,10 +1043,11 @@ public class SDbShipment extends SDbRegistryUser{
                     }
 
                     SBolLocations loc = new SBolLocations();
+                    loc.setFreight(child.getPkRowId() == 1);
                     loc.setLocationType("Destino");
                     loc.setLocationId(locationId);
                     loc.setShiptFolios(child.getShipmentOrderFolio() + "");
-                    loc.setFiscalId((!child.getDbmsCustomerTaxId().isEmpty() ? child.getDbmsCustomerTaxId() : "(SIN RFC)" ));
+                    loc.setFiscalId((child.getDbmsCustomerTaxId()));
                     loc.setNameFiscalId(child.getDbmsCustomer());
                     loc.setLocalityCode(localityCode);
                     loc.setLocality(localityName);
@@ -1081,8 +1092,10 @@ public class SDbShipment extends SDbRegistryUser{
             moBolShip.setTicket(mnTicketId);
             moBolShip.setOrigLocId(confSms.getWebLocationId());
             moBolShip.setShipperFiscalId(shipper.getFiscalId());
+            /* Isabel Servín 12/04/2022: RFC para pruebas */
+            //moBolShip.setShipperFiscalId("MISC491214B86");
             moBolShip.setPlate(msVehiclePlate);
-            moBolShip.setTrailerPlate(msTrailerPlate.isEmpty() ? "(SIN REMOLQUE)" : msTrailerPlate);
+            moBolShip.setTrailerPlate(msTrailerPlate);
             moBolShip.setTotWei(mdKilograms);
             moBolShip.setCurrency("MXN");
             
@@ -1091,11 +1104,10 @@ public class SDbShipment extends SDbRegistryUser{
             if (resultSet.next()) {
                 moBolShip.setProviderCode(resultSet.getString(1));
             }
-            else {
-                moBolShip.setProviderCode("(SIN INFORMACIÓN)");
-            }
             
             processChildRows(session);
+            /* Isabel Servín 12/04/2022: Para pruebas, obtener el JSON antes de ser enviado */
+//            moBolShip.encodeJson();
         }
         catch(Exception e) {
             SLibUtils.printException(this, e);

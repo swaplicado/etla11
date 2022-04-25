@@ -62,6 +62,7 @@ public abstract class SReportHtml {
             "h1, h2 {\n" +
             "  font-family: Helvetica, Geneva, Arial,\n" +
             "        SunSans-Regular, sans-serif }\n" +
+            ".empresa{background-color: turquoise}\n" +
             "address {\n" +
             "  margin-top: 1em;\n" +
             "  padding-top: 1em;\n" +
@@ -179,7 +180,7 @@ public abstract class SReportHtml {
                        encabezado++; 
                        html += "<br>\n" +
                             "<hr>\n" +
-                            "<h2>" + SLibUtils.textToHtml(resultSetUsb.getString(nomUsrBas)) + "</h2>" +
+                            "<h2 class=\"empresa\">" + SLibUtils.textToHtml(resultSetUsb.getString(nomUsrBas)) + "</h2>" +
                             "<table>\n" +
                             "    <tr>\n" ;
                        html += "        <th>Producto</th>\n" +
@@ -234,7 +235,7 @@ public abstract class SReportHtml {
                             if (usuarioBas == 0){
                                 html += "<br>\n" +
                                     "<hr>\n" +
-                                    "<h2>" + SLibUtils.textToHtml(resultSetUsb.getString(nomUsrBas)) + "</h2>\n" ;
+                                    "<h2 class=\"empresa\">" + SLibUtils.textToHtml(resultSetUsb.getString(nomUsrBas)) + "</h2>\n" ;
                                 usuarioBas++;
                             }
                             html += "<h3>" + SLibUtils.textToHtml(resultSetPro.getString(nomPro)) + "</h3>\n" +

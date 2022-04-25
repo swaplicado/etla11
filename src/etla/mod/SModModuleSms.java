@@ -31,6 +31,7 @@ import etla.mod.sms.view.SViewCrew;
 import etla.mod.sms.view.SViewForkliftDriver;
 import etla.mod.sms.view.SViewShipment;
 import etla.mod.sms.view.SViewShipmentByPeriod;
+import etla.mod.sms.view.SViewShipmentLog;
 import etla.mod.sms.view.SViewShipper;
 import javax.swing.JMenu;
 import sa.lib.SLibConsts;
@@ -283,6 +284,9 @@ public class SModModuleSms extends SGuiModule {
                     default:
                         miClient.showMsgBoxError(SLibConsts.ERR_MSG_OPTION_UNKNOWN);
                 }
+                break;
+            case SModConsts.S_SHIPT_LOG:
+                view = new SViewShipmentLog(miClient, "Bitácora envío de información embarque");
                 break;
             case SModConsts.SU_SHIPPER:
                 view = new SViewShipper(miClient, "Transportistas");

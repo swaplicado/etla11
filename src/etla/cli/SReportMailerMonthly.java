@@ -51,7 +51,7 @@ public class SReportMailerMonthly {
     private static final int ARG_REP_TYPE = 1;
     private static final int ARG_MAIL_TO = 2;
     private static final int ARG_MAIL_BCC = 3;
-    private static final String DEF_MAIL_TO = "sflores@swaplicado.com.mx;isabel_servin1992@hotmail.com";
+    private static final String DEF_MAIL_TO = "sflores@swaplicado.com.mx;isabel.garcia@swaplicado.com.mx";
     private static final String DEF_MAIL_BCC = "floresgtz@hotmail.com";
     private static final HashMap<String, String> ReportTypesMap = new HashMap<>();
     
@@ -74,7 +74,7 @@ public class SReportMailerMonthly {
         try {
             // Definir los argumentos del programa:
             
-            String systemType = SYS_TYPE_ETL;
+            String systemType = SYS_TYPE_SOM;
             String reportType = REP_TYPE_OUT;
             String mailTo = DEF_MAIL_TO;
             String mailBcc = DEF_MAIL_BCC;
@@ -139,6 +139,14 @@ public class SReportMailerMonthly {
                     bd, // TODO: oportunidad de mejora al parametrizar esta constante
                     (String) configXml.getAttribute(SUtilConfigXml.ATT_USR_NAME).getValue(),
                     (String) configXml.getAttribute(SUtilConfigXml.ATT_USR_PSWD).getValue());
+            
+            /* Isabel Servín 19/04/2022: para pruebas desde localhost */
+//            int result = database.connect(
+//                    "192.168.1.233",
+//                    "3306",
+//                    bd, 
+//                    "root",
+//                    "msroot");
 
             if (result != SDbConsts.CONNECTION_OK) {
                 throw new Exception(SDbConsts.ERR_MSG_DB_CONNECTION);
@@ -177,13 +185,13 @@ public class SReportMailerMonthly {
             
             // Generar el asunto del correo-e:
             
-            String mailSubject = systemType.equals(SYS_TYPE_ETL) ? "[SIIE] " : "[" + SYS_TYPE_SOM + "] ";
-            String mailTitle = ReportTypesMap.get(reportType) + " mensuales báscula al " + SLibUtils.DateFormatDate.format(new Date());
+            String mailSubject = systemType.equals(SYS_TYPE_ETL) ? "[SIIE] " : "[REVUELTA] ";
+            String mailTitle = ReportTypesMap.get(reportType) + " mensuales al " + SLibUtils.DateFormatDate.format(new Date());
             mailSubject += mailTitle;
 
             // Generar el cuerpo del correo-e en formato HTML:
 
-            String mailBody = SReportMailerMonthlyHtml.generateReportHtml(connection, reportType, mailTitle);
+            String mailBody = SReportMailerMonthlyHtml.generateReportHtml(connection, reportType, systemType.equals(SYS_TYPE_ETL) ? "SIIE: " : "Revuelta: " + mailTitle);
             
             
             // Preparar los destinatarios del correo-e:

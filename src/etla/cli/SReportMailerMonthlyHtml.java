@@ -19,7 +19,7 @@ import sa.lib.SLibUtils;
  * @author Isabel Servín
  */
 public abstract class SReportMailerMonthlyHtml {
-
+    
     public static String generateReportHtml(final Connection connection, final String reportType, final String mailSubject) throws Exception {
         // Define inicio y fin del reporte (hoy a menos 3 años)
         Date today = new Date();
@@ -63,6 +63,7 @@ public abstract class SReportMailerMonthlyHtml {
             "h1, h2 {\n" +
             "  font-family: Helvetica, Geneva, Arial,\n" +
             "        SunSans-Regular, sans-serif }\n" +
+            "h2 { background-color: turquoise}" +
             "address {\n" +
             "  margin-top: 1em;\n" +
             "  padding-top: 1em;\n" +
@@ -93,9 +94,18 @@ public abstract class SReportMailerMonthlyHtml {
         
         // Cuerpo del HTML:
         
+        Statement statementHour = connection.createStatement();
+        String sqlHour = "SELECT HOUR(NOW()), MINUTE(NOW());";
+        ResultSet resultSetHour = statementHour.executeQuery(sqlHour);
+        String hour = "";
+        String minute = "";
+        if (resultSetHour.next()) {
+            hour = resultSetHour.getString(1);
+            minute = resultSetHour.getString(2).length() == 1 ? "0" + resultSetHour.getString(2) : resultSetHour.getString(2);
+        }
         html += "<body>\n";
         html += "<h1>" + SLibUtils.textToHtml(mailSubject) + "</h1>\n";
-        html += "Hora de corte: 12:00 hr" + "\n";
+        html += "Hora de corte: " + hour + ":" + minute + " hrs." + "\n";
         
         /* ACTUALIZACIÓN 09/12/2020: anteriormente no se agrupaban las tablas por asociados de negocio,
         * a partir de ahora si se realizará esta agrupación
@@ -177,7 +187,8 @@ public abstract class SReportMailerMonthlyHtml {
 
                 //Creación y llenado de la tabla HTML
                 //Excluye las tablas totalmente vacias
-                if (totYear != 0 || totLastYear != 0 || totAncestorYear != 0) {
+                //Isabel Servín 22/04/2022: se comentó para que no aparezcan las tablas unicámente con información de hace 2 años
+                if (totYear != 0 || totLastYear != 0 /*|| totAncestorYear != 0*/) {
                     //Cabecera
                     html += "<h3>" + SLibUtils.textToHtml(resultSetPro.getString(nomPro)) + "</h3>" +
                             "<table>\n" +

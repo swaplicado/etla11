@@ -23,6 +23,8 @@ public class SDbShipmentLog extends SDbRegistryUser {
     protected int mnPkShipmentLogId;
     protected int mnFileType;
     protected String msMail;
+    protected String msCode;
+    protected String msMessage;
     protected String msResponse;
     protected int mnFkShipmentId;
     protected int mnFkUserId;
@@ -39,6 +41,8 @@ public class SDbShipmentLog extends SDbRegistryUser {
     public void setPkShipmentLogId(int n) { mnPkShipmentLogId = n; }
     public void setFileType(int n) { mnFileType = n; }
     public void setMail(String s) { msMail = s; }
+    public void setCode(String s) { msCode = s; }
+    public void setMessage(String s) { msMessage = s; }
     public void setResponse(String s) { msResponse = s; }
     public void setFkShipmentId(int n) { mnFkShipmentId = n; }
     public void setFkUserId(int n) { mnFkUserId = n; }
@@ -48,6 +52,8 @@ public class SDbShipmentLog extends SDbRegistryUser {
     public int getPkShipmentLogId() { return mnPkShipmentLogId; }
     public int getFileType() { return mnFileType; }
     public String getMail() { return msMail; }
+    public String getCode() { return msCode; }
+    public String getMessage() { return msMessage; }
     public String getResponse() { return msResponse; }
     public int getFkShipmentId() { return mnFkShipmentId; }
     public int getFkUserId() { return mnFkUserId; }
@@ -74,6 +80,8 @@ public class SDbShipmentLog extends SDbRegistryUser {
         mnPkShipmentLogId = 0;
         mnFileType = 0;
         msMail = "";
+        msCode = "";
+        msMessage = "";
         msResponse = "";
         mnFkShipmentId = 0;
         mnFkUserId = 0;
@@ -125,6 +133,8 @@ public class SDbShipmentLog extends SDbRegistryUser {
             mnPkShipmentLogId = resultSet.getInt("id_shipt_log");
             mnFileType = resultSet.getInt("file_tp");
             msMail = resultSet.getString("mail");
+            msCode = resultSet.getString("code");
+            msMessage = resultSet.getString("message");
             msResponse = resultSet.getString("response");
             mnFkShipmentId = resultSet.getInt("fk_shipt");
             mnFkUserId = resultSet.getInt("fk_usr");
@@ -149,6 +159,8 @@ public class SDbShipmentLog extends SDbRegistryUser {
                 mnPkShipmentLogId + ", " + 
                 mnFileType + ", " + 
                 "'" + msMail + "', " + 
+                "'" + msCode + "', " + 
+                "'" + msMessage + "', " + 
                 "'" + msResponse + "', " + 
                 mnFkShipmentId + ", " + 
                 mnFkUserId + ", " + 
@@ -160,6 +172,8 @@ public class SDbShipmentLog extends SDbRegistryUser {
 //                "id_shipt_log = " + mnPkShipmentLogId + ", " +
                 "file_tp = " + mnFileType + ", " +
                 "mail = '" + msMail + "', " +
+                "code = '" + msCode + "', " +
+                "message = '" + msMessage + "', " +
                 "response = '" + msResponse + "', " +
                 "fk_shipt = " + mnFkShipmentId + ", " +
                 "fk_usr = " + mnFkUserId + ", " +
@@ -180,6 +194,8 @@ public class SDbShipmentLog extends SDbRegistryUser {
         registry.setPkShipmentLogId(this.getPkShipmentLogId());
         registry.setFileType(this.getFileType());
         registry.setMail(this.getMail());
+        registry.setCode(this.getCode());
+        registry.setMessage(this.getMessage());
         registry.setResponse(this.getResponse());
         registry.setFkShipmentId(this.getFkShipmentId());
         registry.setFkUserId(this.getFkUserId());

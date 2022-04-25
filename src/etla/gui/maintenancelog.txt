@@ -1,4 +1,14 @@
 ================================================================================
+2022-04-25, 1.1 016.0
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Creación de la vista de la bitácora de envío de información de embarques.
+2) Se agregaron los campos código y mensaje en la bitácora de envío de información de embarques.
+3) Se agregó el campo booleano "flete" en la generación del JSON para el CPT.
+4) Se dejaron los campos vacios en los campos que no contienen información en el JSON para el CPT.
+5) Cambios generales en las clases del envío automatico del reporte de entradas y salidas.
+
+================================================================================
 2022-04-18, 1.1 015.3
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------

@@ -33,6 +33,7 @@ public class SBolLocations {
     protected String sStateCode;
     protected String sCountryCode;
     protected String sZipCode;
+    protected boolean bFreight;
     
     protected HashMap<String, String> moNeighborhoodsMap;
     
@@ -56,6 +57,7 @@ public class SBolLocations {
         sStateCode = "";
         sCountryCode = "";
         sZipCode = "";
+        bFreight = false;
         
         maMerchandises = new ArrayList<>();
     }    
@@ -77,6 +79,7 @@ public class SBolLocations {
     public void setStateCode(String s) { sStateCode = s; }
     public void setCountryCode(String s) { sCountryCode = s; }
     public void setZipCode(String s) { sZipCode = s; }
+    public void setFreight(boolean b) { bFreight = b; }
     
     public void setNeighborhoodsMap(HashMap<String, String> o) { moNeighborhoodsMap = o; }
     
@@ -99,6 +102,7 @@ public class SBolLocations {
     public String getStateCode() { return sStateCode; }
     public String getCountryCode() { return sCountryCode; }
     public String getZipCode() { return sZipCode; }
+    public boolean getFreight() { return bFreight; }
     
     public HashMap<String, String> getNeighborhoodsMap() { return moNeighborhoodsMap; }
     
@@ -110,6 +114,7 @@ public class SBolLocations {
         loc.put("rfcRemitenteDestinatario", sFiscalId);
         loc.put("nombreRFC", sNameFiscalId);
         loc.put("talones", sShiptFolios);
+        loc.put("flete", bFreight);
         
         JSONObject add = new JSONObject();
         add.put("calle", sStreet);
