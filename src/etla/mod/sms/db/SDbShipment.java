@@ -14,7 +14,7 @@ import etla.mod.SModConsts;
 import etla.mod.SModSysConsts;
 import etla.mod.cfg.db.SDbConfig;
 import etla.mod.etl.db.SEtlConsts;
-import static etla.mod.etl.db.SEtlProcess.createConnection;
+import etla.mod.etl.db.SEtlProcess;
 import etla.mod.sms.bol.CPTLoginResponse;
 import etla.mod.sms.bol.SBolLocations;
 import etla.mod.sms.bol.SBolMerchandises;
@@ -673,7 +673,7 @@ public class SDbShipment extends SDbRegistryUser{
     
     private Statement getStatementSiie(SGuiSession session) throws Exception {
         SDbConfig config = (SDbConfig) session.getConfigSystem();
-        Connection connectionSiie = createConnection(
+        Connection connectionSiie = SEtlProcess.createConnection(
                 SEtlConsts.DB_MYSQL, 
                 config.getSiieHost(), 
                 config.getSiiePort(), 
@@ -682,7 +682,7 @@ public class SDbShipment extends SDbRegistryUser{
                 config.getSiiePassword());
         
         /* Isabel Servín 30/03/2022: Conexion para pruebas desde localhost a siie de cartró */
-//        Connection connectionSiie = createConnection(
+//        Connection connectionSiie = SEtlProcess.createConnection(
 //                SEtlConsts.DB_MYSQL, 
 //                "10.83.32.129", 
 //                3306, 
@@ -734,10 +734,9 @@ public class SDbShipment extends SDbRegistryUser{
         try {
             SDbConfigSms confSms = new SDbConfigSms();
             confSms.read(session, new int[] { 1 });
-            if (loginCPT(confSms) == 200) {
-            
-                SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
-                if (shipper.isWeb()) {
+            SDbShipper shipper = (SDbShipper) session.readRegistry(SModConsts.SU_SHIPPER, new int[] { mnFkShipperId });
+            if (shipper.isWeb()) {
+                if (loginCPT(confSms) == 200) {
                     String url = confSms.getWebUrl() + "requestdocument";
                     URL obj = new URL(url);
                     HttpURLConnection con = (HttpURLConnection) obj.openConnection();
