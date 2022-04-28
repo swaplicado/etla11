@@ -80,6 +80,7 @@ public abstract class SEtlProcessCatCustomers {
         
         //dataBizPartnerCustomerConfig.setPkCustomerId(...); // set by business partner
         dataBizPartnerCustomerConfig.setIsSignRestricted(false);
+        dataBizPartnerCustomerConfig.setIsSignImmex(false);
         dataBizPartnerCustomerConfig.setIsFreeDiscountDoc(false);
         dataBizPartnerCustomerConfig.setIsFreeCommissions(false);
         dataBizPartnerCustomerConfig.setIsDeleted(false);
