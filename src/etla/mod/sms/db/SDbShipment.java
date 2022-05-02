@@ -74,6 +74,11 @@ public class SDbShipment extends SDbRegistryUser{
     protected double mdKilograms;
     protected String msComments;
     protected int mnTicketId;
+    protected boolean mbValActivated;
+    protected boolean mbValRevueltaConnection;
+    protected boolean mbValTicketRevuelta;
+    protected boolean mbValTicketDuplicated;
+    protected boolean mbValRevueltaData;
     protected boolean mbAnnulled;
     /*
     protected boolean mbDeleted;
@@ -185,6 +190,11 @@ public class SDbShipment extends SDbRegistryUser{
     public void setKilograms(double d) { mdKilograms = d; }
     public void setComments(String s) { msComments = s; }
     public void setTicketId(int n) { mnTicketId = n; }
+    public void setValActivated(boolean b) { mbValActivated = b; }
+    public void setValRevueltaConnection(boolean b) { mbValRevueltaConnection = b; }
+    public void setValTicketRevuelta(boolean b) { mbValTicketRevuelta = b; }
+    public void setValTicketDuplicated(boolean b) { mbValTicketDuplicated = b; }
+    public void setValRevueltaData(boolean b) { mbValRevueltaData = b; }
     public void setAnnulled(boolean b) { mbAnnulled = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
@@ -222,6 +232,11 @@ public class SDbShipment extends SDbRegistryUser{
     public double getKilograms() { return mdKilograms; }
     public String getComments() { return msComments; }
     public int getTicketId() { return mnTicketId; }
+    public boolean isValActivated() { return mbValActivated; }
+    public boolean isValRevueltaConnection() { return mbValRevueltaConnection; }
+    public boolean isValTicketRevuelta() { return mbValTicketRevuelta; }
+    public boolean isValTicketDuplicated() { return mbValTicketDuplicated; }
+    public boolean isValRevueltaData() { return mbValRevueltaData; }
     public boolean isAnnulled() { return mbAnnulled; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
@@ -280,6 +295,11 @@ public class SDbShipment extends SDbRegistryUser{
         mdKilograms = 0;
         msComments = "";
         mnTicketId = 0;
+        mbValActivated = false;
+        mbValRevueltaConnection = false;
+        mbValTicketRevuelta = false;
+        mbValTicketDuplicated = false;
+        mbValRevueltaData = false;
         mbAnnulled = false;
         mbDeleted = false;
         mbSystem = false;
@@ -369,6 +389,11 @@ public class SDbShipment extends SDbRegistryUser{
             mdKilograms = resultSet.getDouble("kg");
             msComments = resultSet.getString("comments");
             mnTicketId = resultSet.getInt("ticket_id");
+            mbValActivated = resultSet.getBoolean("b_val_act");
+            mbValRevueltaConnection = resultSet.getBoolean("b_val_rev_con");
+            mbValTicketRevuelta = resultSet.getBoolean("b_val_tic_rev");
+            mbValTicketDuplicated = resultSet.getBoolean("b_val_tic_dup");
+            mbValRevueltaData = resultSet.getBoolean("b_val_rev_data");
             mbAnnulled = mbOriginalAnnulled = resultSet.getBoolean("b_ann"); // preserve original value
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
@@ -472,6 +497,11 @@ public class SDbShipment extends SDbRegistryUser{
                 SLibUtils.round(mdKilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " + 
                 "'" + msComments + "', " + 
                 mnTicketId + ", " + 
+                (mbValActivated ? 1 : 0) + ", " + 
+                (mbValRevueltaConnection ? 1 : 0) + ", " + 
+                (mbValTicketRevuelta ? 1 : 0) + ", " + 
+                (mbValTicketDuplicated ? 1 : 0) + ", " + 
+                (mbValRevueltaData ? 1 : 0) + ", " + 
                 (mbAnnulled ? 1 : 0) + ", " + 
                 (mbDeleted ? 1 : 0) + ", " + 
                 (mbSystem ? 1 : 0) + ", " + 
@@ -514,6 +544,11 @@ public class SDbShipment extends SDbRegistryUser{
                 "kg = " + SLibUtils.round(mdKilograms, SLibUtils.getDecimalFormatQuantity().getMaximumFractionDigits()) + ", " +   
                 "comments = '" + msComments + "', " +
                 "ticket_id = " + mnTicketId + ", " +
+                "b_val_act = " + (mbValActivated ? 1 : 0) + ", " +
+                "b_val_rev_con = " + (mbValRevueltaConnection ? 1 : 0) + ", " +
+                "b_val_tic_rev = " + (mbValTicketRevuelta ? 1 : 0) + ", " +
+                "b_val_tic_dup = " + (mbValTicketDuplicated ? 1 : 0) + ", " +
+                "b_val_rev_data = " + (mbValRevueltaData ? 1 : 0) + ", " +
                 "b_ann = " + (mbAnnulled ? 1 : 0) + ", " +
                 "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                 "b_sys = " + (mbSystem ? 1 : 0) + ", " +
@@ -583,6 +618,11 @@ public class SDbShipment extends SDbRegistryUser{
         registry.setKilograms(this.getKilograms());
         registry.setComments(this.getComments());
         registry.setTicketId(this.getTicketId());
+        registry.setValActivated(this.isValActivated());
+        registry.setValRevueltaConnection(this.isValRevueltaConnection());
+        registry.setValTicketRevuelta(this.isValTicketRevuelta());
+        registry.setValTicketDuplicated(this.isValTicketDuplicated());
+        registry.setValRevueltaData(this.isValRevueltaData());
         registry.setAnnulled(this.isAnnulled());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());

@@ -73,6 +73,13 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private JButton jbRowDown;
     private JButton jbRowUp;
     
+    private int mnTicketValidatedId;
+    private boolean mbTicketValidated;
+    private boolean mbRevueltaConnection;
+    private boolean mbTicketRevuelta;
+    private boolean mbTicketDuplicated;
+    private boolean mbRevueltaData;
+    
     /**
      * Creates new form SFormShipmentOrder
      * @param client
@@ -124,6 +131,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jPanel16 = new javax.swing.JPanel();
         jlShipper = new javax.swing.JLabel();
         moKeyShipper = new sa.lib.gui.bean.SBeanFieldKey();
+        jbEdit = new javax.swing.JButton();
         jPanel17 = new javax.swing.JPanel();
         jlVehicleType = new javax.swing.JLabel();
         moKeyVehicleType = new sa.lib.gui.bean.SBeanFieldKey();
@@ -306,6 +314,11 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
 
         moKeyShipper.setPreferredSize(new java.awt.Dimension(500, 23));
         jPanel16.add(moKeyShipper);
+
+        jbEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/etla/gui/img/icon_std_edit.gif"))); // NOI18N
+        jbEdit.setToolTipText("Editar información obtenida de Revuelta");
+        jbEdit.setPreferredSize(new java.awt.Dimension(23, 23));
+        jPanel16.add(jbEdit);
 
         jPanel6.add(jPanel16);
 
@@ -648,6 +661,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     private javax.swing.JPanel jPanel9;
     private javax.swing.JButton jbAddComment;
     private javax.swing.JButton jbClearRows;
+    private javax.swing.JButton jbEdit;
     private javax.swing.JButton jbRowAdd;
     private javax.swing.JButton jbRowRemove;
     private javax.swing.JButton jbShowRows;
@@ -738,7 +752,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moKeyVehicleType.setKeySettings(miClient, SGuiUtils.getLabelName(jlVehicleType), true);
         moTextVehiclePlate.setTextSettings(SGuiUtils.getLabelName(jlVehiclePlate), 25, 0);
         moTextDriverName.setTextSettings(SGuiUtils.getLabelName(jlDriverName), 50, 0);
-        moTextDriverPhone.setTextSettings(SGuiUtils.getLabelName(jlDriverPhone), 50, 0);
+        moTextDriverPhone.setTextSettings(SGuiUtils.getLabelName(jlDriverPhone), 50, 10);
         moTextTrailerPlate.setTextSettings(SGuiUtils.getLabelName(jlTrailerPlate), 25, 0);
         moDateRows.setDateSettings(miClient, SGuiUtils.getLabelName(jlDateRows), false);
         moDateRows.setNextButton(jbShowRows);
@@ -849,6 +863,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         mvFormGrids.add(moGridAvailableRows);
         mvFormGrids.add(moGridSelectedRows);
         */
+        
+        jbValidateTicket.setEnabled(moConfigSms.isWmTicketValidation());
+        mnTicketValidatedId = 0;
+        mbTicketValidated = false;
     }
     
     private void showShipmentInfo(){
@@ -928,30 +946,91 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     }
     
     private void actionPerfomedValidateTicket() {
+        validateTicket(true);
+    }
+    
+    private void validateTicket(boolean showBoxInformation) {
         try {
-            if (moSmsEtl != null) {
-                moSmsEtl.importRevueltaWmTickets(moIntTicketId.getText());
-            }
-            
-            SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), moIntTicketId.getValue()) }, SDbConsts.MODE_STEALTH);
-            
-            if (wmTicket.isRegistryNew()) {
-                moKeyShipper.resetField();
-                moTextVehiclePlate.resetField();
-                moTextDriverName.resetField();
-                moTextDriverPhone.resetField();
-                miClient.showMsgBoxInformation("No se encontró el boleto '" + moIntTicketId.getText() + "'.");
-            }
-            else {
-                moKeyShipper.setValue(new int [] { SSmsUtils.getShipperId(miClient.getSession(), wmTicket.getCarrierId()) });
-                moTextVehiclePlate.setText(wmTicket.getVehiclePlate());
-                moTextDriverName.setText(wmTicket.getDriverName());
-                moTextDriverPhone.setText("");
+            if (moConfigSms.isWmTicketValidation()) {
+                mnTicketValidatedId = moIntTicketId.getValue();
+                moSmsEtl = new SSmsEtl(miClient.getSession());
+                mbRevueltaConnection = moSmsEtl.isRevueltaConnection();
+                mbTicketValidated = true;
+                mbRevueltaData = false;
+                if (mbRevueltaConnection) {
+                    moSmsEtl.importRevueltaWmTickets(mnTicketValidatedId);
+                    mbTicketRevuelta = moSmsEtl.isTicketRevuelta();
+                    if (mbTicketRevuelta) {
+                        if (showBoxInformation) {
+                            if (miClient.showMsgBoxConfirm("Se pordra perder alguna de la información previamente capturada.\n¿Desea continuar?") == JOptionPane.OK_OPTION) {
+                                SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), mnTicketValidatedId) }, SDbConsts.MODE_STEALTH);
+                                int shipperId = SSmsUtils.getShipperId(miClient.getSession(), wmTicket.getCarrierId());
+                                if (shipperId != 0) {
+                                    moKeyShipper.setValue(new int [] { shipperId });
+                                    moKeyShipper.setEnabled(false);
+                                }
+                                moTextVehiclePlate.setText(wmTicket.getVehiclePlate());
+                                moTextDriverName.setText(wmTicket.getDriverName());
+
+                                moTextVehiclePlate.setEnabled(false);
+                                moTextDriverName.setEnabled(false);
+                                mbRevueltaData = true;
+                            }
+                        }
+                    }
+                    else {
+                        if (showBoxInformation) {
+                            miClient.showMsgBoxInformation("No se encontró el boleto '" + moIntTicketId.getText() + "' en la base de datos de Revuelta.");
+                        }
+                    }
+                }
+                else {
+                    if (showBoxInformation){
+                        miClient.showMsgBoxInformation("No se pudo establecer una conexión a báscula de Revuelta.\nFavor de contactar al administrador del sistema.");
+                    }
+                }
             }
         }
         catch (Exception e) {
             SLibUtils.showException(this, e);
         }
+    }
+    
+    private boolean confirmTicketDuplicated() {
+        try {
+            mbTicketDuplicated = false;
+            String sql = "SELECT number, shipt_date FROM s_shipt " +
+                    "WHERE ticket_id = " + moIntTicketId.getValue() + " " +
+                    "ORDER BY shipt_date DESC LIMIT 1;";
+            ResultSet resultSet = miClient.getSession().getStatement().executeQuery(sql);
+            if (resultSet.next()) {
+                mbTicketDuplicated = true;
+                return miClient.showMsgBoxConfirm("El boleto ya está asignado en el embarque con folio " + resultSet.getString(1) + " con fecha " + resultSet.getDate(2) + "\n" +
+                        "¿Desea continuar?") == JOptionPane.OK_OPTION;
+            }
+        }
+        catch (Exception e) {
+            miClient.showMsgBoxError(e.getMessage()); 
+        }
+        return true;
+    }
+    
+    private void validateRevueltaInformation() {
+        /* Isabel Servín 02/05/2022: valida que la indormación capturada coincida con la del embarque */
+//        try {
+//            if (mbTicketRevuelta && mnTicketValidatedId != 0 && moConfigSms.isWmTicketValidation()) {
+//                SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), moIntTicketId.getValue()) }, SDbConsts.MODE_STEALTH);
+//                if (SSmsUtils.getShipperId(miClient.getSession(), wmTicket.getCarrierId()) == 0)
+//                    mbRevueltaData =  moTextVehiclePlate.getValue().equals(wmTicket.getVehiclePlate()) &&
+//                            moTextDriverName.getValue().equals(wmTicket.getDriverName());
+//                else mbRevueltaData = (moKeyShipper.getValue()[0] == SSmsUtils.getShipperId(miClient.getSession(), wmTicket.getCarrierId())) &&
+//                        moTextVehiclePlate.getValue().equals(wmTicket.getVehiclePlate()) &&
+//                        moTextDriverName.getValue().equals(wmTicket.getDriverName());
+//            }
+//        }
+//        catch (Exception e) {
+//            miClient.showMsgBoxError(e.getMessage());
+//        }
     }
     
     private void actionPerformedShowRows() {
@@ -1159,6 +1238,12 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         }
     }
 
+    private void actionPerformedEdit() {
+        moKeyShipper.setEnabled(true);
+        moTextVehiclePlate.setEnabled(true);
+        moTextDriverName.setEnabled(true);
+        mbRevueltaData = false;
+    }
     
     private void itemStateChangedShipper() {
         if (moKeyShipper.getSelectedIndex() == SModSysConsts.SU_SHIPPER_NA) { //if 'N/A' is the selected item
@@ -1207,6 +1292,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jbAddComment.addActionListener(this);
         jbRowDown.addActionListener(this); 
         jbRowUp.addActionListener(this);
+        jbEdit.addActionListener(this);
         moKeyShipper.addItemListener(this);
         moKeyVehicleType.addItemListener(this);
     }
@@ -1221,6 +1307,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         jbAddComment.removeActionListener(this);
         jbRowDown.removeActionListener(this); 
         jbRowUp.removeActionListener(this);
+        jbEdit.removeActionListener(this); 
         moKeyShipper.removeItemListener(this);
         moKeyVehicleType.removeItemListener(this);
     }
@@ -1237,6 +1324,8 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         miClient.getSession().populateCatalogue(moKeyShipper, SModConsts.SU_SHIPPER, configSms.getShipperConfig(), null);
         miClient.getSession().populateCatalogue(moKeyVehicleType, SModConsts.SU_VEHIC_TP, 0, null);
         miClient.getSession().populateCatalogue(moKeyComment, SModConsts.SU_COMMENT, 0, null);
+        
+        moSmsEtl = null;
     }
 
     @Override
@@ -1267,6 +1356,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         moKeyForkliftDriver.setValue(new int[] { moRegistry.getFkForkliftDriverId() });
         moKeyCrew.setValue(new int[] { moRegistry.getFkCrewId() });
         moIntTicketId.setValue(moRegistry.getTicketId());
+        mbRevueltaConnection = moRegistry.isValRevueltaConnection();
+        mbTicketRevuelta = moRegistry.isValTicketRevuelta();
+        mbTicketDuplicated = moRegistry.isValTicketDuplicated();
+        mbRevueltaData = moRegistry.isValRevueltaData();
         moKeyShipper.setValue(new int[] { moRegistry.getFkShipperId() });
         moKeyVehicleType.setValue(new int[] { moRegistry.getFkVehicleTypeId() });
         moTextVehiclePlate.setValue(moRegistry.getVehiclePlate());
@@ -1309,10 +1402,6 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             
         }
         
-        if (moConfigSms.isWmTicketValidation()) {
-            moSmsEtl = new SSmsEtl(miClient.getSession());
-        }
-        
         try {
             SDbConfigAvista configAvista = ((SDbConfig) miClient.getSession().getConfigSystem()).getDbConfigAvista();
             miConnectionAvista = SEtlProcess.createConnection(
@@ -1326,6 +1415,10 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         catch (Exception e) {
             SLibUtils.showException(this, e);
         }
+        
+        moKeyShipper.setEnabled(!mbRevueltaData);
+        moTextVehiclePlate.setEnabled(!mbRevueltaData);
+        moTextDriverName.setEnabled(!mbRevueltaData);
         
         showShipmentInfo();
         addAllListeners();
@@ -1348,6 +1441,11 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         //registry.setKilograms(...);
         registry.setComments(jtaComments.getText());
         registry.setTicketId(moIntTicketId.getValue());
+        registry.setValActivated(moConfigSms.isWmTicketValidation());
+        registry.setValRevueltaConnection(mbRevueltaConnection);
+        registry.setValTicketRevuelta(mbTicketRevuelta);
+        registry.setValTicketDuplicated(mbTicketDuplicated);
+        registry.setValRevueltaData(mbRevueltaData);
         //registry.setScaleTicket1Datetime_n(...);
         //registry.setScaleTicket1Kilograms(...);
         //registry.setScaleTicket2(...);
@@ -1421,7 +1519,35 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                 }
             }
         }
+        if (validation.isValid() && moConfigSms.isWmTicketValidation()) {
+            if (moSmsEtl == null) {
+                validation = validateFormTicket();
+            }
+            else {
+                if ((!mbTicketValidated  || (mnTicketValidatedId != moIntTicketId.getValue())) && moSmsEtl.isRevueltaConnection()) {
+                    validation = validateFormTicket();
+                }
+            }
+        }
+        if (validation.isValid()) {
+            if (!confirmTicketDuplicated()) {
+                validation.setMessage("Ingrese otro boleto.");
+                validation.setComponent(moIntTicketId);
+            }
+        }
         
+        return validation;
+    }
+    
+    private SGuiValidation validateFormTicket() {
+        SGuiValidation validation = new SGuiValidation();
+        validateTicket(false);
+        if (!moSmsEtl.isTicketRevuelta()) {
+            if (miClient.showMsgBoxConfirm("No se encontró el boleto '" + moIntTicketId.getText() + "' en la base de datos de Revuelta.\n ¿Desea continuar?") != JOptionPane.OK_OPTION) {
+                validation.setMessage("Ingrese otro boleto.");
+                validation.setComponent(moIntTicketId);
+            }
+        }
         return validation;
     }
 
@@ -1453,6 +1579,9 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             }
             else if (button == jbRowUp) {
                 actionPerformedRowUp();
+            }
+            else if (button == jbEdit) {
+                actionPerformedEdit();
             }
         }
     }

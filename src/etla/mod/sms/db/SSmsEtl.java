@@ -10,6 +10,7 @@ import etla.mod.SModConsts;
 import etla.mod.SModSysConsts;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.Date;
 import sa.lib.SLibUtils;
 import sa.lib.gui.SGuiSession;
@@ -22,10 +23,13 @@ public class SSmsEtl {
 
     private final SGuiSession moSession;
     private final Connection moConnectionSiie;
-    private final Connection moConnectionRevuelta;
+    private Connection moConnectionRevuelta;
     private SDbErpDocEtlLog moLastErpDocEtlLog;
     private Date mtEtlStart;
     private Date mtMaxDocTsEdit;
+    
+    private boolean mbRevueltaConnection;
+    private boolean mbTicketRevuelta;
 
     /**
      * Creates an object to compute SMS ETL.
@@ -35,17 +39,50 @@ public class SSmsEtl {
     public SSmsEtl(final SGuiSession session) throws Exception {
         moSession = session;
         moConnectionSiie = SSmsUtils.connectToSiie(moSession);
-        moConnectionRevuelta = SSmsUtils.connectToRevuelta(moSession);
+        try {
+            moConnectionRevuelta = SSmsUtils.connectToRevuelta(moSession);
+            mbRevueltaConnection = true;
+        }
+        catch (Exception e) {
+            mbRevueltaConnection = false;
+        }
+        mbTicketRevuelta = false;
         moLastErpDocEtlLog = null;
         mtEtlStart = null;
         mtMaxDocTsEdit = null;
+        
+        if (mbRevueltaConnection) { 
+            String sql = "select * from dba.pesadas where pes_fechor >= '2022-04-29'";
+
+            int count = 0;
+            try (ResultSet resultSet = moConnectionRevuelta.createStatement().executeQuery(sql)) {
+                while (resultSet.next()) {
+                    count ++;
+                    System.out.println(count + " ↓");
+                    ResultSetMetaData metaData = resultSet.getMetaData();
+                    for(int i = 0; i < metaData.getColumnCount(); i++) {
+                        System.out.println(metaData.getColumnName(i + 1) + ": " + resultSet.getString(i + 1));
+                    }
+                    System.out.println(count + " ↑\n");
+                }
+            }
+
+            System.out.println("Resultados totales: " + count);
+            System.out.println("Fin del resultSet.");
+        }
     }
+    
+    public boolean isRevueltaConnection() { return mbRevueltaConnection; }
+    public boolean isTicketRevuelta() { return mbTicketRevuelta; }
 
     /**
      * Imports weighing machine users (companies) from Revuelta DB.
      * @throws Exception 
      */
     private void importRevueltaWmUsers() throws Exception {
+        if (moConnectionRevuelta.isClosed()) {
+            moConnectionRevuelta = SSmsUtils.connectToRevuelta(moSession);
+        }
         String sql = "SELECT Usb_ID, Usb_Nombre "
                 + "FROM dba.UsuariosBas "
                 + "ORDER BY Usb_ID";
@@ -83,6 +120,9 @@ public class SSmsEtl {
      * @throws Exception 
      */
     private void importRevueltaWmItems() throws Exception {
+        if (moConnectionRevuelta.isClosed()) {
+            moConnectionRevuelta = SSmsUtils.connectToRevuelta(moSession);
+        }
         String sql = "SELECT Pro_ID, Pro_Nombre "
                 + "FROM dba.Productos "
                 + "ORDER BY Pro_ID";
@@ -164,12 +204,12 @@ public class SSmsEtl {
 
     /**
      * Imports weighing machine tickets from Revuelta DB.
-     * @param ticketId Optional Revuelta ID of ticket to import. Otherwise (when empty or "0") all pending Revuelta tickets.
+     * @param ticketId Optional Revuelta ID of ticket to import. Otherwise (when 0) all pending Revuelta tickets.
      * @throws Exception 
      */
-    public void importRevueltaWmTickets(final String ticketId) throws Exception {
+    public void importRevueltaWmTickets(final int ticketId) throws Exception {
         String sqlRev;
-        if (ticketId.isEmpty() || ticketId.equals("0")) {
+        if (ticketId == 0) {
             // Si el argumento ticektId está vacío o es 0 se hace un importado masivo desde la ultima fecha en la que se realizó:
             obtainLastErpDocEtlLog();
             
@@ -189,9 +229,13 @@ public class SSmsEtl {
                     + "FROM dba.Pesadas "
                     + "WHERE Pes_ID = " + ticketId;
         }
+        if (moConnectionRevuelta.isClosed()) {
+            moConnectionRevuelta = SSmsUtils.connectToRevuelta(moSession);
+        }
         
         try (ResultSet resultSetRev = moConnectionRevuelta.createStatement().executeQuery(sqlRev)) {
             while (resultSetRev.next()) {
+                mbTicketRevuelta = true;
                 
                 // Permitir visibilidad del progreso de importación de boletos Revuelta:
                 System.out.println("Importing Revuelta ticket " + resultSetRev.getString("Pes_ID") + ", " + resultSetRev.getString("Pes_FecHor") + "...");
@@ -257,7 +301,7 @@ public class SSmsEtl {
      */
     private void importSiieDocs() throws Exception {
         mtMaxDocTsEdit = new Date(0);
-
+        
         String sql = "SELECT d.id_year, d.id_doc, d.fid_ct_dps, d.fid_cl_dps, "
                 + "d.num_ser, d.num, d.dt, d.ts_edit, b.id_bp, b.bp, "
                 + "SUM(de.weight_gross) AS _weight_gross "
@@ -365,7 +409,7 @@ public class SSmsEtl {
         obtainLastErpDocEtlLog(); // must be invoked at the begining!
         importRevueltaWmUsers();
         importRevueltaWmItems();
-        importRevueltaWmTickets("");
+        importRevueltaWmTickets(0);
         importSiieDocs();
         createErpDocEtlLog(); // must be invoked at the end!
     }
