@@ -44,13 +44,16 @@ public class SReportMailerMonthly {
     public static final String SYS_TYPE_ETL = "ETL";
     public static final String SYS_TYPE_SOM = "SOM";
     
+    public static final String REP_COMP = "AMEU=AME;ACTH=AETH"; 
+    
     public static final String REP_TYPE_IN = "E";
     public static final String REP_TYPE_OUT = "S";
     
     private static final int ARG_SYS_TYPE = 0;
     private static final int ARG_REP_TYPE = 1;
-    private static final int ARG_MAIL_TO = 2;
-    private static final int ARG_MAIL_BCC = 3;
+    private static final int ARG_COMP = 2;
+    private static final int ARG_MAIL_TO = 3;
+    private static final int ARG_MAIL_BCC = 4;
     private static final String DEF_MAIL_TO = "sflores@swaplicado.com.mx;isabel.garcia@swaplicado.com.mx";
     private static final String DEF_MAIL_BCC = "floresgtz@hotmail.com";
     private static final HashMap<String, String> ReportTypesMap = new HashMap<>();
@@ -76,6 +79,7 @@ public class SReportMailerMonthly {
             
             String systemType = SYS_TYPE_SOM;
             String reportType = REP_TYPE_OUT;
+            String companies = REP_COMP;
             String mailTo = DEF_MAIL_TO;
             String mailBcc = DEF_MAIL_BCC;
             
@@ -86,9 +90,12 @@ public class SReportMailerMonthly {
                 reportType = args[ARG_REP_TYPE];
             }
             if (args.length >= 3) {
-                mailTo = args[ARG_MAIL_TO];
+                companies = args[ARG_COMP];
             }
             if (args.length >= 4) {
+                mailTo = args[ARG_MAIL_TO];
+            }
+            if (args.length >= 5) {
                 mailBcc = args[ARG_MAIL_BCC];
             }
             
@@ -191,7 +198,7 @@ public class SReportMailerMonthly {
 
             // Generar el cuerpo del correo-e en formato HTML:
 
-            String mailBody = SReportMailerMonthlyHtml.generateReportHtml(connection, reportType, systemType.equals(SYS_TYPE_ETL) ? "SIIE: " : "Revuelta: " + mailTitle);
+            String mailBody = SReportMailerMonthlyOneYearHtml.generateReportHtml(connection, reportType, companies, systemType.equals(SYS_TYPE_ETL) ? "SIIE: " : "Revuelta: " + mailTitle);
             
             
             // Preparar los destinatarios del correo-e:
