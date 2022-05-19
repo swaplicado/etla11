@@ -52,6 +52,7 @@ public abstract class SEtlProcessCatCustomers {
         dataBizPartnerCategory.setDiotOperation("");
         dataBizPartnerCategory.setCfdiPaymentWay("");
         dataBizPartnerCategory.setCfdiCfdiUsage("");
+        dataBizPartnerCategory.setTaxRegime("");
         dataBizPartnerCategory.setIsCreditByUser(false);
         dataBizPartnerCategory.setIsGuaranteeInProcess(false);
         dataBizPartnerCategory.setIsInsuranceInProcess(false);

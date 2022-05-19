@@ -178,7 +178,6 @@ public class SEtlProcessDocInvoices {
                 + "ci.CurrentStatusKey IN (" + SEtlConsts.AVISTA_INV_STA_APP + ", " + SEtlConsts.AVISTA_INV_STA_ARC + ") AND "
                 + "ci.CustomerInvoiceTypeKey=" + SEtlConsts.AVISTA_INV_TP_INV + " "
                 + (etlPackage.InvoiceBatch == SLibConsts.UNDEFINED ? "" : "AND ci.BatchNumber=" + etlPackage.InvoiceBatch + " ")
-                //+ "AND ci.CustomerId = 500 "  // line used for debugging purposes
                 + "ORDER BY CAST(ci.Created AS DATE), ci.InvoiceNumber, ci.CustomerInvoiceKey ";
         
         rsAvistaInvoiceList = stAvistaInvoiceList.executeQuery(sql);
