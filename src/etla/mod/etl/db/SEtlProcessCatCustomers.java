@@ -28,7 +28,7 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores, Isabel Servín
+ * @author Sergio Flores, Isabel Servín, Sergio Flores
  */
 public abstract class SEtlProcessCatCustomers {
     
@@ -584,7 +584,7 @@ public abstract class SEtlProcessCatCustomers {
 
                     dataBizPartnerCustomerBranchConfig = createCustomerBranchConfig(session);
 
-                    dataBizPartnerBranch.getDbmsDataCustomerBranchConfig().add(dataBizPartnerCustomerBranchConfig);
+                    dataBizPartnerBranch.setDbmsDataCustomerBranchConfig(dataBizPartnerCustomerBranchConfig);
 
                     // Add business-partner branch to business partner:
 
@@ -647,7 +647,7 @@ public abstract class SEtlProcessCatCustomers {
                             
                             dataBizPartnerCustomerBranchConfig = createCustomerBranchConfig(session);
 
-                            dataBizPartner.getDbmsBizPartnerBranchHq().getDbmsDataCustomerBranchConfig().add(dataBizPartnerCustomerBranchConfig);
+                            dataBizPartner.getDbmsBizPartnerBranchHq().setDbmsDataCustomerBranchConfig(dataBizPartnerCustomerBranchConfig);
                         }
                         
                         if (dataBizPartner.getDbmsCategorySettingsCus().getIsDeleted()) {
