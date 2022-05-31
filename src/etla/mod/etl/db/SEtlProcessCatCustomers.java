@@ -242,7 +242,7 @@ public abstract class SEtlProcessCatCustomers {
         
         etlCatalogs = new SEtlCatalogs(session, true, false);
         
-        // Obtener la cantidad de clientes
+        // Obtain customers count from Avista invoices:
         nCount = 0;
         
         sql = "SELECT DISTINCT COUNT(*) "
@@ -623,7 +623,7 @@ public abstract class SEtlProcessCatCustomers {
                         }
                         dataBizPartner.setIsDeleted(false);
                         //dataBizPartner.setFkUserNewId(...);
-                        dataBizPartner.setFkUserEditId(/*((SDbUser) session.getUser()).getDesUserId()*/SDataConstantsSys.USRX_USER_NA); // to prevent confusion in Department of Credit
+                        //dataBizPartner.setFkUserEditId(...); // to prevent confusion in company's Department of Credit, originally editor user was set to 'NA', but, since May 2022, editor user is set automatically when BP is saved
                         //dataBizPartner.setFkUserDeleteId(...);
                         
                         if (dataBizPartner.getDbmsCategorySettingsCus() == null) {
@@ -654,9 +654,13 @@ public abstract class SEtlProcessCatCustomers {
                             dataBizPartnerCategory = dataBizPartner.getDbmsCategorySettingsCus();
                             dataBizPartnerCategory.setIsDeleted(false);
                             //dataBizPartnerCategory.setFkUserNewId(...);
-                            dataBizPartnerCategory.setFkUserEditId(/*((SDbUser) session.getUser()).getDesUserId()*/SDataConstantsSys.USRX_USER_NA); // to prevent confusion in Department of Credit
+                            //dataBizPartnerCategory.setFkUserEditId(...); // to prevent confusion in company's Department of Credit, originally editor user was set to 'NA', but, since May 2022, editor user is set automatically when BP is saved
                             //dataBizPartnerCategory.setFkUserDeleteId(...);
+                            
+                            dataBizPartnerCategory.setIsRegistryEdited(true);
                         }
+                        
+                        dataBizPartner.setIsRegistryEdited(true);
                         
                         if (dataBizPartner.save(etlPackage.ConnectionSiie) != SLibConstants.DB_ACTION_SAVE_OK) {
                             throw new Exception(SEtlConsts.MSG_ERR_SIIE_CUS_UPD + msgCustomer);
