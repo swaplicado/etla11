@@ -1,4 +1,11 @@
 ================================================================================
+2022-05-31, 1.1 018.1
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Ajustes al proceso ETL de clientes por la refactorización de las clases correspondientes de SIIE 3.2,
+en el sentido de indicar explícitamente (método setIsRegistryEdited()) cuáles registros relacionados con asociados de negocios han sufrido cambios para que efectivamente se guarden.
+
+================================================================================
 2022-05-27, 1.1 018.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
