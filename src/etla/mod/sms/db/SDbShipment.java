@@ -830,6 +830,7 @@ public class SDbShipment extends SDbRegistryUser{
 
                     SDbShipmentLog log = new SDbShipmentLog();
                     log.setFileType(2); // JSON
+                    log.setParameters(parameters); 
                     log.setCode(code == 0 ? responseCode + "" : code + "");
                     log.setMessage(message);
                     log.setResponse(response.toString());

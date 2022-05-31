@@ -58,6 +58,7 @@ public class SViewShipmentLog extends SGridPaneView {
                 + "s.shipt_date, "
                 + "IF(sl.file_tp = 1, 'MAIL', 'CPT') AS enviado_via, "
                 + "sl.mail, "
+                + "sl.parameters, "
                 + "sl.code AS " + SDbConsts.FIELD_CODE + ", "
                 + "sl.message, "
                 + "sl.response, "
@@ -79,6 +80,7 @@ public class SViewShipmentLog extends SGridPaneView {
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE, "s.shipt_date", "Fecha"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "enviado_via", "Enviado vía"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_M, "sl.mail", "Mail"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_L, "sl.parameters", "Parametros"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, SDbConsts.FIELD_CODE, SGridConsts.COL_TITLE_CODE + " CPT"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_M, "sl.message", "Descripción código CPT"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_L, "sl.response", "Respuesta CPT"));
