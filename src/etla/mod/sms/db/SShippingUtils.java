@@ -95,6 +95,8 @@ public abstract class SShippingUtils {
             row.setDbmsCountry(resultSet.getString("Country") == null || resultSet.getString("Country").toLowerCase().equals("null") ? "" : resultSet.getString("Country"));
             row.setAuxSiteLocationId(resultSet.getInt("SiteLocation"));
 
+            row.readDbmsCustomer(session);
+            
             availableRows.add(new SRowShipmentRow(row));
         }
 

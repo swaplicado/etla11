@@ -59,7 +59,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public SDbShipmentRow () {
         super(SModConsts.S_SHIPT_ROW);
     }
-
+    
     /*
      * Public methods
      */
@@ -129,7 +129,17 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public boolean isAuxDestinationCreated() { return mbAuxDestinationCreated; }
     public boolean isAuxIsRowSelected() { return mbAuxIsRowSelected; }
     public int getAuxRow() { return mnAuxRow; }
+    
+    public void readDbmsCustomer (SGuiSession session) {
+        if (mnFkCustomerId != 0) {
+            msDbmsCustomer = (String) session.readField(SModConsts.AU_CUS, new int[] { mnFkCustomerId }, SDbRegistry.FIELD_NAME);
+            SDbCustomer cus = (SDbCustomer) session.readRegistry(SModConsts.AU_CUS, new int[] { mnFkCustomerId });
+            msDbmsCustomerTaxId = cus.getTaxId();
+            msDbmsCustomerZip = cus.getZip();
+        }
+    }
 
+    
     /*
      * Overriden methods
      */
@@ -245,10 +255,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
             mnFkCustomerId = resultSet.getInt("fk_customer");
             mnFkDestinationId = resultSet.getInt("fk_destin");
 
-            msDbmsCustomer = (String) session.readField(SModConsts.AU_CUS, new int[] { mnFkCustomerId }, SDbRegistry.FIELD_NAME);
-            SDbCustomer cus = (SDbCustomer) session.readRegistry(SModConsts.AU_CUS, new int[] { mnFkCustomerId });
-            msDbmsCustomerTaxId = cus.getTaxId();
-            msDbmsCustomerZip = cus.getZip();
+            readDbmsCustomer(session);
             
             SDbDestination destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId });
             msDbmsDestination = destination.getName();

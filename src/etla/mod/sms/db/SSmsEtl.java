@@ -10,7 +10,6 @@ import etla.mod.SModConsts;
 import etla.mod.SModSysConsts;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.util.Date;
 import sa.lib.SLibUtils;
 import sa.lib.gui.SGuiSession;
@@ -50,26 +49,26 @@ public class SSmsEtl {
         moLastErpDocEtlLog = null;
         mtEtlStart = null;
         mtMaxDocTsEdit = null;
-        
-        if (mbRevueltaConnection) { 
-            String sql = "select * from dba.pesadas where pes_fechor >= '2022-04-29'";
-
-            int count = 0;
-            try (ResultSet resultSet = moConnectionRevuelta.createStatement().executeQuery(sql)) {
-                while (resultSet.next()) {
-                    count ++;
-                    System.out.println(count + " ↓");
-                    ResultSetMetaData metaData = resultSet.getMetaData();
-                    for(int i = 0; i < metaData.getColumnCount(); i++) {
-                        System.out.println(metaData.getColumnName(i + 1) + ": " + resultSet.getString(i + 1));
-                    }
-                    System.out.println(count + " ↑\n");
-                }
-            }
-
-            System.out.println("Resultados totales: " + count);
-            System.out.println("Fin del resultSet.");
-        }
+         /* Isabel Servín 15/06/2022 : Codigo para pruebas*/
+//        if (mbRevueltaConnection) { 
+//            String sql = "select * from dba.pesadas where pes_fechor >= '2022-04-29'";
+//
+//            int count = 0;
+//            try (ResultSet resultSet = moConnectionRevuelta.createStatement().executeQuery(sql)) {
+//                while (resultSet.next()) {
+//                    count ++;
+//                    System.out.println(count + " ↓");
+//                    ResultSetMetaData metaData = resultSet.getMetaData();
+//                    for(int i = 0; i < metaData.getColumnCount(); i++) {
+//                        System.out.println(metaData.getColumnName(i + 1) + ": " + resultSet.getString(i + 1));
+//                    }
+//                    System.out.println(count + " ↑\n");
+//                }
+//            }
+//
+//            System.out.println("Resultados totales: " + count);
+//            System.out.println("Fin del resultSet.");
+//        }
     }
     
     public boolean isRevueltaConnection() { return mbRevueltaConnection; }
