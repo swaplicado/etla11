@@ -2,7 +2,14 @@
 2022-06-15, 1.1 018.2
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
-1) Se agrego la lectura de los datos del cliente al momento de obtener las remisiones para evitar que el RFC del destinatario se mande vacío a CPT.
+1) Se agregó la lectura de los datos del cliente al momento de obtener las remisiones para evitar que el RFC del destinatario se mande vacío a CPT.
+
+================================================================================
+2022-06-15, 1.1 018.2
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Adaptación del formato de impresión de embarques para usarse en impresora de matriz de puntos.
+2) Adaptación provisional del método SDataDpsCfd.setTaxRegime() en el proceso ETL.
 
 ================================================================================
 2022-05-31, 1.1 018.1
