@@ -39,10 +39,12 @@ public abstract class SShippingUtils {
     public static ArrayList<SRowShipmentRow> obtainAvailableRows(final SGuiSession session, final Connection connection, final Date date) throws SQLException, Exception {
         ArrayList<SRowShipmentRow> availableRows = new ArrayList<>();
         Statement statement = connection.createStatement();
-        ResultSet resultSet = null;
+        ResultSet resultSet;
 
         String sql = "SELECT ci.CustomerInvoiceKey, ci.InvoiceNumber, ci.BatchNumber, ci.Created, ci.Description, RIGHT(ci.Description, LEN(ci.Description) - " + BOL.length() + ") AS _bol, " +
-                "c.CustomerId, c.CustomerName, st.SiteLocation, st.Address1, st.Address2, st.City + ', ' + st.State + ', ' + st.ZipCode AS _site_loc, st.ZipCode, st.Country, " + 
+                "c.CustomerId, c.CustomerName, st.SiteLocation, st.Address1, st.Address2, st.Address3, " + 
+                "st.State + ', ' + st.District + ', ' + st.Address1 + ', ' + st.Address2 + ', ' + st.Address3 + ', ' + st.ZipCode + ', ' + st.City + ', ' + st.State AS _site_loc, " + // State, District, add1, add2, add3, ZipCode, City
+                "st.ZipCode, st.Country, st.District, st.City, st.County, st.State," + 
                 "SUM(cii.Area)/1000000.0 AS _m2, SUM(cii.Weight)/1000000.0 AS _kg, COUNT(*) AS _orders, " +
                 "(SELECT SUM(NoLoads) FROM dbo.BOLUnitsView where BOLKey=RIGHT(ci.Description, LEN(ci.Description) - " + BOL.length() + ")) AS _bales " +
                 "FROM dbo.CustomerInvoices AS ci " +
@@ -56,7 +58,7 @@ public abstract class SShippingUtils {
                 "GROUP BY " +
                 "ci.CustomerInvoiceKey, ci.InvoiceNumber, ci.BatchNumber, ci.Created, ci.Description, ci.SiteLocationKey, " +
                 "c.CustomerId, c.CustomerName, " +
-                "st.SiteLocation,st.Address1, st.Address2, st.City, st.State, st.ZipCode, st.Country " +
+                "st.SiteLocation,st.Address1, st.Address2, st.Address3, st.City, st.State, st.ZipCode, st.Country, st.District, st.County " +
                 "ORDER BY " +
                 "ci.InvoiceNumber, ci.CustomerInvoiceKey ";
 
@@ -87,12 +89,17 @@ public abstract class SShippingUtils {
             row.setFkCustomerId(getCustomerId(session, resultSet.getString("CustomerId")));
             row.setFkDestinationId(getDestinationId(session, resultSet.getInt("SiteLocation")));
 
-            row.setDbmsCustomer(resultSet.getString("CustomerName"));
-            row.setDbmsDestination(resultSet.getString("_site_loc"));
-            row.setDbmsAddress1(resultSet.getString("Address1"));
-            row.setDbmsAddress2(resultSet.getString("Address2"));
-            row.setDbmsDestinationZip(resultSet.getString("ZipCode"));
-            row.setDbmsCountry(resultSet.getString("Country") == null || resultSet.getString("Country").toLowerCase().equals("null") ? "" : resultSet.getString("Country"));
+            row.setDbmsCustomer(SLibUtils.textTrim(resultSet.getString("CustomerName")).toUpperCase());
+            row.setDbmsDestination(SLibUtils.textTrim(resultSet.getString("_site_loc")).toUpperCase()); 
+            row.setDbmsAddress1(SLibUtils.textTrim(resultSet.getString("Address1")).toUpperCase());
+            row.setDbmsAddress2(SLibUtils.textTrim(resultSet.getString("Address2")).toUpperCase());
+            row.setDbmsAddress3(SLibUtils.textTrim(resultSet.getString("Address3")).toUpperCase());
+            row.setDbmsDistrict(SLibUtils.textTrim(resultSet.getString("District")).toUpperCase());
+            row.setDbmsCity(SLibUtils.textTrim(resultSet.getString("City")).toUpperCase());
+            row.setDbmsCounty(SLibUtils.textTrim(resultSet.getString("County")).toUpperCase());
+            row.setDbmsState(SLibUtils.textTrim(resultSet.getString("State")).toUpperCase());
+            row.setDbmsDestinationZip(SLibUtils.textTrim(resultSet.getString("ZipCode")).toUpperCase());
+            row.setDbmsCountry(SLibUtils.textTrim(resultSet.getString("Country") == null || resultSet.getString("Country").toLowerCase().equals("null") ? "" : resultSet.getString("Country")).toUpperCase());
             row.setAuxSiteLocationId(resultSet.getInt("SiteLocation"));
 
             row.readDbmsCustomer(session);

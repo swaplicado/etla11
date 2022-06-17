@@ -48,7 +48,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
     protected int mnDbmsSiteLocationId;
     protected String msDbmsAddress1;
     protected String msDbmsAddress2;
-    protected String msDbmsDestinationZip;
+    protected String msDbmsAddress3;
+    protected String msDbmsDisctrict;
+    protected String msDbmsCity;
+    protected String msDbmsCounty;
+    protected String msDbmsState;
+    protected String msDbmsDestinationZipCode;
     protected String msDbmsCountry;
 
     protected int mnAuxSiteLocationId;
@@ -107,7 +112,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public void setDbmsSiteLocationId(int n) { mnDbmsSiteLocationId = n; }
     public void setDbmsAddress1(String s) { msDbmsAddress1 = s; }
     public void setDbmsAddress2(String s) { msDbmsAddress2 = s; }
-    public void setDbmsDestinationZip(String s) { msDbmsDestinationZip = s; }
+    public void setDbmsAddress3(String s) { msDbmsAddress3 = s; }
+    public void setDbmsDistrict(String s) { msDbmsDisctrict = s; }
+    public void setDbmsCity(String s) { msDbmsCity = s; }
+    public void setDbmsCounty(String s) { msDbmsCounty = s; }
+    public void setDbmsState(String s) { msDbmsState = s; }
+    public void setDbmsDestinationZip(String s) { msDbmsDestinationZipCode = s; }
     public void setDbmsCountry(String s) { msDbmsCountry = s; }
 
     public String getDbmsCustomer() { return msDbmsCustomer; }
@@ -117,7 +127,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public int getDbmsSiteLocationId() { return mnDbmsSiteLocationId; }
     public String getDbmsAddress1() { return msDbmsAddress1; }
     public String getDbmsAddress2() { return msDbmsAddress2; }
-    public String getDbmsDestinationZip() { return msDbmsDestinationZip; }
+    public String getDbmsAddress3() { return msDbmsAddress3; }
+    public String getDbmsDistrict() { return msDbmsDisctrict; }
+    public String getDbmsCity() { return msDbmsCity; }
+    public String getDbmsCounty() { return msDbmsCounty; }
+    public String getDbmsState() { return msDbmsState; }
+    public String getDbmsDestinationZip() { return msDbmsDestinationZipCode; }
     public String getDbmsCountry() { return msDbmsCountry; }
 
     public void setAuxSiteLocationId(int n) { mnAuxSiteLocationId = n; }
@@ -184,7 +199,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
         mnDbmsSiteLocationId = 0;
         msDbmsAddress1 = "";
         msDbmsAddress2 = "";
-        msDbmsDestinationZip = "";
+        msDbmsAddress3 = "";
+        msDbmsDisctrict = "";
+        msDbmsCity = "";
+        msDbmsCounty = "";
+        msDbmsState = "";
+        msDbmsDestinationZipCode = "";
         msDbmsCountry = "";
 
         mnAuxSiteLocationId = 0;
@@ -262,7 +282,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
             mnDbmsSiteLocationId = destination.getSiteLocationId();
             msDbmsAddress1 = destination.getAddress1();
             msDbmsAddress2 = destination.getAddress2();
-            msDbmsDestinationZip = destination.getZipCode();
+            msDbmsAddress3 = destination.getAddress2();
+            msDbmsDisctrict = destination.getDistrict();
+            msDbmsCity = destination.getCity();
+            msDbmsCounty = destination.getCounty();
+            msDbmsState = destination.getCounty();
+            msDbmsDestinationZipCode = destination.getZipCode();
             msDbmsCountry = destination.getCountry();
             
             mbAuxIsRowSelected = true;
@@ -288,12 +313,18 @@ public class SDbShipmentRow extends SDbRegistryUser {
             destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId });
             if (!destination.getName().equalsIgnoreCase(msDbmsDestination) ||
                     !destination.getAddress1().equalsIgnoreCase(msDbmsAddress1) ||
-                    !destination.getAddress2().equalsIgnoreCase(msDbmsAddress2)) {
+                    !destination.getAddress2().equalsIgnoreCase(msDbmsAddress2) || 
+                    !destination.getAddress3().equalsIgnoreCase(msDbmsAddress3)) {
                 destination.setName(msDbmsDestination);
                 destination.setSiteLocationId(mnDbmsSiteLocationId);
                 destination.setAddress1(msDbmsAddress1);
                 destination.setAddress2(msDbmsAddress2);
-                destination.setZipCode(msDbmsDestinationZip);
+                destination.setAddress3(msDbmsAddress3);
+                destination.setDistrict(msDbmsDisctrict);
+                destination.setCity(msDbmsCity);
+                destination.setCounty(msDbmsCounty);
+                destination.setState(msDbmsState);
+                destination.setZipCode(msDbmsDestinationZipCode);
                 destination.setCountry(msDbmsCountry);
                 destination.save(session);
             }
@@ -308,7 +339,12 @@ public class SDbShipmentRow extends SDbRegistryUser {
             destination.setSiteLocationId(mnDbmsSiteLocationId);
             destination.setAddress1(msDbmsAddress1);
             destination.setAddress2(msDbmsAddress2);
-            destination.setZipCode(msDbmsDestinationZip);
+            destination.setAddress3(msDbmsAddress3);
+            destination.setDistrict(msDbmsDisctrict);
+            destination.setCity(msDbmsCity);
+            destination.setCounty(msDbmsCounty);
+            destination.setState(msDbmsState);
+            destination.setZipCode(msDbmsDestinationZipCode);
             destination.setCountry(msDbmsCountry);
             //destination.setDeleted(...);
             //destination.setSystem(...);
@@ -403,6 +439,10 @@ public class SDbShipmentRow extends SDbRegistryUser {
         registry.setDbmsDestination(this.getDbmsDestination());
         registry.setDbmsAddress1(this.getDbmsAddress1());
         registry.setDbmsAddress2(this.getDbmsAddress2());
+        registry.setDbmsAddress3(this.getDbmsAddress3());
+        registry.setDbmsDistrict(this.getDbmsDistrict());
+        registry.setDbmsCity(this.getDbmsCity());
+        registry.setDbmsCounty(this.getDbmsCounty());
         registry.setDbmsDestinationZip(this.getDbmsDestinationZip());
         registry.setDbmsCountry(this.getDbmsCountry());
         
