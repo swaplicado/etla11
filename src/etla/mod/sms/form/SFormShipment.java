@@ -962,7 +962,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
                     mbTicketRevuelta = moSmsEtl.isTicketRevuelta();
                     if (mbTicketRevuelta) {
                         if (showBoxInformation) {
-                            if (miClient.showMsgBoxConfirm("Se pordra perder alguna de la información previamente capturada.\n¿Desea continuar?") == JOptionPane.OK_OPTION) {
+                            if (miClient.showMsgBoxConfirm("Se puede perder parte de la información previamente capturada.\n¿Desea continuar?") == JOptionPane.OK_OPTION) {
                                 SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), mnTicketValidatedId) }, SDbConsts.MODE_STEALTH);
                                 int shipperId = SSmsUtils.getShipperId(miClient.getSession(), wmTicket.getCarrierId());
                                 if (shipperId != 0) {
@@ -1016,7 +1016,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
     }
     
     private void validateRevueltaInformation() {
-        /* Isabel Servín 02/05/2022: valida que la indormación capturada coincida con la del embarque */
+        /* Isabel Servín 02/05/2022: valida que la información capturada coincida con la del embarque. */
 //        try {
 //            if (mbTicketRevuelta && mnTicketValidatedId != 0 && moConfigSms.isWmTicketValidation()) {
 //                SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), moIntTicketId.getValue()) }, SDbConsts.MODE_STEALTH);

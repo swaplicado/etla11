@@ -860,7 +860,7 @@ public class SEtlProcessDocInvoices {
                     dataDpsCfd.setPaymentConditions(dataDps.getFkPaymentTypeId() == SDataConstantsSys.TRNS_TP_PAY_CASH ? "CONTADO" : "CRÉDITO " + dataDps.getDaysOfCredit() + " DÍAS"); // XXX: implement method!
                     dataDpsCfd.setZipIssue(dbInvoice.getDesCfdiZipIssue());
                     //dataDpsCfd.setConfirmation(...);
-                    dataDpsCfd.setTaxRegimeIssuing(dbInvoice.getDesCfdiTaxRegime());
+                    dataDpsCfd.setTaxRegime(dbInvoice.getDesCfdiTaxRegime());
                     dataDpsCfd.setCfdiUsage(dbInvoice.getDesCfdiCfdiUsage());
                     
                     dataDps.setDbmsDataDpsCfd(dataDpsCfd);
