@@ -1015,24 +1015,6 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         return true;
     }
     
-    private void validateRevueltaInformation() {
-        /* Isabel Servín 02/05/2022: valida que la información capturada coincida con la del embarque. */
-//        try {
-//            if (mbTicketRevuelta && mnTicketValidatedId != 0 && moConfigSms.isWmTicketValidation()) {
-//                SDbWmTicket wmTicket = (SDbWmTicket) miClient.getSession().readRegistry(SModConsts.S_WM_TICKET, new int[] { SSmsUtils.getWmTicketId(miClient.getSession(), moIntTicketId.getValue()) }, SDbConsts.MODE_STEALTH);
-//                if (SSmsUtils.getShipperId(miClient.getSession(), wmTicket.getCarrierId()) == 0)
-//                    mbRevueltaData =  moTextVehiclePlate.getValue().equals(wmTicket.getVehiclePlate()) &&
-//                            moTextDriverName.getValue().equals(wmTicket.getDriverName());
-//                else mbRevueltaData = (moKeyShipper.getValue()[0] == SSmsUtils.getShipperId(miClient.getSession(), wmTicket.getCarrierId())) &&
-//                        moTextVehiclePlate.getValue().equals(wmTicket.getVehiclePlate()) &&
-//                        moTextDriverName.getValue().equals(wmTicket.getDriverName());
-//            }
-//        }
-//        catch (Exception e) {
-//            miClient.showMsgBoxError(e.getMessage());
-//        }
-    }
-    
     private void actionPerformedShowRows() {
         if (jbShowRows.isEnabled()) {
             if (moDateRows.getValue() == null) {
