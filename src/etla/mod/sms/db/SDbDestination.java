@@ -27,8 +27,10 @@ public class SDbDestination extends SDbRegistryUser{
     protected String msAddress1;
     protected String msAddress2;
     protected String msAddress3;
+    /** En realidad contiene municipio */
     protected String msDistrict;
     protected String msCity;
+    /** En realidad contiene la colonia */
     protected String msCounty;
     protected String msState;
     protected String msZipCode;
