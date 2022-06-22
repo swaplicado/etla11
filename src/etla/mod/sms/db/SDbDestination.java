@@ -48,6 +48,19 @@ public class SDbDestination extends SDbRegistryUser{
     public SDbDestination () {
         super(SModConsts.SU_DESTIN);
     }
+    
+    private void checkSiteLocationId(SGuiSession session) throws SQLException {
+        ResultSet resultSet;
+
+        mnPkDestinationId = 0;
+
+        msSql = "SELECT id_destin FROM " + getSqlTable() + " WHERE site_loc_id = " + mnSiteLocationId;
+        resultSet = session.getStatement().executeQuery(msSql);
+        if (resultSet.next()) {
+            mnPkDestinationId = resultSet.getInt(1);
+            mbRegistryNew = false;
+        }
+    }
 
     /*
      * Public methods
@@ -151,7 +164,7 @@ public class SDbDestination extends SDbRegistryUser{
 
     @Override
     public void computePrimaryKey(SGuiSession session) throws SQLException, Exception {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
 
         mnPkDestinationId = 0;
 
@@ -164,7 +177,7 @@ public class SDbDestination extends SDbRegistryUser{
 
     @Override
     public void read(SGuiSession session, int[] pk) throws SQLException, Exception {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
 
         initRegistry();
         initQueryMembers();
@@ -206,6 +219,10 @@ public class SDbDestination extends SDbRegistryUser{
     public void save(SGuiSession session) throws SQLException, Exception {       
         initQueryMembers();
         mnQueryResultId = SDbConsts.READ_ERROR;
+        
+        if (mbRegistryNew) {
+            checkSiteLocationId(session);
+        }
 
         if (mbRegistryNew) {
             computePrimaryKey(session);
@@ -258,7 +275,7 @@ public class SDbDestination extends SDbRegistryUser{
                     //"fk_usr_ins = " + mnFkUserInsertId + ", " +
                     "fk_usr_upd = " + mnFkUserUpdateId + ", " +
                     //"ts_usr_ins = " + "NOW()" + ", " +
-                    "ts_usr_upd = " + "NOW()" +
+                    "ts_usr_upd = " + "NOW() " +
                  getSqlWhere(); 
         }
 

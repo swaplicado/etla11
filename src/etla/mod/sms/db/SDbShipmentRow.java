@@ -10,7 +10,6 @@ import etla.mod.etl.db.SDbCustomer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import sa.lib.SLibConsts;
 import sa.lib.SLibUtils;
 import sa.lib.db.SDbConsts;
 import sa.lib.db.SDbRegistry;
@@ -40,22 +39,13 @@ public class SDbShipmentRow extends SDbRegistryUser {
     protected double mdKilograms;
     protected int mnFkCustomerId;
     protected int mnFkDestinationId;
-
+    
     protected String msDbmsCustomer;
     protected String msDbmsCustomerTaxId;
     protected String msDbmsCustomerZip;
-    protected String msDbmsDestination;
-    protected int mnDbmsSiteLocationId;
-    protected String msDbmsAddress1;
-    protected String msDbmsAddress2;
-    protected String msDbmsAddress3;
-    protected String msDbmsDisctrict;
-    protected String msDbmsCity;
-    protected String msDbmsCounty;
-    protected String msDbmsState;
-    protected String msDbmsDestinationZipCode;
-    protected String msDbmsCountry;
-
+    
+    protected SDbDestination moDbmsDestination;
+    
     protected int mnAuxSiteLocationId;
     protected boolean mbAuxDestinationCreated;
     protected boolean mbAuxIsRowSelected;
@@ -104,37 +94,19 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public double getKilograms() { return mdKilograms; }
     public int getFkCustomerId() { return mnFkCustomerId; }
     public int getFkDestinationId() { return mnFkDestinationId; }
-
+    
     public void setDbmsCustomer(String s) { msDbmsCustomer = s; }
     public void setDbmsCustomerTaxId(String s) { msDbmsCustomerTaxId = s; }
     public void setDbmsCustomerZip(String s) { msDbmsCustomerZip = s; }
-    public void setDbmsDestination(String s) { msDbmsDestination = s; }
-    public void setDbmsSiteLocationId(int n) { mnDbmsSiteLocationId = n; }
-    public void setDbmsAddress1(String s) { msDbmsAddress1 = s; }
-    public void setDbmsAddress2(String s) { msDbmsAddress2 = s; }
-    public void setDbmsAddress3(String s) { msDbmsAddress3 = s; }
-    public void setDbmsDistrict(String s) { msDbmsDisctrict = s; }
-    public void setDbmsCity(String s) { msDbmsCity = s; }
-    public void setDbmsCounty(String s) { msDbmsCounty = s; }
-    public void setDbmsState(String s) { msDbmsState = s; }
-    public void setDbmsDestinationZip(String s) { msDbmsDestinationZipCode = s; }
-    public void setDbmsCountry(String s) { msDbmsCountry = s; }
-
+    
     public String getDbmsCustomer() { return msDbmsCustomer; }
     public String getDbmsCustomerTaxId() { return msDbmsCustomerTaxId; }
     public String getDbmsCustomerZip() { return msDbmsCustomerZip; }
-    public String getDbmsDestination() { return msDbmsDestination; }
-    public int getDbmsSiteLocationId() { return mnDbmsSiteLocationId; }
-    public String getDbmsAddress1() { return msDbmsAddress1; }
-    public String getDbmsAddress2() { return msDbmsAddress2; }
-    public String getDbmsAddress3() { return msDbmsAddress3; }
-    public String getDbmsDistrict() { return msDbmsDisctrict; }
-    public String getDbmsCity() { return msDbmsCity; }
-    public String getDbmsCounty() { return msDbmsCounty; }
-    public String getDbmsState() { return msDbmsState; }
-    public String getDbmsDestinationZip() { return msDbmsDestinationZipCode; }
-    public String getDbmsCountry() { return msDbmsCountry; }
-
+    
+    public void setDbmsDestination(SDbDestination o) { moDbmsDestination = o; }
+    
+    public SDbDestination getDbmsDestination() { return moDbmsDestination; }
+    
     public void setAuxSiteLocationId(int n) { mnAuxSiteLocationId = n; }
     public void setAuxDestinationCreated(boolean b) { mbAuxDestinationCreated = b; }
     public void setAuxIsRowSelected(boolean b) { mbAuxIsRowSelected = b; }
@@ -195,17 +167,8 @@ public class SDbShipmentRow extends SDbRegistryUser {
         msDbmsCustomer = "";
         msDbmsCustomerTaxId = "";
         msDbmsCustomerZip = "";
-        msDbmsDestination = "";
-        mnDbmsSiteLocationId = 0;
-        msDbmsAddress1 = "";
-        msDbmsAddress2 = "";
-        msDbmsAddress3 = "";
-        msDbmsDisctrict = "";
-        msDbmsCity = "";
-        msDbmsCounty = "";
-        msDbmsState = "";
-        msDbmsDestinationZipCode = "";
-        msDbmsCountry = "";
+        
+        moDbmsDestination = null;
 
         mnAuxSiteLocationId = 0;
         mbAuxDestinationCreated = false;
@@ -277,18 +240,7 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
             readDbmsCustomer(session);
             
-            SDbDestination destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId });
-            msDbmsDestination = destination.getName();
-            mnDbmsSiteLocationId = destination.getSiteLocationId();
-            msDbmsAddress1 = destination.getAddress1();
-            msDbmsAddress2 = destination.getAddress2();
-            msDbmsAddress3 = destination.getAddress2();
-            msDbmsDisctrict = destination.getDistrict();
-            msDbmsCity = destination.getCity();
-            msDbmsCounty = destination.getCounty();
-            msDbmsState = destination.getCounty();
-            msDbmsDestinationZipCode = destination.getZipCode();
-            msDbmsCountry = destination.getCountry();
+            moDbmsDestination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId });
             
             mbAuxIsRowSelected = true;
             mnAuxRow = mnPkRowId;
@@ -303,60 +255,6 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public void save(SGuiSession session) throws SQLException, Exception {       
         initQueryMembers();
         mnQueryResultId = SDbConsts.READ_ERROR;
-
-        // check if current destination should be created or updated:
-
-        SDbDestination destination;
-
-        if (mnFkDestinationId != SLibConsts.UNDEFINED) {
-            // update destination if necessary:
-            destination = (SDbDestination) session.readRegistry(SModConsts.SU_DESTIN, new int[] { mnFkDestinationId });
-            if (!destination.getName().equalsIgnoreCase(msDbmsDestination) ||
-                    !destination.getAddress1().equalsIgnoreCase(msDbmsAddress1) ||
-                    !destination.getAddress2().equalsIgnoreCase(msDbmsAddress2) || 
-                    !destination.getAddress3().equalsIgnoreCase(msDbmsAddress3)) {
-                destination.setName(msDbmsDestination);
-                destination.setSiteLocationId(mnDbmsSiteLocationId);
-                destination.setAddress1(msDbmsAddress1);
-                destination.setAddress2(msDbmsAddress2);
-                destination.setAddress3(msDbmsAddress3);
-                destination.setDistrict(msDbmsDisctrict);
-                destination.setCity(msDbmsCity);
-                destination.setCounty(msDbmsCounty);
-                destination.setState(msDbmsState);
-                destination.setZipCode(msDbmsDestinationZipCode);
-                destination.setCountry(msDbmsCountry);
-                destination.save(session);
-            }
-        }
-        else {
-            // create destination:
-            destination = new SDbDestination();
-            //destination.setPkDestinationId(...);
-            destination.setSiteLocationId(mnAuxSiteLocationId);
-            destination.setCode("");
-            destination.setName(msDbmsDestination);
-            destination.setSiteLocationId(mnDbmsSiteLocationId);
-            destination.setAddress1(msDbmsAddress1);
-            destination.setAddress2(msDbmsAddress2);
-            destination.setAddress3(msDbmsAddress3);
-            destination.setDistrict(msDbmsDisctrict);
-            destination.setCity(msDbmsCity);
-            destination.setCounty(msDbmsCounty);
-            destination.setState(msDbmsState);
-            destination.setZipCode(msDbmsDestinationZipCode);
-            destination.setCountry(msDbmsCountry);
-            //destination.setDeleted(...);
-            //destination.setSystem(...);
-            //destination.setFkUserInsertId(...);
-            //destination.setFkUserUpdateId(...);
-            //destination.setTsUserInsert(...);
-            //destination.setTsUserUpdate(...);
-            destination.save(session);
-
-            mnFkDestinationId = destination.getPkDestinationId();
-            mbAuxDestinationCreated = true;
-        }
 
         // save shipment row registry:
 
@@ -406,6 +304,8 @@ public class SDbShipmentRow extends SDbRegistryUser {
         }
 
         session.getStatement().execute(msSql);
+        
+        moDbmsDestination.save(session);
 
         mbRegistryNew = false;
         mnQueryResultId = SDbConsts.SAVE_OK;
@@ -437,14 +337,8 @@ public class SDbShipmentRow extends SDbRegistryUser {
         registry.setDbmsCustomerTaxId(this.getDbmsCustomerTaxId());
         registry.setDbmsCustomerZip(this.getDbmsCustomerZip());
         registry.setDbmsDestination(this.getDbmsDestination());
-        registry.setDbmsAddress1(this.getDbmsAddress1());
-        registry.setDbmsAddress2(this.getDbmsAddress2());
-        registry.setDbmsAddress3(this.getDbmsAddress3());
-        registry.setDbmsDistrict(this.getDbmsDistrict());
-        registry.setDbmsCity(this.getDbmsCity());
-        registry.setDbmsCounty(this.getDbmsCounty());
-        registry.setDbmsDestinationZip(this.getDbmsDestinationZip());
-        registry.setDbmsCountry(this.getDbmsCountry());
+        
+        registry.setDbmsDestination(this.getDbmsDestination());
         
         registry.setAuxSiteLocationId(this.getAuxSiteLocationId());
         registry.setAuxDestinationCreated(this.isAuxDestinationCreated());

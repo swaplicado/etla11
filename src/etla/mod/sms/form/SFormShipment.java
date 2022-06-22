@@ -878,7 +878,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             String countyName;
             String localityName;
             SGuiSession session = miClient.getSession();
-            String zipCode = sr.getDbmsDestinationZip();
+            String zipCode = sr.getDbmsDestination().getZipCode();
             String sql = "SELECT * FROM erp.locs_bol_zip_code WHERE id_zip_code = '" + zipCode + "' AND NOT b_del;";
             Statement statement = session.getDatabase().getConnection().createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -910,7 +910,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
             jtfCounty.setText(countyName);
             jtfState.setText(stateCode);
             jtfZipcode.setText(zipCode);
-            jtfAddress.setText(sr.getDbmsAddress1());
+            jtfAddress.setText(sr.getDbmsDestination().getAddress1());
             jtfAddress.setCaretPosition(0);
         }
         catch (Exception e) {
@@ -1085,7 +1085,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         else {            
             try {
                 if (moIntShiptFolio.getValue() != 0) {
-                    checkRowToAdd(((SRowShipmentRow) moGridAvailableRows.getSelectedGridRow()).getShipmentRow());
+//                    checkRowToAdd(((SRowShipmentRow) moGridAvailableRows.getSelectedGridRow()).getShipmentRow());
                     // identify row to be added:
                     int index = moGridAvailableRows.getTable().getSelectedRow();
 

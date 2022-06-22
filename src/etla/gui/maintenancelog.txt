@@ -1,4 +1,11 @@
 ================================================================================
+2022-06-22, 1.1 019.1
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Se eliminaron los atributos Dbms en la clase SDbShipmentRow siendo sustituidos por un único atributo de tipo SDbDestination.
+2) Se agregó la validación de si ya existe el valor id_ship_loc antes de guardar un registro en la tabla su_destin. 
+
+================================================================================
 2022-06-17, 1.1 019.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------

@@ -80,7 +80,7 @@ public class SRowShipmentRow implements SGridRow {
                     value = moShipmentRow.getDbmsCustomer();
                     break;
                 case 6:
-                    value = moShipmentRow.getDbmsDestination();
+                    value = moShipmentRow.getDbmsDestination().getName();
                     break;
                 case 7:
                     value = moShipmentRow.getMeters2();
@@ -106,7 +106,7 @@ public class SRowShipmentRow implements SGridRow {
                     value = moShipmentRow.getDbmsCustomer();
                     break;
                 case 4:
-                    value = moShipmentRow.getDbmsDestination();
+                    value = moShipmentRow.getDbmsDestination().getName();
                     break;
                 case 5:
                     value = moShipmentRow.getMeters2();

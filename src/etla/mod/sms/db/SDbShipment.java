@@ -1044,7 +1044,7 @@ public class SDbShipment extends SDbRegistryUser{
                 }
 
                 if (newLocation) {
-                    String zipCode = child.getDbmsDestinationZip();
+                    String zipCode = child.getDbmsDestination().getZipCode();
                     if (zipCode.isEmpty()) {
                         zipCode = child.getDbmsCustomerZip();
                     }
@@ -1068,7 +1068,7 @@ public class SDbShipment extends SDbRegistryUser{
                         zipCode = "00000";
                     }
 
-                    switch (child.getDbmsCountry()) {
+                    switch (child.getDbmsDestination().getCountry()) {
                         case "MX" : countryCode = "MEX"; break;
                         case "US" : countryCode = "USA"; break;
                         case "CA" : countryCode = "CAN"; break;

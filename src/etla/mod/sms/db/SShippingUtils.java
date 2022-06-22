@@ -88,20 +88,22 @@ public abstract class SShippingUtils {
             row.setKilograms(resultSet.getDouble("_kg"));
             row.setFkCustomerId(getCustomerId(session, resultSet.getString("CustomerId")));
             row.setFkDestinationId(getDestinationId(session, resultSet.getInt("SiteLocation")));
-
             row.setDbmsCustomer(SLibUtils.textTrim(resultSet.getString("CustomerName")).toUpperCase());
-            row.setDbmsDestination(SLibUtils.textTrim(resultSet.getString("_site_loc")).toUpperCase()); 
-            row.setDbmsAddress1(SLibUtils.textTrim(resultSet.getString("Address1")).toUpperCase());
-            row.setDbmsAddress2(SLibUtils.textTrim(resultSet.getString("Address2")).toUpperCase());
-            row.setDbmsAddress3(SLibUtils.textTrim(resultSet.getString("Address3")).toUpperCase());
-            row.setDbmsDistrict(SLibUtils.textTrim(resultSet.getString("District")).toUpperCase());
-            row.setDbmsCity(SLibUtils.textTrim(resultSet.getString("City")).toUpperCase());
-            row.setDbmsCounty(SLibUtils.textTrim(resultSet.getString("County")).toUpperCase());
-            row.setDbmsState(SLibUtils.textTrim(resultSet.getString("State")).toUpperCase());
-            row.setDbmsDestinationZip(SLibUtils.textTrim(resultSet.getString("ZipCode")).toUpperCase());
-            row.setDbmsCountry(SLibUtils.textTrim(resultSet.getString("Country") == null || resultSet.getString("Country").toLowerCase().equals("null") ? "" : resultSet.getString("Country")).toUpperCase());
-            row.setAuxSiteLocationId(resultSet.getInt("SiteLocation"));
+            
+            SDbDestination destination = new SDbDestination();
+            destination.setName(SLibUtils.textTrim(resultSet.getString("_site_loc")).toUpperCase()); 
+            destination.setAddress1(SLibUtils.textTrim(resultSet.getString("Address1")).toUpperCase());
+            destination.setAddress2(SLibUtils.textTrim(resultSet.getString("Address2")).toUpperCase());
+            destination.setAddress3(SLibUtils.textTrim(resultSet.getString("Address3")).toUpperCase());
+            destination.setDistrict(SLibUtils.textTrim(resultSet.getString("District")).toUpperCase());
+            destination.setCity(SLibUtils.textTrim(resultSet.getString("City")).toUpperCase());
+            destination.setCounty(SLibUtils.textTrim(resultSet.getString("County")).toUpperCase());
+            destination.setState(SLibUtils.textTrim(resultSet.getString("State")).toUpperCase());
+            destination.setZipCode(SLibUtils.textTrim(resultSet.getString("ZipCode")).toUpperCase());
+            destination.setCountry(SLibUtils.textTrim(resultSet.getString("Country") == null || resultSet.getString("Country").toLowerCase().equals("null") ? "" : resultSet.getString("Country")).toUpperCase());
+            destination.setSiteLocationId(resultSet.getInt("SiteLocation"));
 
+            row.setDbmsDestination(destination);
             row.readDbmsCustomer(session);
             
             availableRows.add(new SRowShipmentRow(row));
