@@ -255,7 +255,10 @@ public class SDbShipmentRow extends SDbRegistryUser {
     public void save(SGuiSession session) throws SQLException, Exception {       
         initQueryMembers();
         mnQueryResultId = SDbConsts.READ_ERROR;
-
+        
+        moDbmsDestination.save(session);
+        mnFkDestinationId = moDbmsDestination.getPkDestinationId();
+        
         // save shipment row registry:
 
         if (mbRegistryNew) {
@@ -305,8 +308,6 @@ public class SDbShipmentRow extends SDbRegistryUser {
 
         session.getStatement().execute(msSql);
         
-        moDbmsDestination.save(session);
-
         mbRegistryNew = false;
         mnQueryResultId = SDbConsts.SAVE_OK;
     }
@@ -336,7 +337,6 @@ public class SDbShipmentRow extends SDbRegistryUser {
         registry.setDbmsCustomer(this.getDbmsCustomer());
         registry.setDbmsCustomerTaxId(this.getDbmsCustomerTaxId());
         registry.setDbmsCustomerZip(this.getDbmsCustomerZip());
-        registry.setDbmsDestination(this.getDbmsDestination());
         
         registry.setDbmsDestination(this.getDbmsDestination());
         

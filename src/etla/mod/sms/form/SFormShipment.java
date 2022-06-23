@@ -1085,7 +1085,7 @@ public class SFormShipment extends SBeanForm implements ActionListener, ItemList
         else {            
             try {
                 if (moIntShiptFolio.getValue() != 0) {
-//                    checkRowToAdd(((SRowShipmentRow) moGridAvailableRows.getSelectedGridRow()).getShipmentRow());
+                    checkRowToAdd(((SRowShipmentRow) moGridAvailableRows.getSelectedGridRow()).getShipmentRow());
                     // identify row to be added:
                     int index = moGridAvailableRows.getTable().getSelectedRow();
 
