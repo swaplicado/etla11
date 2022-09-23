@@ -89,7 +89,7 @@ public class SViewShipmentByPeriod extends SGridPaneView {
                 + "INNER JOIN su_vehic_tp AS vt ON s.fk_vehic_tp = vt.id_vehic_tp " 
                 + "LEFT JOIN su_forklift_drv AS f ON s.fk_forklift_drv = f.id_forklift_drv " 
                 + "LEFT JOIN su_crew AS crew ON s.fk_crew = crew.id_crew " 
-                + "LEFT JOIN erp.locs_bol_zip_code AS z ON d.zip = z.id_zip_code "  
+                + "LEFT JOIN erp.locs_bol_zip_code AS z ON d.zip_code = z.id_zip_code "  
                 + "LEFT JOIN erp.locu_sta AS state ON z.id_sta_code = state.sta_code " 
                 + "LEFT JOIN erp.locs_bol_county AS county ON z.county_code = county.id_county_code AND z.id_sta_code = county.id_sta_code "
                 + (sql.isEmpty() ? "" : "WHERE " + sql);
@@ -97,7 +97,7 @@ public class SViewShipmentByPeriod extends SGridPaneView {
     
     @Override
     public ArrayList<SGridColumnView> createGridColumns() {
-        ArrayList<SGridColumnView> columns = new ArrayList<SGridColumnView>();
+        ArrayList<SGridColumnView> columns = new ArrayList<>();
 
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "s.number", "Embarque"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE, "s.shipt_date", "Fecha embarque"));
