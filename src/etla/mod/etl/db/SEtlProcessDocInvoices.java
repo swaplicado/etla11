@@ -7,6 +7,7 @@ package etla.mod.etl.db;
 
 import cfd.DCfdConsts;
 import cfd.ver33.DCfdi33Catalogs;
+import cfd.ver40.DCfdi40Catalogs;
 import erp.data.SDataConstantsSys;
 import erp.lib.SLibConstants;
 import erp.mbps.data.SDataBizPartner;
@@ -430,7 +431,7 @@ public class SEtlProcessDocInvoices {
                         dbInvoice.setDesPayMethodFk(idInvoicePayMethodDes);    // SIIE & SIIE-ETL primary keys of both catalogs are the same
                         dbInvoice.setDesCfdiZipIssue(dbConfigAvista.getDesCfdiZipIssue());
                         dbInvoice.setDesCfdiTaxRegime(dbConfigAvista.getDesCfdiTaxRegime());
-                        dbInvoice.setDesCfdiPaymentWay(dbInvoice.getCreditDays() == 0 ? SDataConstantsSys.TRNS_CFD_CAT_PAY_WAY_99 : dataBizPartnerCustomer.getDbmsCategorySettingsCus().getCfdiPaymentWay());
+                        dbInvoice.setDesCfdiPaymentWay(dbInvoice.getCreditDays() == 0 ? DCfdi40Catalogs.FDP_POR_DEF : dataBizPartnerCustomer.getDbmsCategorySettingsCus().getCfdiPaymentWay());
                         dbInvoice.setDesCfdiCfdiUsage(!dataBizPartnerCustomer.getDbmsCategorySettingsCus().getCfdiCfdiUsage().isEmpty() ? dataBizPartnerCustomer.getDbmsCategorySettingsCus().getCfdiCfdiUsage() : dbConfigAvista.getDesCfdiCfdiUsage());
                         //dbInvoice.setFirstEtlInsert(...); // set when saved
                         //dbInvoice.setLastEtlUpdate(...);  // set when saved
@@ -856,11 +857,11 @@ public class SEtlProcessDocInvoices {
                     dataDpsCfd.setVersion("" + DCfdConsts.CFDI_VER_33);
                     dataDpsCfd.setCfdiType(DCfdi33Catalogs.CFD_TP_I);
                     dataDpsCfd.setPaymentWay(dbInvoice.getDesCfdiPaymentWay());
-                    dataDpsCfd.setPaymentMethod(dataDps.getFkPaymentTypeId() == SDataConstantsSys.TRNS_TP_PAY_CASH ? SDataConstantsSys.TRNS_CFD_CAT_PAY_MET_PUE : SDataConstantsSys.TRNS_CFD_CAT_PAY_MET_PPD);
+                    dataDpsCfd.setPaymentMethod(dataDps.getFkPaymentTypeId() == SDataConstantsSys.TRNS_TP_PAY_CASH ? DCfdi40Catalogs.MDP_PUE : DCfdi40Catalogs.MDP_PPD);
                     dataDpsCfd.setPaymentConditions(dataDps.getFkPaymentTypeId() == SDataConstantsSys.TRNS_TP_PAY_CASH ? "CONTADO" : "CRÉDITO " + dataDps.getDaysOfCredit() + " DÍAS"); // XXX: implement method!
                     dataDpsCfd.setZipIssue(dbInvoice.getDesCfdiZipIssue());
                     //dataDpsCfd.setConfirmation(...);
-                    dataDpsCfd.setTaxRegime(dbInvoice.getDesCfdiTaxRegime());
+                    dataDpsCfd.setTaxRegimeIssuing(dbInvoice.getDesCfdiTaxRegime());
                     dataDpsCfd.setCfdiUsage(dbInvoice.getDesCfdiCfdiUsage());
                     
                     dataDps.setDbmsDataDpsCfd(dataDpsCfd);
