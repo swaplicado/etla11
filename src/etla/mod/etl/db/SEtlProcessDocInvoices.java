@@ -6,7 +6,6 @@
 package etla.mod.etl.db;
 
 import cfd.DCfdConsts;
-import cfd.ver33.DCfdi33Catalogs;
 import cfd.ver40.DCfdi40Catalogs;
 import erp.data.SDataConstantsSys;
 import erp.lib.SLibConstants;
@@ -854,15 +853,23 @@ public class SEtlProcessDocInvoices {
                     
                     //dataDpsCfd.setPkYearId(...);
                     //dataDpsCfd.setPkDocId(...);
-                    dataDpsCfd.setVersion("" + DCfdConsts.CFDI_VER_33);
-                    dataDpsCfd.setCfdiType(DCfdi33Catalogs.CFD_TP_I);
+                    dataDpsCfd.setVersion("" + DCfdConsts.CFDI_VER_40);
+                    dataDpsCfd.setCfdiType(DCfdi40Catalogs.CFD_TP_I);
                     dataDpsCfd.setPaymentWay(dbInvoice.getDesCfdiPaymentWay());
                     dataDpsCfd.setPaymentMethod(dataDps.getFkPaymentTypeId() == SDataConstantsSys.TRNS_TP_PAY_CASH ? DCfdi40Catalogs.MDP_PUE : DCfdi40Catalogs.MDP_PPD);
                     dataDpsCfd.setPaymentConditions(dataDps.getFkPaymentTypeId() == SDataConstantsSys.TRNS_TP_PAY_CASH ? "CONTADO" : "CRÉDITO " + dataDps.getDaysOfCredit() + " DÍAS"); // XXX: implement method!
+                    dataDpsCfd.setExportation(DCfdi40Catalogs.ClaveExportacionNoAplica);
+                    //dataDpsCfd.setGlobalPeriodocity(...);
+                    //dataDpsCfd.setGlobalMonths(...);
+                    //dataDpsCfd.setGlobalYear(...);
                     dataDpsCfd.setZipIssue(dbInvoice.getDesCfdiZipIssue());
                     //dataDpsCfd.setConfirmation(...);
                     dataDpsCfd.setTaxRegimeIssuing(dbInvoice.getDesCfdiTaxRegime());
+                    dataDpsCfd.setTaxRegimeReceptor("");
                     dataDpsCfd.setCfdiUsage(dbInvoice.getDesCfdiCfdiUsage());
+                    //dataDpsCfd.setRelationType(...);
+                    //dataDpsCfd.setRelatedUuid(...);
+                    //dataDpsCfd.setXml(..);
                     
                     dataDps.setDbmsDataDpsCfd(dataDpsCfd);
                     

@@ -1,4 +1,10 @@
 ================================================================================
+2023-03-16, 1.1 019.4
+Isabel Danae GARCÍA SERVÍN
+--------------------------------------------------------------------------------
+1) Adición de los campos faltantes en las clases etla.mod.etl.db.SEtlProcessCatCustomers y etla.mod.etl.db.SEtlProcessDocInvoices para la emisión del CFDI 4.0.
+
+================================================================================
 2022-09-23, 1.1 019.3
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------

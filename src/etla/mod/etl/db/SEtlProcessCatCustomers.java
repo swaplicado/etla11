@@ -439,6 +439,9 @@ public abstract class SEtlProcessCatCustomers {
                     //dataBizPartner.setPkBizPartnerId(...); // set on save
                     dataBizPartner.setBizPartner(sAvistaCustomerName);
                     dataBizPartner.setBizPartnerCommercial(sAvistaCustomerTradename);
+                    dataBizPartner.setBizPartnerFiscalPolicy("");
+                    dataBizPartner.setBizPartnerFiscal(bIsBizPartnerPerson ? "" : sAvistaCustomerName);
+                    dataBizPartner.setBizPartnerCapitalRegime("");
                     dataBizPartner.setLastname(bIsBizPartnerPerson ? sAvistaCustomerName : "");
                     dataBizPartner.setFirstname("");
                     dataBizPartner.setFiscalId(sAvistaCustomerTaxId); // keystone for ETL processing!
@@ -513,8 +516,8 @@ public abstract class SEtlProcessCatCustomers {
                     
                     //dataBizPartnerBranchAddress.setPkBizPartnerBranchId(...); // set by business-partner branch
                     //dataBizPartnerBranchAddress.setPkAddressId(...); // set on save
-                    dataBizPartnerBranchAddress.setAddressCode("");
                     dataBizPartnerBranchAddress.setAddress(SModSysConsts.TXT_OFFICIAL);
+                    dataBizPartnerBranchAddress.setAddressCode("");
                     dataBizPartnerBranchAddress.setStreet(SLibUtils.textToSql(resultSetAvista.getString("Address1")).replaceAll("'", "''"));
                     dataBizPartnerBranchAddress.setStreetNumberExt(SLibUtils.textToSql(resultSetAvista.getString("Address2")).replaceAll("'", "''"));
                     dataBizPartnerBranchAddress.setStreetNumberInt(SLibUtils.textToSql(resultSetAvista.getString("AddressInternalNumber")).replaceAll("'", "''"));
@@ -734,6 +737,8 @@ public abstract class SEtlProcessCatCustomers {
                     dbCustomer.setSrcCustomerSalesAgentFk_n(resultSetAvista.getInt("SalesUserKey"));
                     dbCustomer.setSrcRequiredCurrencyFk_n(dbSysCurrencyRequired == null ? SLibConsts.UNDEFINED : dbSysCurrencyRequired.getSrcCurrencyId()); // user defined, but default value set
                     dbCustomer.setSrcRequiredUnitOfMeasureFk_n(dbSysUnitOfMeasureRequired == null ? "" : dbSysUnitOfMeasureRequired.getSrcUnitOfMeasureId()); // user defined, but default value set
+                    //dbCustomer.setDesCfdiPaymentWay(..);
+                    //dbCustomer.setDesCfdiCfdiUsage(..);
                     //dbCustomersetFirstEtlInsert(...); // set on save
                     //dbCustomersetLastEtlUpdate(...); // set on save
                     dbCustomer.setEtlIgnore(false);
