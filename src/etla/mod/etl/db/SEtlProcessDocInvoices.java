@@ -10,6 +10,7 @@ import cfd.ver40.DCfdi40Catalogs;
 import erp.data.SDataConstantsSys;
 import erp.lib.SLibConstants;
 import erp.mbps.data.SDataBizPartner;
+import erp.mfin.data.SDataExchangeRate;
 import erp.mitm.data.SDataItem;
 import erp.mtrn.data.SDataDps;
 import erp.mtrn.data.SDataDpsCfd;
@@ -102,8 +103,10 @@ public class SEtlProcessDocInvoices {
         SDbItem dbLineItem = null;
         SDbSysUnitOfMeasure dbLineUnitOfMeasureSrc = null;
         SDbSysUnitOfMeasure dbLineUnitOfMeasureReq = null;
+        SDbExchangeRate dbExcRate = null;
         SDataBizPartner dataBizPartnerCompany = null;
         SDataBizPartner dataBizPartnerCustomer = null;
+        SDataExchangeRate dataExcRate = null;
         SDataItem dataItem = null;
         SDataDps dataDps = null;
         SDataDpsCfd dataDpsCfd = null;
@@ -155,6 +158,18 @@ public class SEtlProcessDocInvoices {
         nMiscDecsAmountUnit = SLibUtils.getDecimalFormatAmountUnitary().getMaximumFractionDigits();
         nMiscDefaultSiieUnitId = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(dbConfigAvista.getFkSrcDefaultUnitOfMeasureId())).getDesUnitOfMeasureId();
         dMisc1kFeetTo1kMeters = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(SModSysConsts.AS_UOM_MSF)).getConversionFactor();
+        
+        dInvoiceExchangeRate = SEtlUtils.getEtlExchangeRate(session, idInvoiceCurrencyReq, etlPackage.DateIssue);
+        if (dInvoiceExchangeRate == 0) {
+            dataExcRate = new SDataExchangeRate();
+            if (dataExcRate.read(new Object[] {SModSysConsts.AS_CUR_USD, etlPackage.DateIssue}, stSiie) != SLibConstants.DB_ACTION_READ_OK) {
+                dbExcRate = new SDbExchangeRate();
+                dbExcRate.setPkCurrencyId(SModSysConsts.AS_CUR_USD);
+                dbExcRate.setDate(etlPackage.DateIssue);
+                dbExcRate.setExchangeRate(dataExcRate.getExchangeRate());
+                dbExcRate.save(session);
+            }
+        }
         
         // Get invoices count:
         
