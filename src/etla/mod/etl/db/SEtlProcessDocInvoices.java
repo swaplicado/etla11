@@ -159,10 +159,10 @@ public class SEtlProcessDocInvoices {
         nMiscDefaultSiieUnitId = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(dbConfigAvista.getFkSrcDefaultUnitOfMeasureId())).getDesUnitOfMeasureId();
         dMisc1kFeetTo1kMeters = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(SModSysConsts.AS_UOM_MSF)).getConversionFactor();
         
-        dInvoiceExchangeRate = SEtlUtils.getEtlExchangeRate(session, idInvoiceCurrencyReq, etlPackage.DateIssue);
+        dInvoiceExchangeRate = SEtlUtils.getEtlExchangeRate(session, SModSysConsts.AS_CUR_USD, etlPackage.DateIssue);
         if (dInvoiceExchangeRate == 0) {
             dataExcRate = new SDataExchangeRate();
-            if (dataExcRate.read(new Object[] {SModSysConsts.AS_CUR_USD, etlPackage.DateIssue}, stSiie) != SLibConstants.DB_ACTION_READ_OK) {
+            if (dataExcRate.read(new Object[] {SModSysConsts.AS_CUR_USD, etlPackage.DateIssue}, stSiie) == SLibConstants.DB_ACTION_READ_OK) {
                 dbExcRate = new SDbExchangeRate();
                 dbExcRate.setPkCurrencyId(SModSysConsts.AS_CUR_USD);
                 dbExcRate.setDate(etlPackage.DateIssue);
