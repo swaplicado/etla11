@@ -51,6 +51,7 @@ public class SBolMerchandises {
     public double getValue() { return dValue; }
     public String getCurrency() { return sCurrency; }
     
+    @SuppressWarnings("unchecked")
     public JSONObject getJson() {
         JSONObject merch = new JSONObject();
         merch.put("bienesTransp", sBienesTransp);

@@ -795,7 +795,7 @@ public class SEtlProcessDocInvoices {
                     dataDps.setFkDpsAnnulationTypeId(erp.mod.SModSysConsts.TRNU_TP_DPS_ANN_NA);
                     dataDps.setFkDpsNatureId(SDataConstantsSys.TRNU_DPS_NAT_DEF);
                     dataDps.setFkCompanyBranchId(dbConfigAvista.getDesCompanyBranchFk());
-                    dataDps.setFkFunctionalAreaId(erp.mod.SModSysConsts.CFGU_FUNC_NON);
+                    dataDps.setFkFunctionalAreaId(erp.mod.SModSysConsts.CFGU_FUNC_NA);
                     dataDps.setFkBizPartnerId_r(dbInvoiceCustomer.getDesCustomerId());
                     dataDps.setFkBizPartnerBranchId(dbInvoiceCustomer.getDesCustomerBranchId());
                     dataDps.setFkBizPartnerBranchAddressId(SEtlConsts.SIIE_DEFAULT);

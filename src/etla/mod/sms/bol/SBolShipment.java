@@ -60,6 +60,7 @@ public class SBolShipment {
     
     public ArrayList<SBolLocations> getLocations() { return maLocations; }
     
+    @SuppressWarnings("unchecked")
     public String encodeJson() {
         JSONObject cp = new JSONObject();
         cp.put("embarque", nShipmentId);

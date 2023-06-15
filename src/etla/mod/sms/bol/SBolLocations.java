@@ -108,6 +108,7 @@ public class SBolLocations {
     
     public ArrayList<SBolMerchandises> getMerchandises() { return maMerchandises; }
     
+    @SuppressWarnings("unchecked")
     public JSONObject getJson() {
         JSONObject loc = new JSONObject();
         loc.put("tipoUbicacion", sLocationType);
