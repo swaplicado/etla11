@@ -54,7 +54,7 @@ public class SReportMailer {
     private static final int ARG_MAIL_TO = 2;
     private static final int ARG_MAIL_BCC = 3;
     private static final String DEF_MAIL_TO = "sflores@swaplicado.com.mx;isabel.garcia@swaplicado.com.mx";
-    private static final String DEF_MAIL_BCC = "floresgtz@hotmail.com";
+    private static final String DEF_MAIL_BCC = "";
     private static final HashMap<String, String> ReportTypesMap = new HashMap<>();
     
     private final static Logger LOGGER = Logger.getLogger("mailer.SReportMailer");

@@ -6,11 +6,11 @@
 package etla.mod.etl.db;
 
 import cfd.DCfdConsts;
-import cfd.ver33.DCfdi33Catalogs;
 import cfd.ver40.DCfdi40Catalogs;
 import erp.data.SDataConstantsSys;
 import erp.lib.SLibConstants;
 import erp.mbps.data.SDataBizPartner;
+import erp.mfin.data.SDataExchangeRate;
 import erp.mitm.data.SDataItem;
 import erp.mtrn.data.SDataDps;
 import erp.mtrn.data.SDataDpsCfd;
@@ -103,8 +103,10 @@ public class SEtlProcessDocInvoices {
         SDbItem dbLineItem = null;
         SDbSysUnitOfMeasure dbLineUnitOfMeasureSrc = null;
         SDbSysUnitOfMeasure dbLineUnitOfMeasureReq = null;
+        SDbExchangeRate dbExcRate = null;
         SDataBizPartner dataBizPartnerCompany = null;
         SDataBizPartner dataBizPartnerCustomer = null;
+        SDataExchangeRate dataExcRate = null;
         SDataItem dataItem = null;
         SDataDps dataDps = null;
         SDataDpsCfd dataDpsCfd = null;
@@ -156,6 +158,18 @@ public class SEtlProcessDocInvoices {
         nMiscDecsAmountUnit = SLibUtils.getDecimalFormatAmountUnitary().getMaximumFractionDigits();
         nMiscDefaultSiieUnitId = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(dbConfigAvista.getFkSrcDefaultUnitOfMeasureId())).getDesUnitOfMeasureId();
         dMisc1kFeetTo1kMeters = ((SDbSysUnitOfMeasure) etlCatalogs.getEtlUnitOfMeasure(SModSysConsts.AS_UOM_MSF)).getConversionFactor();
+        
+        dInvoiceExchangeRate = SEtlUtils.getEtlExchangeRate(session, SModSysConsts.AS_CUR_USD, etlPackage.DateIssue);
+        if (dInvoiceExchangeRate == 0) {
+            dataExcRate = new SDataExchangeRate();
+            if (dataExcRate.read(new Object[] {SModSysConsts.AS_CUR_USD, etlPackage.DateIssue}, stSiie) == SLibConstants.DB_ACTION_READ_OK) {
+                dbExcRate = new SDbExchangeRate();
+                dbExcRate.setPkCurrencyId(SModSysConsts.AS_CUR_USD);
+                dbExcRate.setDate(etlPackage.DateIssue);
+                dbExcRate.setExchangeRate(dataExcRate.getExchangeRate());
+                dbExcRate.save(session);
+            }
+        }
         
         // Get invoices count:
         
@@ -854,15 +868,23 @@ public class SEtlProcessDocInvoices {
                     
                     //dataDpsCfd.setPkYearId(...);
                     //dataDpsCfd.setPkDocId(...);
-                    dataDpsCfd.setVersion("" + DCfdConsts.CFDI_VER_33);
-                    dataDpsCfd.setCfdiType(DCfdi33Catalogs.CFD_TP_I);
+                    dataDpsCfd.setVersion("" + DCfdConsts.CFDI_VER_40);
+                    dataDpsCfd.setCfdiType(DCfdi40Catalogs.CFD_TP_I);
                     dataDpsCfd.setPaymentWay(dbInvoice.getDesCfdiPaymentWay());
                     dataDpsCfd.setPaymentMethod(dataDps.getFkPaymentTypeId() == SDataConstantsSys.TRNS_TP_PAY_CASH ? DCfdi40Catalogs.MDP_PUE : DCfdi40Catalogs.MDP_PPD);
                     dataDpsCfd.setPaymentConditions(dataDps.getFkPaymentTypeId() == SDataConstantsSys.TRNS_TP_PAY_CASH ? "CONTADO" : "CRÉDITO " + dataDps.getDaysOfCredit() + " DÍAS"); // XXX: implement method!
+                    dataDpsCfd.setExportation(DCfdi40Catalogs.ClaveExportacionNoAplica);
+                    //dataDpsCfd.setGlobalPeriodocity(...);
+                    //dataDpsCfd.setGlobalMonths(...);
+                    //dataDpsCfd.setGlobalYear(...);
                     dataDpsCfd.setZipIssue(dbInvoice.getDesCfdiZipIssue());
                     //dataDpsCfd.setConfirmation(...);
                     dataDpsCfd.setTaxRegimeIssuing(dbInvoice.getDesCfdiTaxRegime());
+                    dataDpsCfd.setTaxRegimeReceptor("");
                     dataDpsCfd.setCfdiUsage(dbInvoice.getDesCfdiCfdiUsage());
+                    //dataDpsCfd.setRelationType(...);
+                    //dataDpsCfd.setRelatedUuid(...);
+                    //dataDpsCfd.setXml(..);
                     
                     dataDps.setDbmsDataDpsCfd(dataDpsCfd);
                     
