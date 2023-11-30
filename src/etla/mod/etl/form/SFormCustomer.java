@@ -12,7 +12,10 @@ import etla.mod.etl.db.SDbCustomer;
 import etla.mod.etl.db.SEtlConsts;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import sa.lib.SLibConsts;
 import sa.lib.SLibUtils;
 import sa.lib.db.SDbRegistry;
@@ -24,9 +27,9 @@ import sa.lib.gui.bean.SBeanForm;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
-public class SFormCustomer extends SBeanForm implements ActionListener {
+public class SFormCustomer extends SBeanForm implements ActionListener, ItemListener {
     
     private SDbCustomer moRegistry;
     
@@ -90,12 +93,26 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
         jPanel7 = new javax.swing.JPanel();
         moBoolEtlIgnore = new sa.lib.gui.bean.SBeanFieldBoolean();
         jLabel1 = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
+        moBoolImmex = new sa.lib.gui.bean.SBeanFieldBoolean();
+        jPanel9 = new javax.swing.JPanel();
+        moBoolCfdComp = new sa.lib.gui.bean.SBeanFieldBoolean();
+        jPanel10 = new javax.swing.JPanel();
+        jlCfdCompDisp = new javax.swing.JLabel();
+        moTextCfdCompDisp = new sa.lib.gui.bean.SBeanFieldText();
+        jPanel17 = new javax.swing.JPanel();
+        jlCfdCompRule = new javax.swing.JLabel();
+        moTextCfdCompRule = new sa.lib.gui.bean.SBeanFieldText();
+        jPanel18 = new javax.swing.JPanel();
+        jlCfdCompCont = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jtaCfdCompCont = new javax.swing.JTextArea();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos del registro:"));
         jPanel1.setLayout(new java.awt.BorderLayout(0, 5));
 
-        jPanel2.setLayout(new java.awt.GridLayout(10, 1, 0, 5));
+        jPanel2.setLayout(new java.awt.GridLayout(15, 1, 0, 5));
 
         jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
@@ -252,9 +269,62 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
 
         jPanel2.add(jPanel7);
 
+        jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        moBoolImmex.setText("Es cliente IMMEX");
+        moBoolImmex.setPreferredSize(new java.awt.Dimension(175, 23));
+        jPanel8.add(moBoolImmex);
+
+        jPanel2.add(jPanel8);
+
+        jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        moBoolCfdComp.setText("Leyenda fiscal");
+        moBoolCfdComp.setPreferredSize(new java.awt.Dimension(175, 23));
+        jPanel9.add(moBoolCfdComp);
+
+        jPanel2.add(jPanel9);
+
+        jPanel10.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        jlCfdCompDisp.setText("Disposición fiscal:");
+        jlCfdCompDisp.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel10.add(jlCfdCompDisp);
+
+        moTextCfdCompDisp.setPreferredSize(new java.awt.Dimension(700, 23));
+        jPanel10.add(moTextCfdCompDisp);
+
+        jPanel2.add(jPanel10);
+
+        jPanel17.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        jlCfdCompRule.setText("Norma:");
+        jlCfdCompRule.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel17.add(jlCfdCompRule);
+
+        moTextCfdCompRule.setPreferredSize(new java.awt.Dimension(700, 23));
+        jPanel17.add(moTextCfdCompRule);
+
+        jPanel2.add(jPanel17);
+
+        jPanel18.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
+
+        jlCfdCompCont.setText("Leyenda fiscal:*");
+        jlCfdCompCont.setPreferredSize(new java.awt.Dimension(100, 23));
+        jPanel18.add(jlCfdCompCont);
+
+        jPanel2.add(jPanel18);
+
         jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
 
         jPanel5.setLayout(new java.awt.BorderLayout(5, 0));
+
+        jtaCfdCompCont.setColumns(20);
+        jtaCfdCompCont.setRows(5);
+        jScrollPane1.setViewportView(jtaCfdCompCont);
+
+        jPanel5.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
         jPanel1.add(jPanel5, java.awt.BorderLayout.CENTER);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -263,21 +333,30 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jbEditDesCustomerBranchId;
     private javax.swing.JButton jbEditDesCustomerId;
     private javax.swing.JButton jbSetUndefined;
+    private javax.swing.JLabel jlCfdCompCont;
+    private javax.swing.JLabel jlCfdCompDisp;
+    private javax.swing.JLabel jlCfdCompRule;
     private javax.swing.JLabel jlCode;
     private javax.swing.JLabel jlDesCustomerBranchId;
     private javax.swing.JLabel jlDesCustomerId;
@@ -289,18 +368,23 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
     private javax.swing.JLabel jlSrcCustomerSalesAgent;
     private javax.swing.JLabel jlSrcRequiredCurrency;
     private javax.swing.JLabel jlSrcRequiredUnitOfMeasure;
+    private javax.swing.JTextArea jtaCfdCompCont;
     private javax.swing.JTextField jtfCode;
     private javax.swing.JTextField jtfDefaultCurrency;
     private javax.swing.JTextField jtfDefaultPayMethod;
     private javax.swing.JTextField jtfDefaultUnitOfMeasure;
     private javax.swing.JTextField jtfName;
+    private sa.lib.gui.bean.SBeanFieldBoolean moBoolCfdComp;
     private sa.lib.gui.bean.SBeanFieldBoolean moBoolEtlIgnore;
+    private sa.lib.gui.bean.SBeanFieldBoolean moBoolImmex;
     private sa.lib.gui.bean.SBeanFieldInteger moIntDesCustomerBranchId;
     private sa.lib.gui.bean.SBeanFieldInteger moIntDesCustomerId;
     private sa.lib.gui.bean.SBeanFieldKey moKeyDesRequiredPayMethod;
     private sa.lib.gui.bean.SBeanFieldKey moKeySrcCustomerSalesAgent;
     private sa.lib.gui.bean.SBeanFieldKey moKeySrcRequiredCurrency;
     private sa.lib.gui.bean.SBeanFieldKey moKeySrcRequiredUnitOfMeasure;
+    private sa.lib.gui.bean.SBeanFieldText moTextCfdCompDisp;
+    private sa.lib.gui.bean.SBeanFieldText moTextCfdCompRule;
     private sa.lib.gui.bean.SBeanFieldText moTextPayAccount;
     // End of variables declaration//GEN-END:variables
 
@@ -311,7 +395,7 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
     private void initComponentsCustom() {
         SDbConfigAvista configAvista = ((SDbConfig) miClient.getSession().getConfigSystem()).getDbConfigAvista();
         
-        SGuiUtils.setWindowBounds(this, 640, 400);
+        SGuiUtils.setWindowBounds(this, 960, 600);
         
         moKeySrcRequiredCurrency.setKeySettings(miClient, SGuiUtils.getLabelName(jlSrcRequiredCurrency), false);
         moKeySrcRequiredUnitOfMeasure.setKeySettings(miClient, SGuiUtils.getLabelName(jlSrcRequiredUnitOfMeasure), false);
@@ -321,6 +405,10 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
         moKeyDesRequiredPayMethod.setKeySettings(miClient, SGuiUtils.getLabelName(jlDesRequiredPayMethod), false);
         moTextPayAccount.setTextSettings(SGuiUtils.getLabelName(jlPayAccount), 25, 0);
         moBoolEtlIgnore.setBooleanSettings(moBoolEtlIgnore.getText(), false);
+        moBoolImmex.setBooleanSettings(moBoolImmex.getText(), false);
+        moBoolCfdComp.setBooleanSettings(moBoolCfdComp.getText(), false);
+        moTextCfdCompDisp.setTextSettings(SGuiUtils.getLabelName(jlCfdCompDisp), 255, 0);
+        moTextCfdCompRule.setTextSettings(SGuiUtils.getLabelName(jlCfdCompRule), 255, 0);
         
         moFields.addField(moKeySrcRequiredCurrency);
         moFields.addField(moKeySrcRequiredUnitOfMeasure);
@@ -330,6 +418,10 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
         moFields.addField(moKeyDesRequiredPayMethod);
         moFields.addField(moTextPayAccount);
         moFields.addField(moBoolEtlIgnore);
+        moFields.addField(moBoolImmex);
+        moFields.addField(moBoolCfdComp);
+        moFields.addField(moTextCfdCompDisp);
+        moFields.addField(moTextCfdCompRule);
         
         moFields.setFormButton(jbSave);
         
@@ -366,6 +458,28 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
         moTextPayAccount.setValue(SEtlConsts.SIIE_PAY_ACC_UNDEF);
         moTextPayAccount.requestFocus();
     }
+    
+    private void actionImmex() {
+        moBoolCfdComp.setEnabled(moBoolImmex.isSelected());
+        if (!moBoolCfdComp.isEnabled()) {
+            moBoolCfdComp.setValue(false);
+        }
+    }
+    
+    private void actionCfdComp() {
+        moTextCfdCompDisp.setEnabled(moBoolCfdComp.isSelected());
+        moTextCfdCompRule.setEnabled(moBoolCfdComp.isSelected());
+        jtaCfdCompCont.setEnabled(moBoolCfdComp.isSelected());
+        if (!moTextCfdCompDisp.isEnabled()){
+            moTextCfdCompDisp.setValue("");
+        }
+        if (!moTextCfdCompRule.isEnabled()) {
+            moTextCfdCompRule.setValue("");
+        }
+        if (!jtaCfdCompCont.isEnabled()) {
+            jtaCfdCompCont.setText("");
+        }
+    }
 
     /*
      * Public methods
@@ -380,6 +494,8 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
         jbEditDesCustomerId.addActionListener(this);
         jbEditDesCustomerBranchId.addActionListener(this);
         jbSetUndefined.addActionListener(this);
+        moBoolImmex.addItemListener(this);
+        moBoolCfdComp.addItemListener(this);
     }
 
     @Override
@@ -387,6 +503,8 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
         jbEditDesCustomerId.removeActionListener(this);
         jbEditDesCustomerBranchId.removeActionListener(this);
         jbSetUndefined.removeActionListener(this);
+        moBoolImmex.removeItemListener(this);
+        moBoolCfdComp.removeItemListener(this);
     }
 
     @Override
@@ -426,11 +544,19 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
         moKeyDesRequiredPayMethod.setValue(new int[] { moRegistry.getFkDesRequiredPayMethodId_n()} );
         moTextPayAccount.setValue(moRegistry.getPayAccount());
         moBoolEtlIgnore.setValue(moRegistry.isEtlIgnore());
+        moBoolImmex.setValue(moRegistry.isImmex());
+        moBoolCfdComp.setValue(moRegistry.isCfdComplement());
+        moTextCfdCompDisp.setValue(moRegistry.getCfdComplementDisposition());
+        moTextCfdCompRule.setValue(moRegistry.getCfdComplementRule());
+        jtaCfdCompCont.setText(moRegistry.getCfdComplementContent());
 
         setFormEditable(true);
         
         enableEditDesCustomerId(false);
         enableEditDesCustomerBranchId(false);
+        
+        actionImmex();
+        actionCfdComp();
         
         if (moRegistry.isRegistryNew()) {
         }
@@ -457,6 +583,11 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
         registry.setFkSrcRequiredCurrencyId_n(moKeySrcRequiredCurrency.getSelectedIndex() <= 0 ? SLibConsts.UNDEFINED : moKeySrcRequiredCurrency.getValue()[0]);
         registry.setFkSrcRequiredUnitOfMeasureId_n(moKeySrcRequiredUnitOfMeasure.getSelectedIndex() <= 0 ? SLibConsts.UNDEFINED : moKeySrcRequiredUnitOfMeasure.getValue()[0]);
         registry.setFkDesRequiredPayMethodId_n(moKeyDesRequiredPayMethod.getSelectedIndex() <= 0 ? SLibConsts.UNDEFINED : moKeyDesRequiredPayMethod.getValue()[0]);
+        registry.setCfdComplementDisposition(moTextCfdCompDisp.getValue());
+        registry.setCfdComplementRule(moTextCfdCompRule.getValue());
+        registry.setCfdComplementContent(jtaCfdCompCont.getText());
+        registry.setImmex(moBoolImmex.getValue());
+        registry.setCfdComplement(moBoolCfdComp.getValue());
 
         return registry;
     }
@@ -464,6 +595,13 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
     @Override
     public SGuiValidation validateForm() {
         SGuiValidation validation = moFields.validateFields();
+        
+        if (validation.isValid() && moBoolCfdComp.isSelected()) {
+            if (jtaCfdCompCont.getText().equals("")) {
+                validation.setMessage("Debe ingresar una leyenda fiscal.");
+                validation.setComponent(jtaCfdCompCont);
+            }
+        }
         
         return validation;
     }
@@ -481,6 +619,21 @@ public class SFormCustomer extends SBeanForm implements ActionListener {
             }
             else if (button == jbSetUndefined) {
                 actionSetUndefined();
+            }
+        }
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if (e.getSource() instanceof JCheckBox) {
+            JCheckBox checkBox = (JCheckBox) e.getSource();
+            
+            if (checkBox == moBoolImmex) {
+                actionImmex();
+            }
+            
+            else if (checkBox == moBoolCfdComp) {
+                actionCfdComp();
             }
         }
     }

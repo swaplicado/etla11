@@ -18,7 +18,7 @@ import sa.lib.gui.SGuiClient;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
 public class SViewCustomer extends SGridPaneView {
     
@@ -66,9 +66,14 @@ public class SViewCustomer extends SGridPaneView {
                 + "v.src_cus_sal_agt_fk_n, "
                 + "v.src_req_cur_fk_n, "
                 + "v.src_req_uom_fk_n, "
+                + "v.cfd_comp_disp, "
+                + "v.cfd_comp_rule, "
+                + "v.cfd_comp_cont, "
                 + "v.fst_etl_ins, "
                 + "v.lst_etl_upd, "
                 + "v.b_etl_ign, "
+                + "v.b_immex, "
+                + "v.b_cfd_comp, "
                 + "v.fk_src_cus_cur_n, "
                 + "v.fk_src_cus_uom_n, "
                 + "v.fk_src_cus_sal_agt_n, "
@@ -133,6 +138,11 @@ public class SViewCustomer extends SGridPaneView {
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_CODE_CAT, "v.src_req_uom_fk_n", "ID unidad req " + SEtlConsts.TXT_SYS_AVISTA));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT_NAME_CAT_S, "uom.name", "Unidad req " + SEtlConsts.TXT_SYS_AVISTA));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_M, "v.b_etl_ign", "Ignorar exportación SIIE"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_M, "v.b_immex", "Cliente IMMEX"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_BOOL_M, "v.b_cfd_comp", "Leyenda fiscal"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, "v.cfd_comp_disp", "Disposición fiscal"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, "v.cfd_comp_rule", "Norma"));
+        columns.add(new SGridColumnView(SGridConsts.COL_TYPE_TEXT, "v.cfd_comp_cont", "Leyenda fisfcal"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE_DATETIME, "v.fst_etl_ins", "Primera exportación"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_DATE_DATETIME, "v.lst_etl_upd", "Última exportación"));
         columns.add(new SGridColumnView(SGridConsts.COL_TYPE_INT_4B, "v.fk_lst_etl_log", "# exportación"));
