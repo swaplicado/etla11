@@ -54,8 +54,10 @@ public abstract class SEtlConsts {
     public static final String SIIE_PAY_ACC_UNDEF = "NO IDENTIFICADO";
     public static final int SIIE_UNIT_MSM = 108;
     public static final int SIIE_UNIT_MSF = 109;
-    public static final int[] SIIE_TAX = new int[] { 1, 6 }; // IVA 16%
-    public static final double SIIE_TAX_RATE = 0.16;
+    public static final int[] SIIE_TAX_0 = new int[] { 1, 2 }; // IVA 0%
+    public static final double SIIE_TAX_RATE_0 = 0.0;
+    public static final int[] SIIE_TAX_16 = new int[] { 1, 6 }; // IVA 16%
+    public static final double SIIE_TAX_RATE_16 = 0.16;
     public static final int SIIE_PRICE_UNIT_DECS = 3;
     
     public static final HashMap<String, String> AvistaCountriesMap = new HashMap<>();

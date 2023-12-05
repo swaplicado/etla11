@@ -17,7 +17,7 @@ import sa.lib.gui.SGuiSession;
 
 /**
  *
- * @author Sergio Flores
+ * @author Sergio Flores, Isabel Servín
  */
 public class SDbCustomer extends SDbRegistryUser {
 
@@ -55,9 +55,14 @@ public class SDbCustomer extends SDbRegistryUser {
     protected String msSrcRequiredUnitOfMeasureFk_n;
     protected String msDesCfdiPaymentWay;
     protected String msDesCfdiCfdiUsage;
+    protected String msCfdComplementDisposition;
+    protected String msCfdComplementRule;
+    protected String msCfdComplementContent;
     protected Date mtFirstEtlInsert;
     protected Date mtLastEtlUpdate;
     protected boolean mbEtlIgnore;
+    protected boolean mbImmex;
+    protected boolean mbCfdComplement;
     protected boolean mbActive;
     /*
     protected boolean mbDeleted;
@@ -119,9 +124,14 @@ public class SDbCustomer extends SDbRegistryUser {
     public void setSrcRequiredUnitOfMeasureFk_n(String s) { msSrcRequiredUnitOfMeasureFk_n = s; }
     public void setDesCfdiPaymentWay(String s) { msDesCfdiPaymentWay = s; }
     public void setDesCfdiCfdiUsage(String s) { msDesCfdiCfdiUsage = s; }
+    public void setCfdComplementDisposition(String s) { msCfdComplementDisposition = s; }
+    public void setCfdComplementRule(String s) { msCfdComplementRule = s; }
+    public void setCfdComplementContent(String s) { msCfdComplementContent = s; }
     public void setFirstEtlInsert(Date t) { mtFirstEtlInsert = t; }
     public void setLastEtlUpdate(Date t) { mtLastEtlUpdate = t; }
     public void setEtlIgnore(boolean b) { mbEtlIgnore = b; }
+    public void setImmex(boolean b) { mbImmex = b; }
+    public void setCfdComplement(boolean b) { mbCfdComplement = b; }
     public void setActive(boolean b) { mbActive = b; }
     public void setDeleted(boolean b) { mbDeleted = b; }
     public void setSystem(boolean b) { mbSystem = b; }
@@ -171,9 +181,14 @@ public class SDbCustomer extends SDbRegistryUser {
     public String getSrcRequiredUnitOfMeasureFk_n() { return msSrcRequiredUnitOfMeasureFk_n; }
     public String getDesCfdiPaymentWay() { return msDesCfdiPaymentWay; }
     public String getDesCfdiCfdiUsage() { return msDesCfdiCfdiUsage; }
+    public String getCfdComplementDisposition() { return msCfdComplementDisposition; }
+    public String getCfdComplementRule() { return msCfdComplementRule; }
+    public String getCfdComplementContent() { return msCfdComplementContent; }
     public Date getFirstEtlInsert() { return mtFirstEtlInsert; }
     public Date getLastEtlUpdate() { return mtLastEtlUpdate; }
     public boolean isEtlIgnore() { return mbEtlIgnore; }
+    public boolean isImmex() { return mbImmex; }
+    public boolean isCfdComplement() { return mbCfdComplement; }
     public boolean isActive() { return mbActive; }
     public boolean isDeleted() { return mbDeleted; }
     public boolean isSystem() { return mbSystem; }
@@ -241,9 +256,14 @@ public class SDbCustomer extends SDbRegistryUser {
         msSrcRequiredUnitOfMeasureFk_n = "";
         msDesCfdiPaymentWay = "";
         msDesCfdiCfdiUsage = "";
+        msCfdComplementDisposition = "";
+        msCfdComplementRule = "";
+        msCfdComplementContent = "";
         mtFirstEtlInsert = null;
         mtLastEtlUpdate = null;
         mbEtlIgnore = false;
+        mbImmex = false;
+        mbCfdComplement = false;
         mbActive = false;
         mbDeleted = false;
         mbSystem = false;
@@ -337,9 +357,14 @@ public class SDbCustomer extends SDbRegistryUser {
             msSrcRequiredUnitOfMeasureFk_n = resultSet.getString("src_req_uom_fk_n");
             msDesCfdiPaymentWay = resultSet.getString("des_cfdi_pay_way");
             msDesCfdiCfdiUsage = resultSet.getString("des_cfdi_cfd_use");
+            msCfdComplementDisposition = resultSet.getString("cfd_comp_disp");
+            msCfdComplementRule = resultSet.getString("cfd_comp_rule");
+            msCfdComplementContent = resultSet.getString("cfd_comp_cont");
             mtFirstEtlInsert = resultSet.getTimestamp("fst_etl_ins");
             mtLastEtlUpdate = resultSet.getTimestamp("lst_etl_upd");
             mbEtlIgnore = resultSet.getBoolean("b_etl_ign");
+            mbImmex = resultSet.getBoolean("b_immex");
+            mbCfdComplement = resultSet.getBoolean("b_cfd_comp");
             mbActive = resultSet.getBoolean("b_act");
             mbDeleted = resultSet.getBoolean("b_del");
             mbSystem = resultSet.getBoolean("b_sys");
@@ -430,9 +455,14 @@ public class SDbCustomer extends SDbRegistryUser {
                     (msSrcRequiredUnitOfMeasureFk_n.isEmpty() ? "NULL" : "'" + msSrcRequiredUnitOfMeasureFk_n + "'") + ", " + 
                     "'" + msDesCfdiPaymentWay + "', " + 
                     "'" + msDesCfdiCfdiUsage + "', " + 
+                    "'" + msCfdComplementDisposition + "', " + 
+                    "'" + msCfdComplementRule + "', " + 
+                    "'" + msCfdComplementContent + "', " + 
                     "NOW()" + ", " + 
                     "NOW()" + ", " + 
                     (mbEtlIgnore ? 1 : 0) + ", " + 
+                    (mbImmex ? 1 : 0) + ", " + 
+                    (mbCfdComplement ? 1 : 0) + ", " + 
                     (mbActive ? 1 : 0) + ", " + 
                     (mbDeleted ? 1 : 0) + ", " + 
                     (mbSystem ? 1 : 0) + ", " + 
@@ -487,9 +517,14 @@ public class SDbCustomer extends SDbRegistryUser {
                     "src_req_uom_fk_n = " + (msSrcRequiredUnitOfMeasureFk_n.isEmpty() ? "NULL" : "'" + msSrcRequiredUnitOfMeasureFk_n + "'") + ", " +
                     "des_cfdi_pay_way = '" + msDesCfdiPaymentWay + "', " +
                     "des_cfdi_cfd_use = '" + msDesCfdiCfdiUsage + "', " +
+                    "cfd_comp_disp = '" + msCfdComplementDisposition + "', " +
+                    "cfd_comp_rule = '" + msCfdComplementRule + "', " +
+                    "cfd_comp_cont = '" + msCfdComplementContent + "', " +
                     //"fst_etl_ins = " + "NOW()" + ", " +
                     "lst_etl_upd = " + "NOW()" + ", " +
                     "b_etl_ign = " + (mbEtlIgnore ? 1 : 0) + ", " +
+                    "b_immex = " + (mbImmex ? 1 : 0) + ", " +
+                    "b_cfd_comp = " + (mbCfdComplement ? 1 : 0) + ", " +
                     "b_act = " + (mbActive ? 1 : 0) + ", " +
                     "b_del = " + (mbDeleted ? 1 : 0) + ", " +
                     "b_sys = " + (mbSystem ? 1 : 0) + ", " +
@@ -551,9 +586,14 @@ public class SDbCustomer extends SDbRegistryUser {
         registry.setSrcRequiredUnitOfMeasureFk_n(this.getSrcRequiredUnitOfMeasureFk_n());
         registry.setDesCfdiPaymentWay(this.getDesCfdiPaymentWay());
         registry.setDesCfdiCfdiUsage(this.getDesCfdiCfdiUsage());
+        registry.setCfdComplementDisposition(this.getCfdComplementDisposition());
+        registry.setCfdComplementRule(this.getCfdComplementRule());
+        registry.setCfdComplementContent(this.getCfdComplementContent());
         registry.setFirstEtlInsert(this.getFirstEtlInsert());
         registry.setLastEtlUpdate(this.getLastEtlUpdate());
         registry.setEtlIgnore(this.isEtlIgnore());
+        registry.setImmex(this.isImmex());
+        registry.setCfdComplement(this.isCfdComplement());
         registry.setActive(this.isActive());
         registry.setDeleted(this.isDeleted());
         registry.setSystem(this.isSystem());

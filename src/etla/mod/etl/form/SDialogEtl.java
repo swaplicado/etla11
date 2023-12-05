@@ -47,6 +47,8 @@ public class SDialogEtl extends SBeanFormDialog implements ActionListener, ItemL
 
     /**
      * Creates new form SDialogEtl
+     * @param client
+     * @param title
      */
     public SDialogEtl(SGuiClient client, String title) {
         setFormSettings(client, SGuiConsts.BEAN_FORM_EDIT, SModConsts.AX_ETL, SLibConsts.UNDEFINED, title);

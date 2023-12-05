@@ -82,6 +82,7 @@ public class SEtlProcessDocInvoices {
         double dLineUnitsReq = 0;
         double dLinePriceReq = 0;
         double dLineAmountReq = 0;
+        double dExchangeToLocal = 0;
         boolean isLineUnitEqual = false;
         String sLinePricePerCode = "";  // for dbo.CustomerInvoiceItems.PricePer, i.e., price per unit of measure (provided by code)
         
@@ -650,17 +651,28 @@ public class SEtlProcessDocInvoices {
                                 }
                             }
                             
+                            dExchangeToLocal = 1;
+                            
+                            if (dbInvoiceCurrencyReq.getDesCurrencyId() != dbConfigAvista.getFkSrcLocalCurrencyId() ) {
+                                if (rsAvistaInvoiceData.getDouble("ExchangeToLocal") == 0.0) {
+                                    throw new Exception("La factura no tiene un tipo de cambio valido." + sInvoiceItemErrMsg);
+                                }
+                                else{
+                                    dExchangeToLocal = rsAvistaInvoiceData.getDouble("ExchangeToLocal");
+                                }
+                            }
+                            
                             if (isLineUnitEqual) {
                                 // Both line (invoice row) units, source and required, are the same:
                                 
-                                dLinePriceReq = SLibUtils.round(rsAvistaInvoiceData.getDouble("LinePrice") * dFactorCurrency, nMiscDecsAmountUnit);
+                                dLinePriceReq = SLibUtils.round((rsAvistaInvoiceData.getDouble("LinePrice")/ dExchangeToLocal) * dFactorCurrency, nMiscDecsAmountUnit);
                                 dLineAmountReq = SLibUtils.round(dLineUnitsReq * dLinePriceReq, nMiscDecsAmount);
                             }
                             else {
                                 // Source and required line (invoice row) units are different:
                                 
-                                dLineAmountReq = SLibUtils.round(SLibUtils.round(dLineUnitsSrc * rsAvistaInvoiceData.getDouble("LinePrice"), nMiscDecsAmountUnit) * dFactorCurrency, nMiscDecsAmount);
-                                dLinePriceReq = SLibUtils.round(dLineAmountReq / dLineUnitsReq, nMiscDecsAmountUnit);
+                                dLineAmountReq = SLibUtils.round(SLibUtils.round((dLineUnitsSrc * rsAvistaInvoiceData.getDouble("LinePrice") / dExchangeToLocal), nMiscDecsAmountUnit) * dFactorCurrency, nMiscDecsAmount);
+                                dLinePriceReq = SLibUtils.round((dLineAmountReq / dLineUnitsReq) / dExchangeToLocal, nMiscDecsAmountUnit);
                             }
                             
                             dbInvoiceRow = new SDbInvoiceRow();
@@ -909,6 +921,29 @@ public class SEtlProcessDocInvoices {
                     
                     dataDps.getDbmsDpsNotes().add(dataDpsNotes);
                     
+                    if (dbInvoiceCustomer.isImmex() && dbInvoiceCustomer.isCfdComplement()) {
+                        SDataDpsNotes dataDpsNotesImmex = new SDataDpsNotes();
+                        
+                        //dataDpsNotesImmex.setPkYearId(...);    // set when saved
+                        //dataDpsNotesImmex.setPkDocId(...);     // set when saved
+                        //dataDpsNotesImmex.setPkNotesId(...);   // set when saved
+                        dataDpsNotesImmex.setNotes(dbInvoiceCustomer.getCfdComplementContent());
+                        dataDpsNotesImmex.setCfdComplementDisposition(dbInvoiceCustomer.getCfdComplementDisposition());
+                        dataDpsNotesImmex.setCfdComplementRule(dbInvoiceCustomer.getCfdComplementRule());
+                        dataDpsNotesImmex.setIsAllDocs(true);
+                        dataDpsNotesImmex.setIsPrintable(true);
+                        //dataDpsNotesImmex.setIsCfdComplement(...);
+                        dataDpsNotesImmex.setIsDeleted(false);
+                        dataDpsNotesImmex.setFkUserNewId(((SDbUser) session.getUser()).getDesUserId());
+                        dataDpsNotesImmex.setFkUserEditId(SDataConstantsSys.USRX_USER_NA);
+                        dataDpsNotesImmex.setFkUserDeleteId(SDataConstantsSys.USRX_USER_NA);
+                        //dataDpsNotes.setUserNewTs(...);
+                        //dataDpsNotes.setUserEditTs(...);
+                        //dataDpsNotes.setUserDeleteTs(...);
+
+                        dataDps.getDbmsDpsNotes().add(dataDpsNotesImmex);
+                    }
+                    
                     if (dataDps.getFkCurrencyId() != erp.mod.SModSysConsts.CFGU_CUR_MXN) {
                         String cur = "";
                         SDataDpsNotes dataDpsNotesCur = new SDataDpsNotes();
@@ -1026,7 +1061,7 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setSubtotalProvisionalCy_r(SLibUtils.round(((dataDpsEntry.getPriceUnitaryCy() - dataDpsEntry.getDiscountUnitaryCy()) * dataDpsEntry.getQuantity()) - dataDpsEntry.getDiscountEntryCy(), nMiscDecsAmount));
                         dataDpsEntry.setDiscountDocCy(0);
                         dataDpsEntry.setSubtotalCy_r(SLibUtils.round(dataDpsEntry.getSubtotalProvisionalCy_r() - dataDpsEntry.getDiscountDocCy(), nMiscDecsAmount));
-                        dataDpsEntry.setTaxChargedCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() * SEtlConsts.SIIE_TAX_RATE, nMiscDecsAmount));
+                        dataDpsEntry.setTaxChargedCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() * (dbInvoiceCustomer.isImmex() ? SEtlConsts.SIIE_TAX_RATE_0 : SEtlConsts.SIIE_TAX_RATE_16), nMiscDecsAmount));
                         dataDpsEntry.setTaxRetainedCy_r(0);
                         dataDpsEntry.setTotalCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() + dataDpsEntry.getTaxChargedCy_r() - dataDpsEntry.getTaxRetainedCy_r(), nMiscDecsAmount));
                         
@@ -1034,7 +1069,7 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setCommissionsCy_r(0);
                         
                         dEntryTotal = SLibUtils.round(dataDpsEntry.getTotalCy_r() * dataDps.getExchangeRate(), nMiscDecsAmount);
-                        dEntrySubtotal = SLibUtils.round(dEntryTotal / (1.0 + SEtlConsts.SIIE_TAX_RATE), nMiscDecsAmount);
+                        dEntrySubtotal = SLibUtils.round(dEntryTotal / (1.0 + (dbInvoiceCustomer.isImmex() ? SEtlConsts.SIIE_TAX_RATE_0 : SEtlConsts.SIIE_TAX_RATE_16)), nMiscDecsAmount);
                         dEntryTaxRetained = 0;
                         dEntryTaxCharged = SLibUtils.round(dEntryTotal - dEntrySubtotal, nMiscDecsAmount);
                         
@@ -1141,9 +1176,16 @@ public class SEtlProcessDocInvoices {
                         //dataDpsEntryTax.setPkYearId(...);     // set when saved
                         //dataDpsEntryTax.setPkDocId(...);      // set when saved
                         //dataDpsEntryTax.setPkEntryId(...);    // set when saved
-                        dataDpsEntryTax.setPkTaxBasicId(SEtlConsts.SIIE_TAX[0]);
-                        dataDpsEntryTax.setPkTaxId(SEtlConsts.SIIE_TAX[1]);
-                        dataDpsEntryTax.setPercentage(SEtlConsts.SIIE_TAX_RATE);
+                        if (!dbInvoiceCustomer.isImmex()) { 
+                            dataDpsEntryTax.setPkTaxBasicId(SEtlConsts.SIIE_TAX_16[0]);
+                            dataDpsEntryTax.setPkTaxId(SEtlConsts.SIIE_TAX_16[1]);
+                            dataDpsEntryTax.setPercentage(SEtlConsts.SIIE_TAX_RATE_16);
+                        }
+                        else {
+                            dataDpsEntryTax.setPkTaxBasicId(SEtlConsts.SIIE_TAX_0[0]);
+                            dataDpsEntryTax.setPkTaxId(SEtlConsts.SIIE_TAX_0[1]);
+                            dataDpsEntryTax.setPercentage(SEtlConsts.SIIE_TAX_RATE_0);
+                        }
                         dataDpsEntryTax.setValueUnitary(0);
                         dataDpsEntryTax.setValue(0);
                         dataDpsEntryTax.setTax(dataDpsEntry.getTaxCharged_r());
@@ -1203,7 +1245,7 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setSubtotalProvisionalCy_r(SLibUtils.round(((dataDpsEntry.getPriceUnitaryCy() - dataDpsEntry.getDiscountUnitaryCy()) * dataDpsEntry.getQuantity()) - dataDpsEntry.getDiscountEntryCy(), nMiscDecsAmount));
                         dataDpsEntry.setDiscountDocCy(0);
                         dataDpsEntry.setSubtotalCy_r(SLibUtils.round(dataDpsEntry.getSubtotalProvisionalCy_r() - dataDpsEntry.getDiscountDocCy(), nMiscDecsAmount));
-                        dataDpsEntry.setTaxChargedCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() * SEtlConsts.SIIE_TAX_RATE, nMiscDecsAmount));
+                        dataDpsEntry.setTaxChargedCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() * (dbInvoiceCustomer.isImmex() ? SEtlConsts.SIIE_TAX_RATE_0 : SEtlConsts.SIIE_TAX_RATE_16), nMiscDecsAmount));
                         dataDpsEntry.setTaxRetainedCy_r(0);
                         dataDpsEntry.setTotalCy_r(SLibUtils.round(dataDpsEntry.getSubtotalCy_r() + dataDpsEntry.getTaxChargedCy_r() - dataDpsEntry.getTaxRetainedCy_r(), nMiscDecsAmount));
                         
@@ -1211,7 +1253,7 @@ public class SEtlProcessDocInvoices {
                         dataDpsEntry.setCommissionsCy_r(0);
                         
                         dEntryTotal = SLibUtils.round(dataDpsEntry.getTotalCy_r() * dataDps.getExchangeRate(), nMiscDecsAmount);
-                        dEntrySubtotal = SLibUtils.round(dEntryTotal / (1.0 + SEtlConsts.SIIE_TAX_RATE), nMiscDecsAmount);
+                        dEntrySubtotal = SLibUtils.round(dEntryTotal / (1.0 + (dbInvoiceCustomer.isImmex() ? SEtlConsts.SIIE_TAX_RATE_0 : SEtlConsts.SIIE_TAX_RATE_16)), nMiscDecsAmount);
                         dEntryTaxRetained = 0;
                         dEntryTaxCharged = SLibUtils.round(dEntryTotal - dEntrySubtotal, nMiscDecsAmount);
                         
@@ -1315,9 +1357,16 @@ public class SEtlProcessDocInvoices {
                         //dataDpsEntryTax.setPkYearId(...);     // set when saved
                         //dataDpsEntryTax.setPkDocId(...);      // set when saved
                         //dataDpsEntryTax.setPkEntryId(...);    // set when saved
-                        dataDpsEntryTax.setPkTaxBasicId(SEtlConsts.SIIE_TAX[0]);
-                        dataDpsEntryTax.setPkTaxId(SEtlConsts.SIIE_TAX[1]);
-                        dataDpsEntryTax.setPercentage(SEtlConsts.SIIE_TAX_RATE);
+                        if (!dbInvoiceCustomer.isImmex()) { 
+                            dataDpsEntryTax.setPkTaxBasicId(SEtlConsts.SIIE_TAX_16[0]);
+                            dataDpsEntryTax.setPkTaxId(SEtlConsts.SIIE_TAX_16[1]);
+                            dataDpsEntryTax.setPercentage(SEtlConsts.SIIE_TAX_RATE_16);
+                        }
+                        else {
+                            dataDpsEntryTax.setPkTaxBasicId(SEtlConsts.SIIE_TAX_0[0]);
+                            dataDpsEntryTax.setPkTaxId(SEtlConsts.SIIE_TAX_0[1]);
+                            dataDpsEntryTax.setPercentage(SEtlConsts.SIIE_TAX_RATE_0);
+                        }
                         dataDpsEntryTax.setValueUnitary(0);
                         dataDpsEntryTax.setValue(0);
                         dataDpsEntryTax.setTax(dataDpsEntry.getTaxCharged_r());

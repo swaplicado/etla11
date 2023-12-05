@@ -393,7 +393,7 @@ public class SDbInvoiceRow extends SDbRegistryUser {
                     "pro_dsc = '" + msProductDescription + "', " +
                     "cus_ord = '" + msCustomerOrder + "', " +
                     "ord_num = '" + msOrderNumber + "', " +
-                    "ord_dsc = '" + msOrderDescription + "', " +
+                    "ord_dsc = '" + msOrderDescription + "', " + 
                     "est_num = '" + msEstimateNumber + "', " +
                     "est_dsc = '" + msEstimateDescription + "', " +
                     "qty_ord = " + mnQuantityOrdered + ", " +
