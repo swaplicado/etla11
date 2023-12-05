@@ -69,17 +69,17 @@ public class SDialogSendWmReport extends SBeanFormDialog implements ActionListen
         jPanel4 = new javax.swing.JPanel();
         jlES = new javax.swing.JLabel();
         moKeyES = new sa.lib.gui.bean.SBeanFieldKey();
-        jPanel7 = new javax.swing.JPanel();
         jlCompany = new javax.swing.JLabel();
         moKeyCompany = new sa.lib.gui.bean.SBeanFieldKey();
         jPanel5 = new javax.swing.JPanel();
         jlStart = new javax.swing.JLabel();
         moStartDate = new sa.lib.gui.bean.SBeanFieldDate();
-        jPanel8 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
         jlEnd = new javax.swing.JLabel();
         moEndDate = new sa.lib.gui.bean.SBeanFieldDate();
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Envio mail resumen báscula:"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Parámetros del reporte mail resumen de báscula:"));
         jPanel1.setPreferredSize(new java.awt.Dimension(640, 400));
         jPanel1.setLayout(new java.awt.BorderLayout(0, 5));
 
@@ -87,37 +87,43 @@ public class SDialogSendWmReport extends SBeanFormDialog implements ActionListen
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
-        jlES.setText("Entrada/Salida:*");
+        jlES.setText("Entrada o salida:*");
         jlES.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel4.add(jlES);
 
         moKeyES.setPreferredSize(new java.awt.Dimension(150, 23));
         jPanel4.add(moKeyES);
-        jPanel4.add(jPanel7);
 
+        jlCompany.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlCompany.setText("Empresa:");
         jlCompany.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel4.add(jlCompany);
 
-        moKeyCompany.setPreferredSize(new java.awt.Dimension(150, 23));
+        moKeyCompany.setPreferredSize(new java.awt.Dimension(200, 23));
         jPanel4.add(moKeyCompany);
 
         jPanel2.add(jPanel4);
 
-        jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
         jlStart.setText("Fecha inicial:*");
         jlStart.setPreferredSize(new java.awt.Dimension(100, 23));
         jPanel5.add(jlStart);
         jPanel5.add(moStartDate);
-        jPanel5.add(jPanel8);
+
+        jLabel1.setPreferredSize(new java.awt.Dimension(42, 23));
+        jPanel5.add(jLabel1);
+
+        jPanel2.add(jPanel5);
+
+        jPanel3.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 0));
 
         jlEnd.setText("Fecha final:*");
         jlEnd.setPreferredSize(new java.awt.Dimension(100, 23));
-        jPanel5.add(jlEnd);
-        jPanel5.add(moEndDate);
+        jPanel3.add(jlEnd);
+        jPanel3.add(moEndDate);
 
-        jPanel2.add(jPanel5);
+        jPanel2.add(jPanel3);
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
 
@@ -129,12 +135,12 @@ public class SDialogSendWmReport extends SBeanFormDialog implements ActionListen
     private javax.swing.ButtonGroup bgExportMode;
     private javax.swing.ButtonGroup bgInvoiceBatch;
     private javax.swing.ButtonGroup bgUpdateMode;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JLabel jlCompany;
     private javax.swing.JLabel jlES;
     private javax.swing.JLabel jlEnd;

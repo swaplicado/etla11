@@ -855,7 +855,7 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
     }
 
     private void actionSmsWmReport(){
-        SDialogSendWmReport dialog = new SDialogSendWmReport(this, "Resumen bascúla");
+        SDialogSendWmReport dialog = new SDialogSendWmReport(this, "Reporte mail resumen de báscula");
         dialog.initForm();
         dialog.setVisible(true);
     }
@@ -1164,11 +1164,13 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             }
             else if (menuItem == jmiWmAuditReport) {
                 if (showMsgBoxConfirm("¿Desea importar boletos Revuelta y documentos SIIE para procesar el reporte?\n"
-                        + "El proceso puede demorar varios minutos.") == JOptionPane.YES_OPTION) {
+                        + "Este proceso puede demorar varios minutos.\n"
+                        + "Terminada la importación, o incluso si opta por no realizarla, se podrá solicitar el reporte.") == JOptionPane.YES_OPTION) {
                     this.jTabbedPane.setCursor(new Cursor(Cursor.WAIT_CURSOR));
                     importProcess();
                     this.jTabbedPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
+                
                 actionSmsWmReport();
             }
             else if (menuItem == jmiHelpHelp) {

@@ -237,7 +237,7 @@ public class SSmsEtl {
                 mbTicketRevuelta = true;
                 
                 // Permitir visibilidad del progreso de importación de boletos Revuelta:
-                System.out.println("Importing Revuelta ticket " + resultSetRev.getString("Pes_ID") + ", " + resultSetRev.getString("Pes_FecHor") + "...");
+                System.out.print("Processing Revuelta ticket " + resultSetRev.getString("Pes_ID") + ", " + resultSetRev.getString("Pes_FecHor") + ": ");
 
                 // Importar boletos Revuelta:
                 
@@ -248,6 +248,10 @@ public class SSmsEtl {
                 
                 if (wmTicketId != 0) {
                     wmTicket.read(moSession, new int[] { wmTicketId });
+                    System.out.println("update...");
+                }
+                else {
+                    System.out.println("insert...");
                 }
                 
                 // Crear o actualizar boleto Revuelta:
@@ -309,14 +313,16 @@ public class SSmsEtl {
                 + "INNER JOIN erp.bpsu_bp AS b ON d.fid_bp_r = b.id_bp "
                 + "WHERE NOT d.b_del AND NOT de.b_del AND d.fid_st_dps = " + SDataConstantsSys.TRNS_ST_DPS_EMITED + " AND "
                 + "d.ts_edit >= '" + SLibUtils.DbmsDateFormatDate.format(moLastErpDocEtlLog.getTsBaseNextEtl()) + "' AND "
-                + "(fid_cl_dps = " + SDataConstantsSys.TRNS_CL_DPS_SAL_DOC[1] + " OR fid_cl_dps = " + SDataConstantsSys.TRNS_CL_DPS_SAL_ADJ[1] + ") "
+                + "(d.fid_cl_dps = " + SDataConstantsSys.TRNS_CL_DPS_SAL_DOC[1] + " OR d.fid_cl_dps = " + SDataConstantsSys.TRNS_CL_DPS_SAL_ADJ[1] + ") "
                 + "GROUP BY d.id_year, d.id_doc, d.fid_ct_dps, d.fid_cl_dps, "
                 + "d.num_ser, d.num, d.dt, d.ts_edit, b.id_bp, b.bp "
                 + "ORDER BY d.id_year, d.id_doc ";
         ResultSet resultSetSiie = moConnectionSiie.createStatement().executeQuery(sql);
         while (resultSetSiie.next()) {
             SDbErpDoc erpDoc = new SDbErpDoc();
-            System.out.println("importing " + resultSetSiie.getString("ts_edit")+ " SIIE Docs");
+            
+            System.out.print("Processing SIIE document year=" + resultSetSiie.getInt("d.id_year") + ", doc=" + resultSetSiie.getInt("d.id_doc") + ", TS: " + resultSetSiie.getString("ts_edit")+ ": ");
+            
             sql = "SELECT id_erp_doc "
                     + "FROM " + SModConsts.TablesMap.get(SModConsts.S_ERP_DOC) + " "
                     + "WHERE erp_year_id = " + resultSetSiie.getInt("d.id_year") + " AND erp_doc_id = " + resultSetSiie.getInt("d.id_doc") + " "
@@ -324,8 +330,13 @@ public class SSmsEtl {
             try (ResultSet resultSet = moSession.getStatement().executeQuery(sql)) {
                 if (resultSet.next()) {
                     erpDoc.read(moSession, new int[] { resultSet.getInt(1) });
+                    System.out.println("update...");
+                }
+                else {
+                    System.out.println("insert...");
                 }
             }
+            
             //erpDoc.setPkErpDocId();
             erpDoc.setErpYearId(resultSetSiie.getInt("d.id_year"));
             erpDoc.setErpDocId(resultSetSiie.getInt("d.id_doc"));
