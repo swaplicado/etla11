@@ -77,14 +77,14 @@
             <Property name="text" type="java.lang.String" value="Facturas"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jmiEtlExchangeRate">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Tipos de cambio"/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jmiEtlEtl">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Exportaci&#xf3;n a SIIE..."/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jmiEtlExchangeRate">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Tipos de cambio"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jsEtl1">

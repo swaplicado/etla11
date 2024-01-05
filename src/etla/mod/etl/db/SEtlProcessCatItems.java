@@ -14,7 +14,6 @@ import etla.mod.cfg.db.SDbConfig;
 import etla.mod.cfg.db.SDbUser;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import sa.lib.SLibConsts;
 import sa.lib.SLibUtils;
 import sa.lib.gui.SGuiSession;
 
@@ -64,7 +63,7 @@ public class SEtlProcessCatItems {
                 + "WHERE CAST(ci.Created AS DATE) BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodStart) + "' AND '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodEnd) + "' AND "
                 + "ci.CurrentStatusKey IN (" + SEtlConsts.AVISTA_INV_STA_APP + ", " + SEtlConsts.AVISTA_INV_STA_ARC + ") AND "
                 + "ci.CustomerInvoiceTypeKey=" + SEtlConsts.AVISTA_INV_TP_INV + " "
-                + (etlPackage.InvoiceBatch == SLibConsts.UNDEFINED ? "" : "AND ci.BatchNumber=" + etlPackage.InvoiceBatch + " ");
+                + (etlPackage.InvoiceBatch == 0 ? "" : "AND ci.BatchNumber=" + etlPackage.InvoiceBatch + " ");
         resultSetAvista = statementAvista.executeQuery(sql);
         while (resultSetAvista.next()) {
             nItems = resultSetAvista.getInt(1);
@@ -80,7 +79,7 @@ public class SEtlProcessCatItems {
                 + "WHERE CAST(ci.Created AS DATE) BETWEEN '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodStart) + "' AND '" + SLibUtils.DbmsDateFormatDate.format(etlPackage.PeriodEnd) + "' AND "
                 + "ci.CurrentStatusKey IN (" + SEtlConsts.AVISTA_INV_STA_APP + ", " + SEtlConsts.AVISTA_INV_STA_ARC + ") AND "
                 + "ci.CustomerInvoiceTypeKey=" + SEtlConsts.AVISTA_INV_TP_INV + " "
-                + (etlPackage.InvoiceBatch == SLibConsts.UNDEFINED ? "" : "AND ci.BatchNumber=" + etlPackage.InvoiceBatch + " ")
+                + (etlPackage.InvoiceBatch == 0 ? "" : "AND ci.BatchNumber=" + etlPackage.InvoiceBatch + " ")
                 + "ORDER BY pe.PlantBoardTypeKey, pe.Flute ";
         resultSetAvista = statementAvista.executeQuery(sql);
         while (resultSetAvista.next()) {
@@ -135,7 +134,7 @@ public class SEtlProcessCatItems {
                     dataItem.setItem(sItemName);
                     dataItem.setItemShort(sItemName);
                     dataItem.setName(sItemName);
-                    dataItem.setNameShort(sItemName);
+                    dataItem.setNameShort(SLibUtils.textLeft(sItemName, 25));
                     dataItem.setPresentation("");
                     dataItem.setPresentationShort("");
                     dataItem.setCode(sItemCodeRaw);
@@ -181,13 +180,14 @@ public class SEtlProcessCatItems {
                     dataItem.setIsSalesFreightRequired(false);
                     dataItem.setIsDeleted(false);
                     dataItem.setFkItemGenericId(dbConfigAvista.getDesDefaultItemGenericFk());
-                    dataItem.setFkItemLineId_n(SLibConsts.UNDEFINED);
+                    dataItem.setFkItemLineId_n(0);
                     dataItem.setFkItemStatusId(SModSysConsts.ITMS_ST_ITEM_ACT);
                     dataItem.setFkUnitId(etlCatalogs.getEtlUnitOfMeasure(etlCatalogs.getEtlIdForUnitOfMeasure(dbConfigAvista.getSrcDefaultUnitOfMeasureFk())).getDesUnitOfMeasureId());
                     dataItem.setFkUnitUnitsContainedId(SModSysConsts.ITMU_UNIT_NA);
                     dataItem.setFkUnitUnitsVirtualId(SModSysConsts.ITMU_UNIT_NA);
                     dataItem.setFkUnitNetContentId(SModSysConsts.ITMU_UNIT_NA);
                     dataItem.setFkUnitNetContentUnitaryId(SModSysConsts.ITMU_UNIT_NA);
+                    dataItem.setFkUnitCommercial_n(0);
                     dataItem.setFkUnitAlternativeTypeId(SModSysConsts.ITMU_TP_UNIT_QTY); // required to enable alternative unit type (when quantity is required as unit instead of surface)
                     dataItem.setFkLevelTypeId(SDataConstantsSys.ITMU_TP_LEV_NA);
                     dataItem.setFkBrandId(SDataConstantsSys.ITMU_BRD_NA);
@@ -201,9 +201,9 @@ public class SEtlProcessCatItems {
                     dataItem.setFkAccountEbitdaTypeId(SDataConstantsSys.NA);
                     dataItem.setFkFiscalAccountIncId(SModSysConsts.FIN_ACC_NA);
                     dataItem.setFkFiscalAccountExpId(SModSysConsts.FIN_ACC_NA);
-                    dataItem.setFkItemPackageId_n(SLibConsts.UNDEFINED);
-                    dataItem.setFkDefaultItemRefId_n(SLibConsts.UNDEFINED);
-                    dataItem.setFkCfdProdServId_n(SLibConsts.UNDEFINED);
+                    dataItem.setFkItemPackageId_n(0);
+                    dataItem.setFkDefaultItemRefId_n(0);
+                    dataItem.setFkCfdProdServId_n(0);
                     dataItem.setFkUserNewId(((SDbUser) session.getUser()).getDesUserId());
                     dataItem.setFkUserEditId(SDataConstantsSys.USRX_USER_NA);
                     dataItem.setFkUserDeleteId(SDataConstantsSys.USRX_USER_NA);
@@ -286,15 +286,15 @@ public class SEtlProcessCatItems {
                     dbItem.setSrcBoardTypeFk(resultSetAvista.getInt("PlantBoardTypeKey"));
                     dbItem.setSrcFluteFk(resultSetAvista.getString("Flute"));
                     dbItem.setSrcCustomerFk_n("");
-                    dbItem.setSrcRequiredCurrencyFk_n(SLibConsts.UNDEFINED);
+                    dbItem.setSrcRequiredCurrencyFk_n(0);
                     dbItem.setSrcRequiredUnitOfMeasureFk_n("");
                     //dbItem.setFirstEtlInsert(...); // set on save
                     //dbItem.setLastEtlUpdate(...); // set on save
                     dbItem.setDeleted(false);
                     dbItem.setSystem(false);
-                    dbItem.setFkSrcCustomerId_n(SLibConsts.UNDEFINED);
-                    dbItem.setFkSrcRequiredCurrencyId_n(SLibConsts.UNDEFINED);
-                    dbItem.setFkSrcRequiredUnitOfMeasureId_n(SLibConsts.UNDEFINED);
+                    dbItem.setFkSrcCustomerId_n(0);
+                    dbItem.setFkSrcRequiredCurrencyId_n(0);
+                    dbItem.setFkSrcRequiredUnitOfMeasureId_n(0);
                     dbItem.setFkLastEtlLogId(etlPackage.EtlLog.getPkEtlLogId());
                     //dbItem.setFkUserInsertId(...); // set on save
                     //dbItem.setFkUserUpdateId(...); // set on save

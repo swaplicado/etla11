@@ -76,7 +76,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 021.1"; // release: 2023-12-05
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 021.1"; // release: 2024-01-05
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 
@@ -146,8 +146,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jmiCfgExtraCharge = new javax.swing.JMenuItem();
         jmiCfgUser = new javax.swing.JMenuItem();
         jmEtl = new javax.swing.JMenu();
-        jmiEtlExchangeRate = new javax.swing.JMenuItem();
         jmiEtlEtl = new javax.swing.JMenuItem();
+        jmiEtlExchangeRate = new javax.swing.JMenuItem();
         jsEtl1 = new javax.swing.JPopupMenu.Separator();
         jmiEtlInvoice = new javax.swing.JMenuItem();
         jmiEtlBolPending = new javax.swing.JMenuItem();
@@ -299,11 +299,11 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
         jmEtl.setText("Facturas");
 
-        jmiEtlExchangeRate.setText("Tipos de cambio");
-        jmEtl.add(jmiEtlExchangeRate);
-
         jmiEtlEtl.setText("Exportación a SIIE...");
         jmEtl.add(jmiEtlEtl);
+
+        jmiEtlExchangeRate.setText("Tipos de cambio");
+        jmEtl.add(jmiEtlExchangeRate);
         jmEtl.add(jsEtl1);
 
         jmiEtlInvoice.setText("Facturas");
@@ -1105,11 +1105,11 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
             else if (menuItem == jmiCfgUser) {
                 moSession.showView(SModConsts.CU_USR, SLibConsts.UNDEFINED, null);
             }
-            else if (menuItem == jmiEtlExchangeRate) {
-                moSession.showView(SModConsts.A_EXR, SLibConsts.UNDEFINED, null);
-            }
             else if (menuItem == jmiEtlEtl) {
                 actionEtlEtl();
+            }
+            else if (menuItem == jmiEtlExchangeRate) {
+                moSession.showView(SModConsts.A_EXR, SLibConsts.UNDEFINED, null);
             }
             else if (menuItem == jmiEtlInvoice) {
                 moSession.showView(SModConsts.A_INV, SViewInvoice.SUBTYPE_ALL, null);
