@@ -127,8 +127,8 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jbWorkingDate = new javax.swing.JButton();
         jtfUser = new javax.swing.JTextField();
         jtfUserTs = new javax.swing.JTextField();
-        jlAppRelease = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jlAppRelease = new javax.swing.JLabel();
         jlAppLogo = new javax.swing.JLabel();
         jMenuBar = new javax.swing.JMenuBar();
         jmFile = new javax.swing.JMenu();
@@ -239,19 +239,20 @@ public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
         jtfUserTs.setPreferredSize(new java.awt.Dimension(150, 20));
         jPanel1.add(jtfUserTs);
 
-        jlAppRelease.setForeground(new java.awt.Color(0, 153, 153));
-        jlAppRelease.setText("RELEASE");
-        jlAppRelease.setPreferredSize(new java.awt.Dimension(150, 20));
-        jPanel1.add(jlAppRelease);
-
         jPanelStatus.add(jPanel1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setBackground(java.awt.Color.black);
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 5, 2));
 
+        jlAppRelease.setForeground(new java.awt.Color(0, 153, 153));
+        jlAppRelease.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jlAppRelease.setText("SIIE ETLA 1.1 021.1");
+        jlAppRelease.setPreferredSize(new java.awt.Dimension(125, 20));
+        jPanel2.add(jlAppRelease);
+
         jlAppLogo.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jlAppLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/etla/gui/img/swap_logo_9.jpg"))); // NOI18N
-        jlAppLogo.setPreferredSize(new java.awt.Dimension(100, 20));
+        jlAppLogo.setPreferredSize(new java.awt.Dimension(80, 20));
         jPanel2.add(jlAppLogo);
 
         jPanelStatus.add(jPanel2, java.awt.BorderLayout.EAST);
