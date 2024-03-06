@@ -1,4 +1,10 @@
 ================================================================================
+2024-03-06, 1.1 021.3
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Actualización de estructura de configuraciones de clientes por adición de nuevo atributo para omitir la restricción de timbrado de facturas en moneda extranjera.
+
+================================================================================
 2024-01-05, 1.1 021.2
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------
