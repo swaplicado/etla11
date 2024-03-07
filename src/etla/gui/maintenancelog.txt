@@ -20,7 +20,7 @@ Sergio Abraham FLORES GUTIÉRREZ
 2023-11-30, 1.1 021.0
 Isabel Danae GARCÍA SERVÍN
 --------------------------------------------------------------------------------
-1) Configuración para clientes IMMEX y exportación de facturas con taza 0 y leyendas fiscales para clientes configurados.
+1) Configuración para clientes IMMEX y exportación de facturas con tasa 0% y leyendas fiscales para clientes configurados.
 
 ================================================================================
 2023-06-15, 1.1 019.7
