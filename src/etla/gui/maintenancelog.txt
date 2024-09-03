@@ -1,4 +1,11 @@
 ================================================================================
+2024-09-03, 1.1 021.4
+Sergio Abraham FLORES GUTIÉRREZ
+--------------------------------------------------------------------------------
+1) Actualización de estructura de documentos SIIE, por la adición del campo condiciones de pago.
+2) Incorporación del soporte de la moneda libras esterlinas, por su incorporación a SIIE.
+
+================================================================================
 2024-03-06, 1.1 021.3
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------

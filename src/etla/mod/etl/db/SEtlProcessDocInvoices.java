@@ -763,6 +763,7 @@ public class SEtlProcessDocInvoices {
                     dataDps.setNumber("" + SEtlUtils.getSiieNextDpsNumber(session, stSiie));
                     dataDps.setNumberReference(dbInvoice.getCustomerOrder().length() <= 25 ? dbInvoice.getCustomerOrder() : dbInvoice.getCustomerOrder().substring(0, 25));
                     dataDps.setCommissionsReference("");
+                    dataDps.setConditionsPayment("");
                     dataDps.setApprovalYear(dataDps.getPkYearId());
                     dataDps.setApprovalNumber(1);
                     dataDps.setDaysOfCredit(dbInvoice.getCreditDays());
@@ -954,6 +955,9 @@ public class SEtlProcessDocInvoices {
                                 break;
                             case erp.mod.SModSysConsts.CFGU_CUR_EUR:
                                 cur = "EUROS";
+                                break;
+                            case erp.mod.SModSysConsts.CFGU_CUR_GBP:
+                                cur = "LIBRAS ESTERLINAS";
                                 break;
                             default:
                                 cur = "MONEDA EXTRANJERA";
