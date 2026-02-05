@@ -76,7 +76,7 @@ import sa.lib.xml.SXmlUtils;
 public class SGuiMain extends JFrame implements SGuiClient, ActionListener {
 
     public static final String APP_NAME = "SIIE ETLA 1.1";
-    public static final String APP_RELEASE = "SIIE ETLA 1.1 021.6"; // release date: 2025-05-06
+    public static final String APP_RELEASE = "SIIE ETLA 1.1 021.7"; // release date: 2026-02-04
     public static final String APP_COPYRIGHT = "© Software Aplicado SA de CV. Todos los derechos reservados.";
     public static final String APP_PROVIDER = "www.swaplicado.com.mx";
 

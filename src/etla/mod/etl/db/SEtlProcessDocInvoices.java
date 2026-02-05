@@ -823,6 +823,7 @@ public class SEtlProcessDocInvoices {
                     dataDps.setFkDpsNatureId(SDataConstantsSys.TRNU_DPS_NAT_DEF);
                     dataDps.setFkCompanyBranchId(dbConfigAvista.getDesCompanyBranchFk());
                     dataDps.setFkFunctionalAreaId(erp.mod.SModSysConsts.CFGU_FUNC_NA);
+                    dataDps.setFkFunctionalSubAreaId(erp.mod.SModSysConsts.CFGU_FUNC_SUB_NA);
                     dataDps.setFkBizPartnerId_r(dbInvoiceCustomer.getDesCustomerId());
                     dataDps.setFkBizPartnerBranchId(dbInvoiceCustomer.getDesCustomerBranchId());
                     dataDps.setFkBizPartnerBranchAddressId(SEtlConsts.SIIE_DEFAULT);
@@ -893,7 +894,7 @@ public class SEtlProcessDocInvoices {
                     dataDpsCfd.setZipIssue(dbInvoice.getDesCfdiZipIssue());
                     //dataDpsCfd.setConfirmation(...);
                     dataDpsCfd.setTaxRegimeIssuing(dbInvoice.getDesCfdiTaxRegime());
-                    dataDpsCfd.setTaxRegimeReceptor("");
+                    dataDpsCfd.setTaxRegimeReceiver("");
                     dataDpsCfd.setCfdiUsage(dbInvoice.getDesCfdiCfdiUsage());
                     //dataDpsCfd.setRelationType(...);
                     //dataDpsCfd.setRelatedUuid(...);
