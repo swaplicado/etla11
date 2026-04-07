@@ -1,4 +1,11 @@
 ================================================================================
+2026-04-07, 1.1 021.8
+Rodrigo Abel AYALA VÁZQUEZ
+--------------------------------------------------------------------------------
+1) Modificación de visualización de tablas de los reportes mensuales a una sola tabla consolidada que agrupa toda la información de manera estructurada.
+2) Se mejoró la visualización de la tabla en dispositivos móviles.
+
+================================================================================
 2026-02-04, 1.1 021.7
 Sergio Abraham FLORES GUTIÉRREZ
 --------------------------------------------------------------------------------

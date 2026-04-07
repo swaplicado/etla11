@@ -37,7 +37,7 @@ import som.mod.som.db.SSomUtils;
 
 /**
  *
- * @author Isabel Servín
+ * @author Isabel Servín, Rodrigo Ayala
  */
 public class SReportMailerMonthly {
     
@@ -54,8 +54,8 @@ public class SReportMailerMonthly {
     private static final int ARG_COMP = 2;
     private static final int ARG_MAIL_TO = 3;
     private static final int ARG_MAIL_BCC = 4;
-    private static final String DEF_MAIL_TO = "sflores@swaplicado.com.mx;isabel.garcia@swaplicado.com.mx";
-    private static final String DEF_MAIL_BCC = "";
+    private static final String DEF_MAIL_TO = "rodrigo.ayala@swaplicado.com.mx";
+    private static final String DEF_MAIL_BCC = "rodrigo.aevil10@gmail.com";
     private static final HashMap<String, String> ReportTypesMap = new HashMap<>();
     
     private final static Logger LOGGER = Logger.getLogger("mailer.SReportMonthlyMailer");
