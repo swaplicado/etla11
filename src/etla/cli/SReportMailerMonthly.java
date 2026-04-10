@@ -54,7 +54,7 @@ public class SReportMailerMonthly {
     private static final int ARG_COMP = 2;
     private static final int ARG_MAIL_TO = 3;
     private static final int ARG_MAIL_BCC = 4;
-    private static final String DEF_MAIL_TO = "rodrigo.ayala@swaplicado.com.mx";
+    private static final String DEF_MAIL_TO = "rodrigo.ayala@swaplicado.com.mx;sflores@swaplicado.com.mx"; //;sflores@swaplicado.com.mx
     private static final String DEF_MAIL_BCC = "rodrigo.aevil10@gmail.com";
     private static final HashMap<String, String> ReportTypesMap = new HashMap<>();
     

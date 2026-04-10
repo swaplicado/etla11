@@ -23,6 +23,7 @@ public abstract class SReportMailerMonthlyOneYearHtml {
     public static String generateReportHtml(final Connection connection, final String reportType, final String companies, final String mailSubject) throws Exception {
         Date today = new Date();
         boolean hasData = false;
+        int maxItemsByTable = 20; // ajustar el tamaño maximo de items por tabla
         
         // Celdas donde se encuentan el nombre del usuario y del producto y el ID del usuario y del producto:
         
@@ -40,38 +41,81 @@ public abstract class SReportMailerMonthlyOneYearHtml {
         // Cabeza del HTML:
         
         html += "<head>\n";
-        html += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
         html += "<title>"+ mailSubject +"</title>\n";
-        html += "<style type=\"text/css\">\n" +
-            "body {\n" +
-            "    padding-left: 2em;\n" +
-            "    padding-right: 2em;\n" +
-            "    font-family:  \"Times New Roman\",\n" +
-            "        Times, serif;\n" +
-            "    color: black;\n" +
-            "    background-color: whitesmoke}\n" +
-            "h1, h2 {\n" +
-            "    font-family: Helvetica, Geneva, Arial,\n" +
-            "        SunSans-Regular, sans-serif }\n" +
+        html += "<style>\n" +
+            "body { font-size: 100%; font-family: sans-serif; }" +
+            "table { border-collapse: collapse; font-size: 0.80em; font-family: sans-serif; table-layout: fixed; width: 100%; }" +
+            "table, th, td { border: 1px solid black; }" +
+            "h1 {\n" + 
+                "font-size: 2.00em;\n" +
+                "font-family: sans-serif;\n" +
+                "}\n" +
+            "h2 {" +
+                "font-size: 1.75em;" +
+                "font-family: sans-serif;" + 
+                "} " +
+            
+            "th {\n" +
+            "    border: 1px solid #000;\n" +
+            "    padding: 2px;\n" +
+            "    text-align: center;" +
+            "    overflow-wrap: break-word;\n" +
+            "    white-space: nowrap;\n" +
+            "    word-break: keep-all;\n" +
+            "    font-size: 0.85em;\n" +
+            "}\n" +
+            "td {\n"
+            + " padding: 2px;"
+            + " white-space: nowrap;"
+            + " word-break: keep-all;"
+            + " font-size: 0.80em;"
+            + "}"
+                
+                /* Columna MES */
+            + "td.col-month, th.col-month {"
+            + " width: 45px;"
+            + " text-align: center;"
+            + " font-size: 0.80em;"
+            + "}"
+
+                /* Encabezado del item (Nombre) */
+            + ".item-header {"
+            + " width: 150px;"
+            + " word-break: break-word;"
+            + " font-weight: bold;"
+            + " font-size: 0.85em;"
+            + " text-align: center;"
+            + " white-space: normal;"
+            + " overflow-wrap: anywhere;"
+            + "}"
+                
+                /* kg */
+            + "td.col-kg, th.col-kg {"
+            + " width: 65px;"
+            + " text-align: right;"
+            + " font-size: 0.80em;"
+            + "}"
+
+            /* % */
+            + "td.col-pct, th.col-pct {"
+            + " width: 28px;"
+            + " text-align: center;"
+            + " font-size: 0.75em;"
+            + "}"
+
+            /* Empresa */
+            + "td.col-emp, th.col-emp {"
+            + " width: 65px;"
+            + " text-align: center;"
+            + " font-size: 0.85em;"
+            + "}" +
+            
             "address {\n" +
             "    margin-top: 1em;\n" +
             "    padding-top: 1em;\n" +
-            "    border-top: thin dotted;\n"+
-            "    font-size: 62.5% }\n" +
-            "table {\n" +
-            "    border: 1px solid #000;\n" +
-            "    border-collapse: collapse;\n" +
-            "    font-size: 14px;\n" +
-            "    width:auto;" +
-            "}\n" +
-            "th, td {\n" +
-            "    vertical-align: top;\n" +
-            "    border: 1px solid #000;\n" +
-            "    border-collapse: collapse;\n" +
-            "    padding: 0.3em;\n" +
-            "    caption-side: bottom;\n"+
-            "    font-family:  \"Times New Roman\";" +
-            "}\n" +
+            "    border-top: thin dotted;"+
+            "    font-size: 82.5% }\n" +
+                
             "caption {\n" +
             "    padding: 0.3em;\n" +
             "    color: #fff;\n" +
@@ -80,25 +124,7 @@ public abstract class SReportMailerMonthlyOneYearHtml {
             "th {\n" +
             "   background: #eee;\n" +
             "}\n" +
-            ".item-header {\n" +
-            "    background-color: #ddd;\n" +
-            "    min-width: 250px;\n" +
-            "    font-weight: bold;\n" +
-            "    text-align: center;\n" +
-            "    white-space: nowrap;\n}\n" +
-            "@media only screen and (max-width: 600px) {\n" +   // dispositivos móviles
-            "    table {\n" +
-            "        font-size: 20px !important;\n" +
-            "    }\n" +
-            "    th, td {\n" +
-            "        padding: 0.5em !important;\n" +
-            "        white-space: nowrap;\n" +
-            "    }\n" +
-            "    .item-header {\n" +
-            "        min-width: 300px !important;\n" +
-            "        font-size: 20px !important;\n" +
-            "    }\n" +
-            "}\n" +
+            
             "</style>";
         
         html += "</head>\n";
@@ -120,7 +146,7 @@ public abstract class SReportMailerMonthlyOneYearHtml {
         html += "<h1>" + SLibUtils.textToHtml(mailSubject) + "</h1>\n";
         html += SLibUtils.textToHtml("Año: " + year) + "<br>";
         html += "Hora de corte: " + hour + ":" + minute + " hrs." + "\n";
-        html += "<br>\n";
+        html += "<br><br>\n";
         
         // Consulta de productos:
         
@@ -146,10 +172,8 @@ public abstract class SReportMailerMonthlyOneYearHtml {
         List<Double> itemTotalAME = new ArrayList<>();
         List<Double> itemTotalAETH = new ArrayList<>();
         
-        // Tabla dinámica principal:
-                
-        html += "<table style='width: max-content;'>\n";
-
+        // Obtención de datos para la tablas:
+        
         while (resultSetPro.next()) {
             
             double totalAnioAeth = 0;
@@ -199,7 +223,7 @@ public abstract class SReportMailerMonthlyOneYearHtml {
                         valsEmp1[mes - 1] = resultSetxPro.getInt(emp1[0]);
                         valsEmp2[mes - 1] = resultSetxPro.getInt(emp2[0]);
                         
-                        if (valsEmp1 != null || valsEmp2 != null) {
+                        if (valsEmp1[mes - 1] != 0 || valsEmp2[mes - 1] != 0) {
                             hasData = true;
                         }
                     }
@@ -212,95 +236,70 @@ public abstract class SReportMailerMonthlyOneYearHtml {
             }
         }
         
-        // Encabezados superiores de la tabla:
-
-        headHtmlTable = "<tr>\n";
-
-        for (int item = 0; item < itemNames.size(); item++) {
-            if (item % 3 == 0) {   // cada 3 items vuelve a salir la columna "mes"
-                headHtmlTable += "<th style=\"width: 25px\" scope=\"row\" rowspan=\"3\">Mes</th>\n";
-            }
-
-            headHtmlTable += "<th colspan='4' class='item-header'>" + itemNames.get(item) + "</th>\n";
-        }
-
-        headHtmlTable += "</tr>\n";
-        headHtmlTable += "<tr>\n";
-
-        for (int i = 0; i < itemNames.size(); i++) {
-            headHtmlTable += "<th colspan='2'>" + emp1[1] + "\n" + "</th><th colspan='2'>" + emp2[1] + "\n" + "</th>";
-        }
+        // Ver si llegaron mas de 20 items, partir la tabla en 2:
         
-        headHtmlTable += "</tr>\n";
-        headHtmlTable += "<tr>\n";
+        int totalItems = itemNames.size();
+        int half = totalItems > maxItemsByTable ? (int) Math.ceil(totalItems / 2.0) : totalItems;
 
-        for (int i = 0; i < itemNames.size(); i++) {
-            headHtmlTable += "<th>kg</th><th>%</th><th>kg</th><th>%</th>\n";
-        }
+        // Primera mitad (siempre la mayor)
+        int startA = 0;
+        int endA = half;
 
-        headHtmlTable += "</tr>";
-
-        // Generación de las filas mes x mes:
+        // Segunda mitad
+        int startB = half;
+        int endB = totalItems;
+        
+        // Tabla dinámica principal:
                 
-        for (int m = 0; m < monthsTable.length; m++) {
-            htmlTable += "<tr>\n";
+        if (itemNames.size() > maxItemsByTable) {
+            
+            htmlTable += "<table>\n";
+            
+            htmlTable += buildTableSection(
+                    startA, endA,
+                    itemNames, itemValsEmp1, itemValsEmp2,
+                    itemTotalAME, itemTotalAETH,
+                    emp1, emp2,
+                    monthsTable);
 
-            for (int item = 0; item < itemNames.size(); item++) {
+            htmlTable += "</table><br>\n";
+            htmlTable += "<br><table>\n";
 
-                if (item % 3 == 0) {
-                    htmlTable += "<td>" + monthsTable[m] + "</td>";
-                }
+            htmlTable += buildTableSection(
+                    startB, endB,
+                    itemNames, itemValsEmp1, itemValsEmp2,
+                    itemTotalAME, itemTotalAETH,
+                    emp1, emp2,
+                    monthsTable);
 
-                int v1 = itemValsEmp1.get(item)[m];
-                int v2 = itemValsEmp2.get(item)[m];
+            htmlTable += "</table>\n";
 
-                htmlTable += "<td align='right'>" + SLibUtils.DecimalFormatInteger.format(v1) + "</td>";
-                htmlTable += "<td align='right'>" + SLibUtils.DecimalFormatPercentage2D.format(itemTotalAME.get(item) != 0 ? (double)v1 / itemTotalAME.get(item) : 0) + "</td>";
 
-                htmlTable += "<td align='right'>" + SLibUtils.DecimalFormatInteger.format(v2) + "</td>";
-                htmlTable += "<td align='right'>" + SLibUtils.DecimalFormatPercentage2D.format(itemTotalAETH.get(item) != 0 ? (double)v2 / itemTotalAETH.get(item) : 0) + "</td>";
-            }
+        } else {
+            
+            html += "<table>\n";
 
-            htmlTable += "</tr>\n";
+            // Tabla normal
+            htmlTable += buildTableSection(
+                    0, itemNames.size(),
+                    itemNames, itemValsEmp1, itemValsEmp2,
+                    itemTotalAME, itemTotalAETH,
+                    emp1, emp2,
+                    monthsTable);
+            
+            htmlTable += "</table>\n";
+
         }
-        
-        // Fila final de totales:
-
-        htmlTable += "<tr>";
-
-        for (int item = 0; item < itemNames.size(); item++) {
-
-            if (item % 3 == 0) {
-                htmlTable += "<td style='font-weight:bold;'>Total</td>";
-            }
-
-            double totAME = itemTotalAME.get(item);
-            double totAETH = itemTotalAETH.get(item);
-
-            htmlTable += "<td align='right' style='font-weight:bold;'>" 
-                    + SLibUtils.DecimalFormatInteger.format(totAME) + "</td>";
-
-            htmlTable += "<td align='right' style='font-weight:bold;'>" 
-                    + SLibUtils.DecimalFormatPercentage2D.format(totAME != 0 ? 1 : 0) + "</td>";
-
-            htmlTable += "<td align='right' style='font-weight:bold;'>" 
-                    + SLibUtils.DecimalFormatInteger.format(totAETH) + "</td>";
-
-            htmlTable += "<td align='right' style='font-weight:bold;'>" 
-                    + SLibUtils.DecimalFormatPercentage2D.format(totAETH != 0 ? 1 : 0) + "</td>";
-        }
-
-        htmlTable += "</tr>";
         
         if (!hasData) {
             htmlTable += "<h3>No se encontró información para el año reportado.</h3>";
         }
 
-        html += headHtmlTable + htmlTable + "</table>\n";
+        html += htmlTable + "<br>\n";
         
         // Final del HTML
         
-        html += "<hr>" +
+        html += "" +
                 "<address>" +
                 SLibUtils.textToHtml("Favor de no responder este mail, fue generado de forma automática.") +
                 "<br>" +
@@ -320,4 +319,106 @@ public abstract class SReportMailerMonthlyOneYearHtml {
         
         return html;
     }
+
+    private static String buildTableSection(
+            int start, 
+            int end,
+            List<String> itemNames,
+            List<int[]> itemValsEmp1,
+            List<int[]> itemValsEmp2,
+            List<Double> itemTotalAME,
+            List<Double> itemTotalAETH,
+            String[] emp1,
+            String[] emp2,
+            String[] monthsTable){
+        
+        String html = "";
+        int colMesRep = 5; // cada cuando vuelve a salir la columna mes
+        
+        // Encabezados superiores de la tabla:
+
+        html = "<tr>\n";
+        
+        for (int item = start; item < end; item++) {
+            if ((item - start) % colMesRep  == 0) {   // cada 3 items vuelve a salir la columna "mes"
+                html += "<th class='col-month' scope='row' rowspan='3'>Mes</th>\n";
+            }
+
+            html += "<th colspan='2' class='item-header'>" + itemNames.get(item) + "</th>\n";
+        }
+
+        html += "</tr>\n";
+        html += "<tr>\n";
+
+        for (int item = start; item < end; item++) {
+            html += "<th colspan='1' class='col-emp'> " + emp1[1] + "\n" + "</th><th colspan='1' class='col-emp'>" + emp2[1] + "\n" + "</th>";
+        }
+        
+        html += "</tr>\n";
+        html += "<tr>\n";
+
+        for (int item = start; item < end; item++) {
+            html += "<th class='col-kg'>kg</th>"
+                    //+ "<th class='col-pct'>%</th>"
+                    + "<th class='col-kg'>kg</th>";
+                    //+ "<th class='col-pct'>%</th>\n";
+        }
+
+        html += "</tr>";
+
+        // Generación de las filas mes x mes:
+                
+        for (int m = 0; m < monthsTable.length; m++) {
+            html += "<tr>\n";
+
+            for (int item = start; item < end; item++) {
+
+                if ((item - start) % colMesRep == 0) {
+                    html += "<td class='col-month'>" + monthsTable[m] + "</td>";
+                }
+
+                int v1 = itemValsEmp1.get(item)[m];
+                int v2 = itemValsEmp2.get(item)[m];
+
+                html += "<td class='col-kg' align='right'>" + SLibUtils.DecimalFormatInteger.format(v1) + "</td>";
+                //htmlTable += "<td class='col-pct' align='right'>" + SLibUtils.DecimalFormatPercentage2D.format(itemTotalAME.get(item) != 0 ? (double)v1 / itemTotalAME.get(item) : 0) + "</td>";
+
+                html += "<td class='col-kg' align='right'>" + SLibUtils.DecimalFormatInteger.format(v2) + "</td>";
+//                htmlTable += "<td class='col-pct' align='right'>" + SLibUtils.DecimalFormatPercentage2D.format(itemTotalAETH.get(item) != 0 ? (double)v2 / itemTotalAETH.get(item) : 0) + "</td>";
+            }
+
+            html += "</tr>\n";
+        }
+        
+        // Fila final de totales:
+
+        html += "<tr>";
+
+        for (int item = start; item < end; item++) {
+
+            if ((item - start) % colMesRep == 0) {
+                html += "<td class='col-month' style='font-weight:bold;'>Total</td>";
+            }
+
+            double totAME = itemTotalAME.get(item);
+            double totAETH = itemTotalAETH.get(item);
+
+            html += "<td class='col-kg' align='right' style='font-weight:bold;'>" 
+                    + SLibUtils.DecimalFormatInteger.format(totAME) + "</td>";
+
+ //           htmlTable += "<td class='col-pct' align='right' style='font-weight:bold;'>" 
+   //                 + SLibUtils.DecimalFormatPercentage2D.format(totAME != 0 ? 1 : 0) + "</td>";
+
+            html += "<td class='col-kg' align='right' style='font-weight:bold;'>" 
+                    + SLibUtils.DecimalFormatInteger.format(totAETH) + "</td>";
+
+ //           htmlTable += "<td class='col-pct' align='right' style='font-weight:bold;'>" 
+   //                 + SLibUtils.DecimalFormatPercentage2D.format(totAETH != 0 ? 1 : 0) + "</td>";
+        }
+
+        html += "</tr>";
+        
+        return html;
+    }
+
 }
