@@ -793,8 +793,9 @@ public class SEtlProcessDocInvoices {
                     dataDps.setPayments(0);
                     //dataDps.setPaymentMethod((String) session.readField(SModConsts.AS_PAY_MET, new int[] { dbInvoice.getFkDesPayMethodId() }, SDbRegistry.FIELD_NAME));   // deprecated since CFDI 3.3
                     dataDps.setPaymentMethod("");
-                    //dataDps.setPaymentAccount(dbInvoice.getPayAccount()); // deprecated since CFDI 3.3
                     dataDps.setPaymentAccount("");
+                    dataDps.setAccountingTag("");
+                    dataDps.setPriority(0);
                     dataDps.setAutomaticAuthorizationRejection(0);  // N/A
                     dataDps.setIsPublic(false);
                     dataDps.setIsLinked(false);
@@ -814,7 +815,6 @@ public class SEtlProcessDocInvoices {
                     dataDps.setFkDpsClassId(erp.mod.SModSysConsts.TRNU_TP_DPS_SAL_INV[1]);
                     dataDps.setFkDpsTypeId(erp.mod.SModSysConsts.TRNU_TP_DPS_SAL_INV[2]);
                     dataDps.setFkPaymentTypeId(dataDps.getDaysOfCredit() == 0 ? SDataConstantsSys.TRNS_TP_PAY_CASH : SDataConstantsSys.TRNS_TP_PAY_CREDIT);
-                    //dataDps.setFkPaymentSystemTypeId(dbInvoice.getFkDesPayMethodId());    // deprecated since CFDI 3.3
                     dataDps.setFkPaymentSystemTypeId(SDataConstantsSys.TRNU_TP_PAY_SYS_NA);
                     dataDps.setFkDpsStatusId(SDataConstantsSys.TRNS_ST_DPS_EMITED);
                     dataDps.setFkDpsValidityStatusId(SDataConstantsSys.TRNS_ST_DPS_VAL_EFF);
